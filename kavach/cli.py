@@ -85,7 +85,8 @@ def _write(ans: dict, trace: dict) -> None:
 
 
 @app.command()
-def investigate(case_id: str, backend: str = "duck", verbose: bool = False, persist: bool = False, no_llm: bool = False):
+def investigate(case_id: str, backend: str = "duck", verbose: bool = False, persist: bool = False, no_llm: bool = False,
+                no_write: bool = typer.Option(False, "--no-write", help="print only; leave cases/<id>.json untouched")):
     """Investigate one case and write cases/<case_id>.json."""
     import json, os
     if no_llm:
@@ -94,7 +95,8 @@ def investigate(case_id: str, backend: str = "duck", verbose: bool = False, pers
     conn = _graph_conn(backend, persist)
     for c in _cases([case_id]):
         ans, trace = inv(c, backend=backend, graph_conn=conn, verbose=verbose)
-        _write(ans, trace)
+        if not no_write:
+            _write(ans, trace)
         if verbose:
             print(json.dumps(ans, indent=2, ensure_ascii=False))
         print(f"{ans['case_id']}: {ans['case']['verdict']} p={ans['case']['fraud_probability']} {ans['case']['pattern']} "
@@ -145,6 +147,14 @@ def report():
     from kavach.report import update_readme
 
     update_readme()
+
+
+@app.command()
+def site():
+    """Build site/cases.js for the static case viewer from cases/*.json and monitor/*.json."""
+    from kavach.site import build
+
+    build()
 
 
 if __name__ == "__main__":

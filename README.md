@@ -5,6 +5,8 @@ Kavach ("shield") takes an alert from the case pack, investigates it through gra
 
 Decisions are deterministic: detectors, a calibrated evidence model and a policy engine that encodes R1 to R10, the approval routes and section 3a. The LLM (Groq `openai/gpt-oss-120b`) only writes prose (summary, SAR narrative, undocumented-pattern description) from a facts JSON, with every identifier checked against the facts and a template fallback.
 
+**Case viewer:** [`site/index.html`](site/index.html) shows every answer file with its evidence ledger, the actions before and after the evidence request with approval routes, and the SAR. Live at https://monsterboy110.github.io/hhgoa-tigergraph/site/ once GitHub Pages is enabled (Settings > Pages > deploy from `main`, root). Rebuild its data with `python -m kavach site`.
+
 ## Results
 
 <!-- RESULTS_TABLE -->
@@ -62,6 +64,20 @@ Decisions are deterministic: detectors, a calibrated evidence model and a policy
 | `kavach/persist.py` | InvestigationCase upsert + edges, read back before `written_to_graph: true` |
 | `kavach/validate.py` | `python -m kavach check`: schema, enums, every id against the dataset, routes, SAR consistency, R1, R10 |
 
+## How Kavach uses TigerGraph
+
+TigerGraph Savanna (4.2.5) is the system of record and the agent's memory. Every number below is from our own run.
+
+| | |
+|---|---|
+| **Graph** `Fraud` | 10 vertex types, 16 edge types (plus reverse edges): Customer, Card, Holder (the underlying account), Transaction, DeviceProfile, EmailDomain, BillingRegion, ClosedCase, InvestigationCase, PolicyDoc |
+| **Loaded** | 590,742 transactions, 13,553 customers, 14,317 cards, 202,440 holders, 9,705 device profiles, 5,565 closed cases, about 3.3M edges; counts verified against the source files |
+| **Tools** | 20 installed GSQL queries (`kavach/graph/queries.gsql`), for example `device_neighbors` (Transaction to DeviceProfile to Transaction to Card), `holder_fraud_history` (Holder to Card to Transaction to ClosedCase), `closed_cases_for`, `amount_peers`, `case_memory`; median about 100 ms per call |
+| **MCP** | the same installed queries run through the TigerGraph MCP server (`--backend mcp`, tool `tigergraph__run_installed_query`); decisions are identical to the direct lane |
+| **TigerVector** | 384-d embeddings of all 5,565 closed-case analyst notes, the README's pattern and Fraud Policy sections, and every investigation summary; `vectorSearch()` drives similar-case recall and the policy-section evidence |
+| **Case memory** | each investigation is upserted as an `InvestigationCase` with edges to its card, transactions, devices and similar closed cases, plus an embedding, then read back before `written_to_graph: true`; later investigations retrieve it through `case_memory` and vector search |
+| **Parity** | the agent runs on TigerGraph or on a DuckDB analysis copy with identical tool shapes; `tests/test_parity.py` checks that both give the same decisions |
+
 ## What the data taught us
 
 1. **Card ids pool many accounts.** `customer_id` comes from the issuer field, so a card id can hold thousands of people. We rebuild the account as `holder_key = card1 | addr1 | account start day`, and use it for baselines and history.
@@ -81,7 +97,9 @@ python -m kavach download   # organizer Google Drive files -> data/raw/
 python -m kavach index      # DuckDB lane; prints row counts and card_id mapping check
 python -m kavach weights    # fits kavach/weights.json from the closed cases
 python -m kavach graph all  # TigerGraph: schema, loading job, load, installed queries, counts
-python -m kavach run --all --backend tg --persist
+python -m kavach vectors    # embeds closed-case notes and policy sections (local, 384-d)
+python -c "from kavach.graph.client import connect; from kavach.graph import vectors_tg as v; c=connect(); v.setup(c); v.upload(c); v.self_check(c)"
+python -m kavach run --all --backend tg --persist   # or --backend mcp
 python -m kavach check      # validator: must print ALL VALID
 pytest -q
 ```

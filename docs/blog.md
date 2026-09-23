@@ -31,11 +31,19 @@ case -> GATHER -> DETECT -> ASSESS -> initial actions -> ask the customer? -> si
 
 ## How we used TigerGraph
 
-<!-- fill in once the Savanna load is done: schema screenshot, load counts, query timings, MCP -->
-
 The graph holds customers, cards, transactions, device profiles, email domains, billing regions, the bank's closed cases, and the agent's own `InvestigationCase` vertices. Every agent tool is an installed GSQL query: `card_history`, `device_neighbors`, `region_activity`, `holder_fraud_history`, `closed_cases_for`, `amount_peers`. The agent runs the same code against TigerGraph (through pyTigerGraph or the TigerGraph MCP server) and against a DuckDB copy used for analysis. A parity test checks that both lanes give the same answers.
 
 The question "what else happened on this device?" is a two-hop traversal, Transaction to DeviceProfile to Transaction to Card. It is the question that cracks the hardest cases.
+
+Numbers from our Savanna (4.2.5, free tier) run:
+
+- **Load:** 590,742 transactions, 202,440 underlying accounts, 9,705 device profiles, 5,565 closed cases and about 3.3M edges, posted to a GSQL loading job in 50k-line chunks in about 6 minutes, every line valid.
+- **Queries:** 20 installed queries (17 graph tools plus 3 vector searches); the graph tools answer in about 100 ms each.
+- **MCP:** the same installed queries also run through the TigerGraph MCP server, and the agent's decisions are identical on both paths.
+- **TigerVector:** 384-d embeddings of every closed-case analyst note and of the policy text live on the vertices; `vectorSearch()` finds, for a sub-$500 burst, exactly the closed cases the analysts labelled undocumented.
+- **Case memory:** every investigation is written back as an `InvestigationCase` vertex with edges and an embedding, read back before we mark it written, and found again by the next investigation on the same card.
+
+Two things tripped us. `proxy` is a reserved word in attribute lists, but only when another attribute follows it. And a fresh workspace came with a sample solution whose global `Card` type collided with ours, so we build our graph with graph-local types in a schema change job.
 
 ## What the data taught us
 
@@ -53,7 +61,30 @@ The question "what else happened on this device?" is a two-hop traversal, Transa
 
 ## Results
 
-<!-- results table from README -->
+Eleven cases came out as fraud, eight as legitimate and one as uncertain (escalated with the evidence), and all 20 files pass our validator. Every investigation is in TigerGraph.
+
+| Case | Verdict | Pattern | p | Exposure | SAR |
+|---|---|---|---|---|---|
+| HHG-001 | legitimate | none | 0.06 | $0.00 | no |
+| HHG-002 | uncertain | card_not_present_fraud | 0.53 | $292.36 | no |
+| HHG-003 | fraud | out_of_region_use | 0.93 | $165.93 | no |
+| HHG-004 | fraud | card_not_present_new_device | 0.88 | $128.33 | no |
+| HHG-005 | legitimate | none | 0.09 | $0.00 | no |
+| HHG-006 | fraud | undocumented | 0.97 | $1,906.07 | yes |
+| HHG-007 | fraud | account_takeover | 0.97 | $228.88 | no |
+| HHG-008 | fraud | card_not_present_fraud | 0.93 | $166.97 | no |
+| HHG-009 | fraud | card_not_present_fraud | 0.89 | $30.02 | no |
+| HHG-010 | legitimate | none | 0.03 | $0.00 | no |
+| HHG-011 | fraud | card_not_present_new_device | 0.96 | $131.30 | yes |
+| HHG-012 | legitimate | none | 0.03 | $0.00 | no |
+| HHG-013 | legitimate | none | 0.03 | $0.00 | no |
+| HHG-014 | fraud | undocumented | 0.97 | $439.61 | yes |
+| HHG-015 | legitimate | none | 0.03 | $0.00 | no |
+| HHG-016 | fraud | card_not_present_new_device | 0.95 | $59.67 | yes |
+| HHG-017 | legitimate | none | 0.04 | $0.00 | no |
+| HHG-018 | fraud | out_of_region_use | 0.97 | $124.08 | no |
+| HHG-019 | fraud | card_not_present_new_device | 0.96 | $99.92 | yes |
+| HHG-020 | legitimate | none | 0.03 | $0.00 | no |
 
 ## Knowing when to ask
 

@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kavach · 20 fraud investigations on TigerGraph</title>
+<meta name="description" content="Kavach, an agentic fraud investigator on TigerGraph: the 20 Hacker House Goa 2026 cases with evidence, rule-cited actions, approval routes and SAR narratives.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2 4 7v8c0 7.5 5.1 13.4 12 15 6.9-1.6 12-7.5 12-15V7z' fill='%23f58220'/%3E%3Ccircle cx='16' cy='13' r='3' fill='%2316181d'/%3E%3Ccircle cx='10.5' cy='19' r='2' fill='%2316181d'/%3E%3Ccircle cx='21.5' cy='19' r='2' fill='%2316181d'/%3E%3C/svg%3E">
+<style>
+@font-face{font-family:"Manrope";src:url("fonts/manrope-400.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Manrope";src:url("fonts/manrope-600.woff2") format("woff2");font-weight:500 650;font-display:swap}
+@font-face{font-family:"Manrope";src:url("fonts/manrope-700.woff2") format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:url("fonts/jetbrains-mono-400.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:url("fonts/jetbrains-mono-600.woff2") format("woff2");font-weight:500 700;font-display:swap}
+:root{
+  --ground:#15171c; --panel:#1c1f26; --panel-2:#222630; --line:#2d323d; --line-2:#3a404d;
+  --ink:#ecebe8; --ink-2:#b7bcc6; --ink-3:#8d94a1;
+  --tg:#f58220; --tg-soft:rgba(245,130,32,.14); --tg-line:rgba(245,130,32,.55);
+  --fraud:#ff6b5b; --legit:#56d39c; --uncertain:#f2c14e;
+  --auto:#8d94a1; --l1:#f2c14e; --l2:#ff6b5b;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  --sans:"Manrope","Segoe UI",system-ui,sans-serif;
+  --r:6px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--ground);color:var(--ink);font:14px/1.5 var(--sans);font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+::selection{background:var(--tg);color:#15171c}
+*{scrollbar-width:thin;scrollbar-color:var(--line-2) transparent}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:10px;border:3px solid var(--ground)}
+:focus-visible{outline:2px solid var(--tg);outline-offset:2px;border-radius:4px}
+a{color:var(--tg);text-underline-offset:3px}
+.mono{font-family:var(--mono);font-size:.92em}
+.pipe{font-family:var(--mono);font-weight:400;color:var(--ink-3);padding:0 .1em}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* ---------- top bar ---------- */
+header.bar{height:56px;display:flex;align-items:center;gap:18px;padding:0 20px;border-bottom:1px solid var(--line);background:var(--panel)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:650;font-size:16px;letter-spacing:.01em}
+.brand svg{width:26px;height:26px}
+.brand small{font-weight:400;color:var(--ink-3);font-size:13px;margin-left:4px}
+nav.tabs{display:flex;gap:4px;margin-left:12px}
+nav.tabs button{background:none;border:0;color:var(--ink-2);font:inherit;padding:8px 12px;border-radius:var(--r);cursor:pointer}
+nav.tabs button:hover{color:var(--ink);background:var(--panel-2)}
+nav.tabs button[aria-selected=true]{color:var(--ink);box-shadow:inset 0 -2px 0 var(--tg)}
+.bar .spacer{flex:1}
+.bar .meta{color:var(--ink-3);font-size:12.5px}
+.bar .meta b{color:var(--ink-2);font-weight:600}
+
+/* ---------- layout ---------- */
+.shell{display:grid;grid-template-columns:320px 1fr;height:calc(100% - 56px)}
+aside.rail{border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0;background:var(--ground)}
+.filters{display:flex;gap:6px;padding:14px 14px 10px;flex-wrap:wrap}
+.filters button{font:inherit;font-size:12.5px;color:var(--ink-2);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px 10px;cursor:pointer}
+.filters button:hover{border-color:var(--line-2);color:var(--ink)}
+.filters button[aria-pressed=true]{border-color:var(--tg-line);color:var(--ink);background:var(--tg-soft)}
+.filters .n{color:var(--ink-3);margin-left:4px}
+ol.cases{list-style:none;margin:0;padding:0 8px 16px;overflow:auto;flex:1}
+ol.cases li button{all:unset;box-sizing:border-box;display:grid;grid-template-columns:74px 1fr auto;gap:2px 10px;width:100%;padding:9px 10px;border-radius:var(--r);cursor:pointer}
+ol.cases li button:hover{background:var(--panel)}
+ol.cases li button[aria-current=true]{background:var(--panel-2);box-shadow:inset 0 0 0 1px var(--line-2)}
+ol.cases li button:focus-visible{outline:2px solid var(--tg);outline-offset:-2px}
+.cid{font-family:var(--mono);font-size:13px;color:var(--ink)}
+.pat{grid-column:2/4;color:var(--ink-3);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.exp{text-align:right;color:var(--ink-2);font-size:12.5px}
+.vd{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink-2)}
+.vd i{width:8px;height:8px;border-radius:50%;background:currentColor;display:inline-block}
+.vd.fraud i{background:var(--fraud)}.vd.legitimate i{background:var(--legit)}.vd.uncertain i{background:var(--uncertain)}
+.rail .foot{padding:12px 16px;border-top:1px solid var(--line);color:var(--ink-3);font-size:12px}
+
+main{overflow:auto;min-width:0}
+.case{max-width:1180px;margin:0 auto;padding:26px 32px 64px}
+.head{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
+.head h1{margin:0;font-family:var(--mono);font-size:28px;font-weight:600;letter-spacing:-.01em}
+.head .status{font-size:13px;color:var(--ink-2);padding:3px 10px;border:1px solid var(--line-2);border-radius:999px}
+.trigger{margin:10px 0 0;color:var(--ink-2);max-width:92ch}
+.trigger .who{color:var(--ink-3);font-size:12.5px;display:block;margin-top:4px}
+
+/* ---------- instrument strip ---------- */
+.strip{display:grid;grid-template-columns:1.4fr 1.6fr 1.5fr 1fr 1fr 1.2fr;margin:22px 0 26px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);overflow:hidden}
+.gauge{padding:14px 16px 12px;border-right:1px solid var(--line);min-width:0}
+.gauge:last-child{border-right:0}
+.gauge .v.p{margin-bottom:8px}
+.gauge .v{font-size:20px;font-weight:650;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gauge .v.wrap{white-space:normal;font-size:16px;line-height:1.25}
+.gauge .v.small{font-size:15px;font-weight:600;font-family:var(--mono)}
+.gauge .pl{margin-top:6px;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gauge.verdict .v{display:flex;align-items:center;gap:8px}
+.gauge.verdict .v i{width:10px;height:10px;border-radius:50%}
+.scale{position:relative;height:30px;margin-top:4px}
+.scale .track{position:absolute;left:0;right:0;top:8px;height:2px;background:var(--line-2);border-radius:2px}
+.scale .zone{position:absolute;top:8px;height:2px}
+.scale .tick{position:absolute;top:4px;width:1px;height:10px;background:var(--ink-3)}
+.scale .needle{position:absolute;top:0;width:3px;height:18px;border-radius:2px;background:var(--ink);transform:translateX(-1px);transition:left .5s cubic-bezier(.16,1,.3,1)}
+.scale .lbl.up{top:-9px}
+.scale .lbl{position:absolute;top:19px;font-size:10px;line-height:1;color:var(--ink-3);transform:translateX(-50%)}
+
+/* ---------- sections ---------- */
+section.blk{margin-top:34px}
+section.blk>h2{font-size:15px;font-weight:650;margin:0 0 12px;letter-spacing:.01em}
+section.blk>h2 .aside{font-weight:400;color:var(--ink-3);font-size:13px;margin-left:8px}
+.two{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:22px;align-items:start}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r)}
+.prose{padding:16px 18px;color:var(--ink);max-width:75ch}
+.prose p{margin:0 0 10px}.prose p:last-child{margin:0}
+.prose .muted{color:var(--ink-2)}
+
+/* graph */
+.graph{position:relative;padding:6px}
+.graph>svg{display:block;width:100%;height:auto}
+.graph .legend svg{width:10px;height:10px;flex:none}
+.graph .legend{display:flex;gap:14px;flex-wrap:wrap;padding:4px 12px 10px;color:var(--ink-3);font-size:11.5px}
+.graph .legend span{display:inline-flex;align-items:center;gap:6px}
+.edge{fill:none;stroke:var(--line-2);stroke-width:1.2}
+.edge.hot{stroke:var(--tg-line);stroke-width:1.6}
+.edge.dash{stroke-dasharray:3 4}
+.draw .edge{stroke-dasharray:var(--len);stroke-dashoffset:var(--len);animation:draw .7s cubic-bezier(.16,1,.3,1) forwards}
+.draw .edge.dash{stroke-dasharray:3 4;animation:none}
+@keyframes draw{to{stroke-dashoffset:0}}
+.node text{font-family:var(--mono);font-size:10.5px;fill:var(--ink-2)}
+.node .big{font-size:12px;fill:var(--ink);font-weight:600}
+@media (prefers-reduced-motion:reduce){.draw .edge{animation:none;stroke-dasharray:none}.scale .needle{transition:none}}
+
+/* ledger tables */
+table.ledger{width:100%;border-collapse:collapse;font-size:13px}
+table.ledger th{text-align:left;font-weight:600;color:var(--ink-3);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;padding:10px 14px;border-bottom:1px solid var(--line)}
+table.ledger td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+table.ledger tr:last-child td{border-bottom:0}
+table.ledger td.claim{max-width:62ch}
+.src{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-2);white-space:nowrap}
+.src svg{width:14px;height:14px;flex:none}
+.ref{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);word-break:break-word;margin-top:4px}
+.ids{display:flex;flex-wrap:wrap;gap:4px}
+.id{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);background:var(--panel-2);border:1px solid var(--line);border-radius:4px;padding:1px 6px;white-space:nowrap}
+
+/* actions */
+.actions{display:grid;grid-template-columns:minmax(0,1fr) 190px minmax(0,1fr);gap:0;align-items:stretch}
+.acol{padding:14px 16px}
+.acol h3{margin:0 0 10px;font-size:13px;font-weight:650}
+.acol h3 span{color:var(--ink-3);font-weight:400}
+.act{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:9px 0;border-top:1px solid var(--line)}
+.act:first-of-type{border-top:0}
+.act b{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--ink)}
+.act .why{grid-column:1/3;color:var(--ink-2);font-size:12.5px}
+.route{font-family:var(--mono);font-size:11px;font-weight:600;padding:1px 7px;border-radius:4px;border:1px solid currentColor;align-self:start}
+.route.auto{color:var(--auto)}.route.L1{color:var(--l1)}.route.L2{color:var(--l2)}
+.bridge{border-left:1px solid var(--line);border-right:1px solid var(--line);padding:14px;display:flex;flex-direction:column;justify-content:center;gap:10px;background:var(--panel-2);font-size:12.5px;color:var(--ink-2)}
+.bridge .arrow{display:block;width:100%;height:14px}
+.bridge .down{display:none;width:14px;height:18px;margin:0 auto}
+.bridge q{display:block;color:var(--ink);quotes:none}
+.bridge .step{color:var(--ink-3);font-size:11.5px}
+.changed{padding:12px 16px;border-top:1px solid var(--line);color:var(--ink-2);font-size:13px}
+
+/* SAR */
+.sar{padding:18px 20px}
+.sar p{margin:0;max-width:78ch;line-height:1.65}
+.sar .facts{display:flex;flex-wrap:wrap;gap:20px;margin-top:14px;color:var(--ink-3);font-size:12.5px}
+.sar .facts b{color:var(--ink-2);font-weight:600}
+.nosar{padding:14px 18px;color:var(--ink-2)}
+
+.footline{margin-top:34px;padding-top:14px;border-top:1px solid var(--line);display:flex;gap:26px;flex-wrap:wrap;color:var(--ink-3);font-size:12.5px}
+.footline b{color:var(--ink-2);font-weight:600}
+
+/* monitor view */
+.mon{max-width:1180px;margin:0 auto;padding:26px 32px 64px}
+.mon h1{font-size:22px;margin:0 0 8px}
+.mon p.lede{color:var(--ink-2);max-width:80ch;margin:0 0 22px}
+
+@media (max-width:1100px){.strip{grid-template-columns:repeat(3,1fr)}.gauge:nth-child(3){border-right:0}.gauge:nth-child(-n+3){border-bottom:1px solid var(--line)}.two{grid-template-columns:1fr}}
+@media (max-width:820px){
+  .shell{grid-template-columns:1fr;height:auto}
+  aside.rail{border-right:0;border-bottom:1px solid var(--line);max-height:46vh}
+  main{overflow:visible}
+  .case,.mon{padding:20px 16px 48px}
+  .actions{grid-template-columns:1fr}.bridge{border:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .bridge .arrow{display:none}.bridge .down{display:block}
+  .bar .meta,.brand small{display:none}
+  header.bar{gap:8px;padding:0 12px}nav.tabs{margin-left:0}nav.tabs button{white-space:nowrap;padding:8px}
+  table.ledger thead{display:none}table.ledger td{display:block;border-bottom:0;padding:6px 14px}table.ledger tr{display:block;border-bottom:1px solid var(--line);padding:6px 0}
+}
+@media (max-width:520px){.strip{grid-template-columns:repeat(2,1fr)}.gauge{border-right:1px solid var(--line)!important;border-bottom:1px solid var(--line)}.gauge:nth-child(2n){border-right:0!important}}
+</style>
+</head>
+<body>
+<!--
+THESIS: a fraud case is a ledger, evidence to rule to action to route; the viewer shows that chain in the order an auditor checks it, refusing the category's metric-hero dashboard and card grid.
+OWN-WORLD: TigerGraph orange on charcoal; one six-instrument readout strip per case (verdict, probability on a thresholded scale, pattern, exposure, SAR, graph write-back); a case ego-graph drawn in orange edges; mono only for IDs and actions.
+STORY: a judge picks any of 20 cases, reads the verdict at a glance, then follows the evidence rows into rule-cited actions and their approval routes, initial versus final across the evidence request, and the SAR when one was filed.
+FIRST VIEWPORT: left rail of 20 cases with verdict filters; right, the case id, trigger text, the readout strip, then the graph beside the summary.
+FORM: evidence ledger, candidate 4 of 7, raised with the night instrument six-pack's cross-check discipline (each readout owns one truth). Seed key 89fa2e12.
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
+-->
+<header class="bar">
+  <div class="brand" aria-label="Kavach">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 4 7v8c0 7.5 5.1 13.4 12 15 6.9-1.6 12-7.5 12-15V7z" fill="#f58220"/><path d="M16 13 10.5 19M16 13l5.5 6M10.5 19h11" stroke="#15171c" stroke-width="1.6"/><circle cx="16" cy="13" r="3" fill="#15171c"/><circle cx="10.5" cy="19" r="2.2" fill="#15171c"/><circle cx="21.5" cy="19" r="2.2" fill="#15171c"/></svg>
+    Kavach <small>agentic fraud investigation on TigerGraph</small>
+  </div>
+  <nav class="tabs" role="tablist" aria-label="Views">
+    <button role="tab" id="tab-cases" aria-selected="true" aria-controls="view">20 exam cases</button>
+    <button role="tab" id="tab-monitor" aria-selected="false" aria-controls="view">Monitor findings</button>
+  </nav>
+  <span class="spacer"></span>
+  <span class="meta" id="barmeta"></span>
+</header>
+<div class="shell">
+  <aside class="rail" aria-label="Cases">
+    <div class="filters" role="group" aria-label="Filter by verdict" id="filters"></div>
+    <ol class="cases" id="caselist"></ol>
+    <div class="foot">Keys: <b class="mono">j</b> / <b class="mono">k</b> move between cases. Links like <span class="mono">#HHG-014</span> open a case directly.</div>
+  </aside>
+  <main id="view" tabindex="-1"></main>
+</div>
+<script src="cases.js"></script>
+<script>
+(() => {
+  const D = window.KAVACH || {cases: [], monitor: []};
+  const C = D.cases, M = D.monitor;
+  const $ = (s, el = document) => el.querySelector(s);
+  const h = (tag, attrs = {}, ...kids) => {
+    const el = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (v === null || v === undefined || v === false) continue;
+      if (k === "class") el.className = v; else if (k === "text") el.textContent = v; else el.setAttribute(k, v);
+    }
+    for (const k of kids.flat()) if (k !== null && k !== undefined && k !== false) el.append(k.nodeType ? k : document.createTextNode(k));
+    return el;
+  };
+  const svgEl = (tag, attrs = {}) => { const el = document.createElementNS("http://www.w3.org/2000/svg", tag); for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v); return el; };
+  const money = v => "$" + Number(v).toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  const PAT = {card_testing: "Card testing", card_not_present_fraud: "Card not present", card_not_present_new_device: "Card not present, new device",
+    out_of_region_use: "Out of region use", account_takeover: "Account takeover", undocumented: "Undocumented pattern", none: "No fraud"};
+  const STATUS = {closed_fraud: "Closed as fraud", closed_legitimate: "Closed as legitimate", escalated: "Escalated to analyst", open: "Open, under monitoring"};
+  const TRIG = {risk_score: "Model risk score", customer_report: "Customer report", analyst_request: "Analyst request"};
+  const ICON = {
+    graph: '<svg viewBox="0 0 16 16" fill="none" stroke="#f58220" stroke-width="1.4"><circle cx="4" cy="4" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="7" cy="12" r="2"/><path d="M5.7 4.4 10 4.8M4.9 5.8l1.4 4.3M11 6.8l-2.8 3.7"/></svg>',
+    document: '<svg viewBox="0 0 16 16" fill="none" stroke="#b7bcc6" stroke-width="1.4"><path d="M4 1.8h5.5L12.5 5v9.2H4z"/><path d="M9.5 1.8V5h3M6 8h4.5M6 10.5h4.5"/></svg>',
+    customer: '<svg viewBox="0 0 16 16" fill="none" stroke="#56d39c" stroke-width="1.4"><circle cx="8" cy="5.5" r="2.6"/><path d="M3 14c.6-2.8 2.6-4.3 5-4.3s4.4 1.5 5 4.3"/></svg>',
+    external: '<svg viewBox="0 0 16 16" fill="none" stroke="#f2c14e" stroke-width="1.4"><path d="M9 2h5v5M14 2 7.5 8.5M12 9.5V14H2V4h4.5"/></svg>'
+  };
+  const counts = {all: C.length};
+  C.forEach(a => counts[a.case.verdict] = (counts[a.case.verdict] || 0) + 1);
+  let filter = "all", current = null, view = "cases";
+
+  $("#barmeta").innerHTML = "";
+  $("#barmeta").append(h("b", {text: `${counts.fraud || 0} fraud`}), " · ", h("b", {text: `${counts.legitimate || 0} legitimate`}), " · ",
+    h("b", {text: `${counts.uncertain || 0} uncertain`}), ` · ${C.filter(a => a.case.written_to_graph).length} of ${C.length} written to TigerGraph`);
+
+  function renderFilters() {
+    const f = $("#filters"); f.innerHTML = "";
+    [["all", "All"], ["fraud", "Fraud"], ["legitimate", "Legitimate"], ["uncertain", "Uncertain"]].forEach(([k, label]) => {
+      if (!counts[k]) return;
+      const b = h("button", {type: "button", "aria-pressed": String(filter === k)}, label, h("span", {class: "n", text: counts[k]}));
+      b.onclick = () => { filter = k; renderFilters(); renderList(); };
+      f.append(b);
+    });
+  }
+  function visible() { return C.filter(a => filter === "all" || a.case.verdict === filter); }
+  function renderList() {
+    const ol = $("#caselist"); ol.innerHTML = "";
+    visible().forEach(a => {
+      const c = a.case;
+      const b = h("button", {type: "button", "aria-current": String(current === a.case_id)},
+        h("span", {class: "cid", text: a.case_id}),
+        h("span", {class: "vd " + c.verdict}, h("i"), c.verdict),
+        h("span", {class: "exp", text: c.exposure_usd ? money(c.exposure_usd) : "no loss"}),
+        h("span", {class: "pat", text: PAT[c.pattern] + " · " + TRIG[a._pack.trigger_type]}));
+      b.onclick = () => select(a.case_id, true);
+      ol.append(h("li", {}, b));
+      if (current === a.case_id) requestAnimationFrame(() => { const top = b.offsetTop - ol.offsetTop, bot = top + b.offsetHeight; if (top < ol.scrollTop || bot > ol.scrollTop + ol.clientHeight) ol.scrollTop = top - 8; });
+    });
+  }
+
+  function gauge(cls, value, placard, extra) {
+    return h("div", {class: "gauge " + (cls || "")}, value, extra || null, h("div", {class: "pl", text: placard}));
+  }
+  function probScale(p) {
+    const s = h("div", {class: "scale", "aria-hidden": "true"});
+    s.append(h("div", {class: "track"}));
+    const zone = (a, b, col) => { const z = h("div", {class: "zone"}); z.style.left = a * 100 + "%"; z.style.width = (b - a) * 100 + "%"; z.style.background = col; return z; };
+    s.append(zone(0, .15, "var(--legit)"), zone(.85, 1, "var(--fraud)"));
+    [[.15, "0.15"], [.30, ""], [.70, "0.70"], [.85, "0.85"]].forEach(([x, l]) => {
+      const t = h("div", {class: "tick"}); t.style.left = x * 100 + "%"; s.append(t);
+      if (l) { const lb = h("div", {class: "lbl" + (x > .8 ? " up" : ""), text: l}); lb.style.left = x * 100 + "%"; s.append(lb); }
+    });
+    const n = h("div", {class: "needle"}); n.style.left = "0%"; s.append(n);
+    requestAnimationFrame(() => requestAnimationFrame(() => n.style.left = (p * 100) + "%"));
+    return s;
+  }
+
+  function egoGraph(a) {
+    const c = a.case, W = 620, H = 430, cx = W / 2, cy = H / 2 + 6;
+    const svg = svgEl("svg", {viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": `Graph of ${a.case_id}: card ${a._pack.card_id}, ${c.affected_txn_ids.length} episode transactions, ${c.connected_card_ids.length} connected cards, ${c.similar_prior_cases.length} similar closed cases`});
+    const edges = svgEl("g"), nodes = svgEl("g");
+    svg.append(edges, nodes);
+    const edge = (x1, y1, x2, y2, cls) => { const l = svgEl("line", {x1, y1, x2, y2, class: "edge " + cls}); const len = Math.hypot(x2 - x1, y2 - y1); l.style.setProperty("--len", len.toFixed(1)); edges.append(l); };
+    const node = (x, y, shape, fill, stroke, label, sub, big) => {
+      const g = svgEl("g", {class: "node", transform: `translate(${x},${y})`});
+      let s;
+      if (shape === "circle") s = svgEl("circle", {r: big ? 20 : 7, fill, stroke, "stroke-width": big ? 2.5 : 1.5});
+      else if (shape === "square") s = svgEl("rect", {x: -6, y: -6, width: 12, height: 12, rx: 2, fill, stroke, "stroke-width": 1.5});
+      else s = svgEl("polygon", {points: "0,-8 7,-4 7,4 0,8 -7,4 -7,-4", fill, stroke, "stroke-width": 1.5});
+      g.append(s);
+      let tx = 0, ty = big ? 36 : (y < cy ? -12 : 20), anchor = "middle";
+      if (!big && Math.abs(x - cx) > 60 && y > cy - 30) { anchor = x > cx ? "start" : "end"; tx = x > cx ? 12 : -12; ty = 4; }
+      const t = svgEl("text", {x: tx, y: ty, "text-anchor": anchor, class: big ? "big" : ""}); t.textContent = label; g.append(t);
+      if (sub) { const t2 = svgEl("text", {x: tx, y: big ? 50 : ty + (anchor === "middle" ? (y < cy ? -12 : 12) : 13), "text-anchor": anchor}); t2.textContent = sub; g.append(t2); }
+      nodes.append(g);
+    };
+    const ring = (items, r, a0, a1) => items.map((it, i) => { const t = items.length === 1 ? (a0 + a1) / 2 : a0 + (a1 - a0) * i / (items.length - 1); return [it, cx + r * Math.cos(t), cy + r * Math.sin(t)]; });
+    const txIds = c.affected_txn_ids.length ? c.affected_txn_ids.slice(0, 7) : [a._pack.flagged_txn_id];
+    const conn = c.connected_card_ids.slice(0, 7), sim = c.similar_prior_cases.slice(0, 4), devs = c.connected_device_profiles.slice(0, 1);
+    ring(txIds, 128, -Math.PI * .85, -Math.PI * .15).forEach(([t, x, y]) => {
+      edge(cx, cy, x, y, c.affected_txn_ids.length ? "hot" : "");
+      const tx = a._txns[t] || {};
+      node(x, y, "circle", c.affected_txn_ids.length ? "#f58220" : "#3a404d", c.affected_txn_ids.length ? "#f58220" : "#8d94a1", t, tx.amt !== undefined ? money(tx.amt) : "");
+    });
+    ring(sim, 205, Math.PI * .62, Math.PI * .98).forEach(([s, x, y]) => {
+      edge(cx, cy, x, y, "dash");
+      const cc = a._closed[s] || {};
+      node(x, y, "square", cc.outcome === "cleared" ? "#1f3b31" : "#3b2320", cc.outcome === "cleared" ? "#56d39c" : "#ff6b5b", s, cc.outcome === "cleared" ? "cleared" : "confirmed");
+    });
+    if (devs.length) {
+      const dx = cx + 70, dy = cy + 70; edge(cx, cy, dx, dy, "hot");
+      node(dx, dy, "hex", "#15171c", "#f58220", "shared device", devs[0].split(" | ")[0].split(" ")[0]);
+      ring(conn, 190, -Math.PI * .1, Math.PI * .38).forEach(([k, x, y]) => { edge(dx, dy, x, y, "hot"); node(x, y, "circle", "#22262f", "#b7bcc6", k, ""); });
+    } else {
+      ring(conn, 190, -Math.PI * .1, Math.PI * .38).forEach(([k, x, y]) => { edge(cx, cy, x, y, "hot"); node(x, y, "circle", "#22262f", "#b7bcc6", k, ""); });
+    }
+    node(cx, cy, "circle", "#15171c", c.verdict === "fraud" ? "#ff6b5b" : c.verdict === "legitimate" ? "#56d39c" : "#f2c14e", a._pack.card_id, a._pack.customer_id, true);
+    // keep labels apart: shift a label down when it would overlap one placed before it
+    const boxes = [];
+    nodes.querySelectorAll("g.node").forEach(g => {
+      const m = /translate\(([-\d.]+),([-\d.]+)\)/.exec(g.getAttribute("transform"));
+      const gx = +m[1], gy = +m[2];
+      g.querySelectorAll("text").forEach(t => {
+        const w = t.textContent.length * 6.4, a = t.getAttribute("text-anchor");
+        const x0 = gx + (+t.getAttribute("x") || 0) - (a === "end" ? w : a === "middle" ? w / 2 : 0);
+        let y = gy + (+t.getAttribute("y") || 0);
+        for (let k = 0; k < 6 && boxes.some(b => Math.abs(b.y - y) < 12 && x0 < b.x1 && x0 + w > b.x0); k++) y += 12;
+        t.setAttribute("y", y - gy);
+        boxes.push({x0, x1: x0 + w, y});
+      });
+    });
+    const wrap = h("div", {class: "panel graph draw"});
+    wrap.append(svg, h("div", {class: "legend"},
+      h("span", {}, dot("#f58220"), "episode transaction"), h("span", {}, dot("#b7bcc6"), "connected card"),
+      h("span", {}, sq("#ff6b5b"), "similar closed case"), h("span", {}, "edges drawn from TigerGraph traversals")));
+    return wrap;
+  }
+  function dot(col) { const s = svgEl("svg", {viewBox: "0 0 10 10", width: 10, height: 10}); s.append(svgEl("circle", {cx: 5, cy: 5, r: 4, fill: col})); return s; }
+  function sq(col) { const s = svgEl("svg", {viewBox: "0 0 10 10", width: 10, height: 10}); s.append(svgEl("rect", {x: 1, y: 1, width: 8, height: 8, rx: 1.5, fill: "none", stroke: col, "stroke-width": 1.5})); return s; }
+
+  function actionList(list) {
+    return list.map(x => h("div", {class: "act"}, h("b", {text: x.action}), h("span", {class: "route " + x.route, title: {auto: "agent may act alone", L1: "team lead approves", L2: "fraud manager approves"}[x.route], text: x.route}), h("span", {class: "why", text: x.reason})));
+  }
+
+  function renderCase(a) {
+    const c = a.case, n = a.next_best_actions, s = a.sar, p = a._pack;
+    const v = $("#view"); v.innerHTML = "";
+    const wrap = h("article", {class: "case", "aria-labelledby": "case-title"});
+    wrap.append(h("div", {class: "head"}, h("h1", {id: "case-title", text: a.case_id}), h("span", {class: "status", text: STATUS[c.status]})));
+    wrap.append(h("p", {class: "trigger"}, p.trigger_text, h("span", {class: "who", text: `${TRIG[p.trigger_type]} · opened ${p.opened_at} · card ${p.card_id} · customer ${p.customer_id}`})));
+
+    const vcol = {fraud: "var(--fraud)", legitimate: "var(--legit)", uncertain: "var(--uncertain)"}[c.verdict];
+    const vi = h("i"); vi.style.background = vcol;
+    wrap.append(h("div", {class: "strip", role: "group", "aria-label": "Case readouts"},
+      gauge("verdict", h("div", {class: "v"}, vi, c.verdict), "verdict"),
+      gauge("", h("div", {class: "v p", text: c.fraud_probability.toFixed(2)}), "fraud probability", probScale(c.fraud_probability)),
+      gauge("", h("div", {class: "v wrap", text: PAT[c.pattern], title: c.pattern}), "pattern"),
+      gauge("", h("div", {class: "v", text: c.exposure_usd ? money(c.exposure_usd) : "$0"}), `exposure, ${c.affected_txn_ids.length} txn`),
+      gauge("", h("div", {class: "v", text: s.file ? "Filed" : "Not filed"}), "SAR"),
+      gauge("", h("div", {class: "v small", text: c.written_to_graph ? c.graph_case_id : "not written"}), "TigerGraph case")));
+
+    const sumP = h("div", {class: "panel prose"}, h("p", {text: c.summary}), h("p", {class: "muted", text: a.stop_reason}));
+    if (c.pattern_description) sumP.append(h("p", {class: "muted"}, h("b", {text: "Pattern, in our words: "}), c.pattern_description));
+    wrap.append(h("div", {class: "two"}, egoGraph(a), sumP));
+
+    const ev = h("table", {class: "ledger"}, h("thead", {}, h("tr", {}, h("th", {text: "Evidence"}), h("th", {text: "Source"}), h("th", {text: "Entities"}))));
+    const tb = h("tbody");
+    c.evidence.forEach(e => {
+      const src = h("span", {class: "src"}); src.innerHTML = ICON[e.source] || ""; src.append(e.source);
+      tb.append(h("tr", {}, h("td", {class: "claim"}, e.claim, h("div", {class: "ref", text: e.ref})), h("td", {}, src),
+        h("td", {}, h("div", {class: "ids"}, e.entity_ids.slice(0, 8).map(x => h("span", {class: "id", text: x})), e.entity_ids.length > 8 ? h("span", {class: "id", text: `+${e.entity_ids.length - 8}`}) : null))));
+    });
+    ev.append(tb);
+    wrap.append(h("section", {class: "blk"}, h("h2", {}, "Evidence ledger", h("span", {class: "aside", text: `${c.evidence.length} entries, each tied to a query, a document section or the customer`})), h("div", {class: "panel"}, ev)));
+
+    const req = a.evidence_requests[0];
+    const arrow = svgEl("svg", {class: "arrow", viewBox: "0 0 160 14", preserveAspectRatio: "none"});
+    arrow.append(svgEl("path", {d: "M2 7h150M146 2l8 5-8 5", fill: "none", stroke: "#f58220", "stroke-width": 1.5}));
+    const down = svgEl("svg", {class: "down", viewBox: "0 0 14 18"});
+    down.append(svgEl("path", {d: "M7 1v14M2 10l5 6 5-6", fill: "none", stroke: "#f58220", "stroke-width": 1.5}));
+    const bridge = h("div", {class: "bridge"}, arrow, down,
+      req ? [h("span", {class: "step", text: `${req.type.replace("_", " ")} requested after step ${req.asked_after_step}`}), h("q", {text: req.assumed_response})]
+          : h("span", {text: "No evidence requested: the case was settled on the graph evidence, so the final actions equal the initial ones."}));
+    const acts = h("div", {class: "panel"},
+      h("div", {class: "actions"},
+        h("div", {class: "acol"}, h("h3", {}, "Initial ", h("span", {text: "before the reply"})), actionList(n.initial)),
+        bridge,
+        h("div", {class: "acol"}, h("h3", {}, "Final ", h("span", {text: "after the reply"})), actionList(n.final))),
+      h("div", {class: "changed", text: n.what_changed === "nothing" ? "What changed: nothing." : "What changed: " + n.what_changed}));
+    wrap.append(h("section", {class: "blk"}, h("h2", {}, "Next best actions", h("span", {class: "aside", text: "auto: agent acts · L1: team lead · L2: fraud manager"})), acts));
+
+    const sarBody = s.file
+      ? h("div", {class: "panel sar"}, h("p", {text: s.narrative}), h("div", {class: "facts"},
+          h("span", {}, "Total ", h("b", {text: money(s.total_amount_usd)})), h("span", {}, "Activity ", h("b", {text: s.activity_dates.join(" to ")})),
+          h("span", {}, "Subjects ", h("b", {text: String(s.subjects.length)})), h("span", {text: s.reason})))
+      : h("div", {class: "panel nosar", text: s.reason});
+    wrap.append(h("section", {class: "blk"}, h("h2", {}, s.file ? "Suspicious activity report" : "No suspicious activity report"), sarBody));
+
+    wrap.append(h("div", {class: "footline"},
+      h("span", {}, "Graph and retrieval calls ", h("b", {text: String(a.tool_calls)})), h("span", {}, "LLM tokens ", h("b", {text: a.tokens.toLocaleString("en-US")})),
+      h("span", {}, "Wall time ", h("b", {text: a.latency_s + " s"})), h("span", {}, "Similar closed cases ", h("b", {text: c.similar_prior_cases.join(", ") || "none"})),
+      h("a", {href: `https://github.com/MONSTERBOY110/hhgoa-tigergraph/blob/main/cases/${a.case_id}.json`, text: "Raw answer file"})));
+    v.append(wrap);
+    markPipes(wrap);
+  }
+
+  // Manrope draws "|" like a capital I; device fingerprints in prose keep their separators legible in mono
+  function markPipes(root) {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {acceptNode: n =>
+      n.nodeValue.includes("|") && !n.parentElement.closest("svg,.mono,.ref,.id,.cid,.pipe") ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT});
+    const hits = []; while (walker.nextNode()) hits.push(walker.currentNode);
+    hits.forEach(n => {
+      const frag = document.createDocumentFragment();
+      n.nodeValue.split("|").forEach((part, i) => { if (i) frag.append(h("span", {class: "pipe", text: "|"})); frag.append(part); });
+      n.replaceWith(frag);
+    });
+  }
+
+  function renderMonitor() {
+    const v = $("#view"); v.innerHTML = "";
+    const t = h("table", {class: "ledger"}, h("thead", {}, h("tr", {}, ["Finding", "Sweep", "Card", "Verdict", "Pattern", "Exposure", "SAR"].map(x => h("th", {text: x})))));
+    const tb = h("tbody");
+    M.forEach(m => tb.append(h("tr", {}, h("td", {}, h("span", {class: "cid", text: m.case_id}), h("div", {class: "ref", text: m.why})),
+      h("td", {text: m.sweep.replaceAll("_", " ")}), h("td", {class: "mono", text: m.card}), h("td", {}, h("span", {class: "vd " + m.verdict}, h("i"), m.verdict)),
+      h("td", {text: PAT[m.pattern]}), h("td", {text: money(m.exposure)}), h("td", {text: m.sar ? "filed" : "no"}))));
+    t.append(tb);
+    v.append(h("div", {class: "mon"}, h("h1", {text: "What the monitor found on its own"}),
+      h("p", {class: "lede", text: "Beyond the 20 exam cases, Kavach sweeps November and December for activity no alert pointed at: bursts of purchases just under a round limit, scripted device rings, and rare devices paying the same amount on several cards. Each finding was investigated by the same agent and policy engine."}),
+      h("div", {class: "panel"}, t)));
+  }
+
+  function select(id, focus) {
+    const a = C.find(x => x.case_id === id) || C[0];
+    if (!a) return;
+    current = a.case_id;
+    if (location.hash !== "#" + a.case_id) history.replaceState(null, "", "#" + a.case_id);
+    setView("cases");
+    renderList(); renderCase(a);
+    $("#view").scrollTop = 0;
+    if (focus) $("#view").focus({preventScroll: true});
+  }
+  function setView(which) {
+    view = which;
+    $("#tab-cases").setAttribute("aria-selected", String(which === "cases"));
+    $("#tab-monitor").setAttribute("aria-selected", String(which === "monitor"));
+  }
+  $("#tab-cases").onclick = () => select(current || C[0].case_id);
+  $("#tab-monitor").onclick = () => { setView("monitor"); renderMonitor(); };
+  document.addEventListener("keydown", e => {
+    if (e.target.closest("input,textarea") || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key !== "j" && e.key !== "k") return;
+    const list = visible(); const i = list.findIndex(x => x.case_id === current);
+    const nx = list[Math.min(list.length - 1, Math.max(0, i + (e.key === "j" ? 1 : -1)))];
+    if (nx) select(nx.case_id, false);
+  });
+  window.addEventListener("hashchange", () => { const id = location.hash.slice(1); if (id && id !== current) select(id, false); });
+
+  renderFilters();
+  if (!C.length) { $("#view").append(h("div", {class: "mon"}, h("h1", {text: "No case data"}), h("p", {class: "lede", text: "Run python -m kavach site to build site/cases.js from the answer files."}))); return; }
+  select(location.hash.slice(1) || C[0].case_id, false);
+})();
+</script>
+</body>
+</html>
