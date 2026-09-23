@@ -9,7 +9,7 @@ CREATE VERTEX Transaction (PRIMARY_ID id STRING, ts DATETIME, dt INT, amt DOUBLE
     risk_score DOUBLE, addr1 INT, addr2 INT, dist1 DOUBLE, p_email STRING, r_email STRING,
     m1 STRING, m2 STRING, m3 STRING, m4 STRING, m5 STRING, m6 STRING, m7 STRING, m8 STRING, m9 STRING,
     c1 DOUBLE, c2 DOUBLE, c13 DOUBLE, c14 DOUBLE, d1 DOUBLE, d2 DOUBLE, d3 DOUBLE, d4 DOUBLE, d10 DOUBLE, d15 DOUBLE,
-    dev_new BOOL, proxy STRING, device_type STRING, card_id STRING, customer_id STRING, device_key STRING, id_15 STRING, id_31 STRING,
+    dev_new BOOL, proxy_type STRING, device_type STRING, card_id STRING, customer_id STRING, device_key STRING, id_15 STRING, id_31 STRING,
     holder_key STRING, card1 INT, card4 STRING, card6 STRING) WITH primary_id_as_attribute="true"
 CREATE VERTEX DeviceProfile (PRIMARY_ID id STRING, device_info STRING, os STRING, browser STRING, screen STRING,
     n_cards INT) WITH primary_id_as_attribute="true"

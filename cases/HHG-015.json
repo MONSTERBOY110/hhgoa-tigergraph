@@ -48,9 +48,9 @@
       "CC-1065",
       "CC-0735"
     ],
-    "summary": "The alert was triggered when the real-time model scored online transaction 3464869 for $599.94 on card C03042-K1 with a risk score of 0.77. The strongest finding is the customer's confirmation that they made the purchase, and the model note that for product R transactions in this score band only 5 % were later confirmed fraud, indicating a low calibrated fraud rate. The verdict is legitimate with a fraud probability of 0.03. The recommended actions are to allow the transaction, create a case record, and close it with no fraud finding.",
-    "written_to_graph": false,
-    "graph_case_id": ""
+    "summary": "The alert was triggered when the real-time model scored online transaction 3464869 for $599.94 on card C03042-K1 with a risk score of 0.77. The strongest finding is that the customer confirmed they made the purchase when contacted, and the model's calibrated fraud rate for product R in this score band is only 5 % based on recent data. The verdict is legitimate with a fraud probability of 0.03. The recommended actions are to allow the transaction, create a case record, and close it with no fraud finding.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-2016-7234"
   },
   "evidence_requests": [
     {
@@ -100,7 +100,7 @@
     "activity_dates": []
   },
   "stop_reason": "The customer's reply settled the question (section 6): probability moved from 0.15 to 0.03. Further steps would not change the actions.",
-  "tool_calls": 12,
-  "tokens": 1109,
-  "latency_s": 26.61
+  "tool_calls": 15,
+  "tokens": 1105,
+  "latency_s": 14.56
 }

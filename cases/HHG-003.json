@@ -52,6 +52,12 @@
         "source": "document",
         "ref": "document:README#PATTERN-4",
         "entity_ids": []
+      },
+      {
+        "claim": "Case memory: the most similar earlier investigation by summary is CASE-2016-5954 (HHG-001, verdict legitimate, similarity 0.82)",
+        "source": "graph",
+        "ref": "query:similar_investigations(vectorSearch InvestigationCase.emb)",
+        "entity_ids": []
       }
     ],
     "similar_prior_cases": [
@@ -61,9 +67,9 @@
       "CC-0764",
       "CC-4240"
     ],
-    "summary": "The alert was triggered when customer C08623 reported that a $49.00 in-person purchase (transaction 3530164) was not made by them. The strongest findings are that the customer disputed transaction 3530164, and a prior transaction on the same account (3530056 for $116.93) occurred 49 minutes earlier with a high fraud risk score of 0.88. The case was judged to be fraud with a probability of 93 percent. The recommended actions are to block the card and to create a case for further investigation.",
-    "written_to_graph": false,
-    "graph_case_id": ""
+    "summary": "The alert was triggered when customer C08623 messaged the bank stating that they never made the $49.00 purchase identified as transaction 3530164. The strongest findings are that the customer disputed transaction 3530164 for $49.00 and that another transaction on the same account, 3530056 for $116.93, occurred 49 minutes earlier with a high fraud risk score of 0.88. The case verdict is fraud with a probability of 0.93. The recommended actions are to block the card and to create a case for further investigation.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-2016-4934"
   },
   "evidence_requests": [],
   "next_best_actions": {
@@ -102,7 +108,7 @@
     "activity_dates": []
   },
   "stop_reason": "Fraud probability 0.93 is at or above 0.85 with 2 independent evidence groups (sequence, customer), so section 6 allows a decision without asking the customer; further queries would not change the actions.",
-  "tool_calls": 8,
-  "tokens": 1086,
-  "latency_s": 26.61
+  "tool_calls": 11,
+  "tokens": 1088,
+  "latency_s": 53.48
 }

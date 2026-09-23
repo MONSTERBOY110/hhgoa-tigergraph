@@ -63,9 +63,9 @@
       "CC-5132",
       "CC-4118"
     ],
-    "summary": "The alert was triggered when the real-time model scored transaction 3514030 at 0.61, a $77.07 in-person purchase on card C12382-K1. The strongest findings are that this is a recurring weekly charge, with two earlier W-type purchases of about $77.07 on the same account (holder 21139|444.0|73) at weekly intervals, that the flagged transaction continues a pattern on account 21139|444.0|73 which already has ten prior transactions and no confirmed fraud, and that an identical amount of $77.08 for product W was previously charged on 2016-11-26. The case was judged legitimate with a fraud probability of 0.06. The recommended actions are to allow the transaction and close the case with no fraud finding.",
-    "written_to_graph": false,
-    "graph_case_id": ""
+    "summary": "The alert was triggered when the real-time model scored transaction 3514030 at 0.61, a $77.07 in-person purchase on card C12382-K1 in billing region 444. The strongest findings are that this transaction is part of a recurring weekly charge pattern, with two earlier W-type charges of about $77.07 on the same account at weekly intervals, and the same amount ($77.08, product W) was previously charged on 2016-11-26, with ten earlier transactions on the account and no confirmed-fraud cases. The case was judged legitimate with a fraud probability of 0.06. The recommended actions are to allow the transaction and close the case with no fraud finding.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-2016-5954"
   },
   "evidence_requests": [],
   "next_best_actions": {
@@ -104,7 +104,7 @@
     "activity_dates": []
   },
   "stop_reason": "Fraud probability 0.06 is at or below 0.15 with 2 independent evidence groups (sequence, history), so section 6 allows a decision without asking the customer; further queries would not change the actions.",
-  "tool_calls": 8,
-  "tokens": 1134,
-  "latency_s": 5.7
+  "tool_calls": 11,
+  "tokens": 1112,
+  "latency_s": 8.55
 }

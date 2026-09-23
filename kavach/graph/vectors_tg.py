@@ -37,10 +37,13 @@ CREATE OR REPLACE QUERY similar_investigations(LIST<FLOAT> qv, INT k) FOR GRAPH 
 INSTALL QUERY similar_closed, similar_docs, similar_investigations"""
 
 
-def setup(conn) -> None:
+def setup(conn, schema: bool = True) -> None:
     g = env("TG_GRAPH", "Fraud")
-    # the vertex types are global (created before CREATE GRAPH), so the change is a global schema change job
-    print(conn.gsql("USE GLOBAL\n" + SCHEMA)[-800:])
+    if schema:
+        # our types are graph-local (setup.schema), so this is a local schema change job on the graph
+        job = SCHEMA.replace("CREATE GLOBAL SCHEMA_CHANGE JOB kavach_vectors", f"CREATE SCHEMA_CHANGE JOB kavach_vectors FOR GRAPH {g}")
+        job = job.replace("RUN GLOBAL SCHEMA_CHANGE JOB", "RUN SCHEMA_CHANGE JOB")
+        print(conn.gsql(f"USE GRAPH {g}\n" + job)[-800:])
     print(conn.gsql(f"USE GRAPH {g}\n" + QUERIES.format(g=g))[-800:])
 
 

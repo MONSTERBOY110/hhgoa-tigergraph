@@ -5,7 +5,7 @@
     "verdict": "fraud",
     "fraud_probability": 0.97,
     "pattern": "undocumented",
-    "pattern_description": "One device profile (SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080) makes low-value online purchases on many unrelated customers' cards, always marked New to the account and behind an anonymous proxy, keeping amounts small so the model scores them low. It touched 27 other cards around this alert and matches earlier confirmed cases on the same profile. It was found by pivoting from the card to the device profile and grouping every card on it.",
+    "pattern_description": "The pattern involves multiple customers' cards being used for online purchases of product C from the same Android device profile (SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080) within a short window (15 Nov, 26 Nov 2016), resulting in three fraudulent transactions on card C13487-K1 totaling $439.61. It affects debit-card holders whose cards share this rare device fingerprint, which has appeared on only 52 cards but generated 60 purchases across 28 customers and is linked to four prior confirmed-fraud cases. The activity was uncovered after an analyst flagged the device profile as unusual and requested a review of transaction 3478561.",
     "affected_txn_ids": [
       "3460634",
       "3478561",
@@ -117,6 +117,12 @@
         "source": "document",
         "ref": "document:README#PATTERN-3",
         "entity_ids": []
+      },
+      {
+        "claim": "Case memory: the most similar earlier investigation by summary is CASE-2016-9691 (HHG-011, verdict fraud, similarity 0.83)",
+        "source": "graph",
+        "ref": "query:similar_investigations(vectorSearch InvestigationCase.emb)",
+        "entity_ids": []
       }
     ],
     "similar_prior_cases": [
@@ -127,9 +133,9 @@
       "CC-3907",
       "CC-4086"
     ],
-    "summary": "Alert HHG-014 opened because an analyst asked for a review of a device profile shared by several cards ($74.96, product C, online, 2016-11-22 16:11) on card C13487-K1. Assessed as an undocumented coordinated pattern with fraud probability 0.97: Device profile SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080 (seen on only 52 cards ever) made 60 purchases on 28 different customers' cards within 19 days, 100% marked New and 100% behind an anonymous proxy; Device profile SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080 appears in 4 confirmed-fraud closed case(s) (CC-2649, CC-2971, CC-2985, CC-3035), labelled undocumented by the analysts. The episode covers 3 transaction(s) totalling $439.61, and 27 other card(s) are linked through device profile SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080.",
-    "written_to_graph": false,
-    "graph_case_id": ""
+    "summary": "The alert was triggered by an analyst request to review transaction 3478561 on card C13487-K1 because several cards this month showed purchases from the same unusual device profile. The strongest findings are that the device profile SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080 has been seen on only 52 cards ever yet made 60 purchases on 28 different customers' cards within 19 days, is 100 % new, always behind an anonymous proxy, and appears in four confirmed-fraud closed cases, while the model risk score of 0.05 for product C transactions corresponds to a calibrated fraud rate of 3 % in the relevant period. The case is judged fraud with a probability of 0.97. The recommended actions are to block the card, create a new case, file a report, monitor the connected cards, and escalate the matter to an analyst.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-2016-2740"
   },
   "evidence_requests": [],
   "next_best_actions": {
@@ -192,7 +198,7 @@
   "sar": {
     "file": true,
     "reason": "R9 and §3a: coordinated activity fitting no documented pattern",
-    "narrative": "This report concerns customer C13487, card C13487-K1, issued as a mastercard debit. Between 2016-11-15 and 2016-11-26, 3 transaction(s) totalling $439.61 were identified as part of one fraud episode, beginning with transaction 3460634. The activity took place online, product code(s) C, billing region(s) 191, from device profile(s) SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080. The transactions were purchases from one device profile used across several customers' cards. The activity is assessed as an undocumented coordinated pattern: Device profile SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080 (seen on only 52 cards ever) made 60 purchases on 28 different customers' cards within 19 days, 100% marked New and 100% behind an anonymous proxy; Device profile SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080 appears in 4 confirmed-fraud closed case(s) (CC-2649, CC-2971, CC-2985, CC-3035), labelled undocumented by the analysts. The same device profile SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080 links this activity to 27 other card(s), including C01289-K1, C01996-K2, C02910-K1, C02975-K1, which indicates a common actor across cardholders. Earlier confirmed cases CC-2649, CC-2971, CC-2985 show the same pattern. The cardholder has not yet been contacted. The bank has recommended BLOCK_CARD, MONITOR_CONNECTED_CARDS and opened an internal case; the report is filed under R9, §3a.",
+    "narrative": "The cardholder identified by customer_id C13487 and card_id C13487-K1, a Mastercard debit, was the victim of unauthorized activity. Three online purchases of product code C were made from device profile SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080 in billing region 191. The first transaction, id 3460634 for $112.37, occurred on 2016-11-15 at 20:30; the second, flagged transaction id 3478561 for $74.96, occurred on 2016-11-22 at 16:11; and the third, id 3489320 for $252.28, occurred on 2016-11-26 at 17:39. All three purchases were conducted online using the same device profile that has been observed on only 52 cards and linked to 60 purchases across 28 different customers within 19 days, all marked New and behind an anonymous proxy. The device profile also appears in four confirmed-fraud closed cases (CC-2649, CC-2971, CC-2985, CC-3035) and is labeled as undocumented by analysts. The pattern matches none of the documented fraud typologies, indicating an undocumented device_ring scheme. The unauthorized use is suspicious because the same device was used across multiple cards, including the subject's, suggesting a coordinated fraud operation. The cardholder has not yet been contacted, and the card was blocked while connected cards are being monitored.",
     "subjects": [
       "C13487",
       "C13487-K1",
@@ -213,7 +219,7 @@
     ]
   },
   "stop_reason": "Fraud probability 0.97 is at or above 0.85 with 2 independent evidence groups (network, history), so section 6 allows a decision without asking the customer; further queries would not change the actions.",
-  "tool_calls": 11,
-  "tokens": 0,
-  "latency_s": 446.46
+  "tool_calls": 14,
+  "tokens": 8561,
+  "latency_s": 173.76
 }

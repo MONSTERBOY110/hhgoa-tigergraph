@@ -58,6 +58,12 @@
         "source": "document",
         "ref": "document:README#PATTERN-4",
         "entity_ids": []
+      },
+      {
+        "claim": "Case memory: the most similar earlier investigation by summary is CASE-2016-2575 (HHG-007, verdict fraud, similarity 0.82)",
+        "source": "graph",
+        "ref": "query:similar_investigations(vectorSearch InvestigationCase.emb)",
+        "entity_ids": []
       }
     ],
     "similar_prior_cases": [
@@ -68,9 +74,9 @@
       "CC-3877",
       "CC-0523"
     ],
-    "summary": "The alert was triggered by customer C02354 reporting that they never made the $39.08 in-person purchase (transaction 3491361). The strongest finding is that the account behind this transaction has already appeared in seven confirmed-fraud closed cases, with all 1,059 alerts on similar accounts previously confirmed as fraud and none cleared; additionally, the customer dispute matches the pattern that every customer-reported alert in the bank's history was confirmed fraud. The case verdict is fraud with a probability of 0.97. The recommended actions are to block the card and create a new case.",
-    "written_to_graph": false,
-    "graph_case_id": ""
+    "summary": "The alert was triggered by customer C02354 reporting that they never made the $39.08 in-person purchase (transaction 3491361). The strongest finding is that the account behind this transaction has already appeared in seven confirmed-fraud closed cases, with all 1,059 alerts on such accounts previously determined to be fraud and every customer-reported alert confirmed as fraud. The case verdict is fraud with a probability of 0.97. The recommended actions are to block the card and create a new case.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-2016-2263"
   },
   "evidence_requests": [],
   "next_best_actions": {
@@ -109,7 +115,7 @@
     "activity_dates": []
   },
   "stop_reason": "Fraud probability 0.97 is at or above 0.85 with 2 independent evidence groups (history, customer), so section 6 allows a decision without asking the customer; further queries would not change the actions.",
-  "tool_calls": 8,
-  "tokens": 1208,
-  "latency_s": 177.86
+  "tool_calls": 11,
+  "tokens": 1192,
+  "latency_s": 10.66
 }

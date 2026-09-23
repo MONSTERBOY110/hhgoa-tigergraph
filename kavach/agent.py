@@ -130,6 +130,7 @@ class Investigation:
         # GraphRAG over the policy and pattern text: the policy section behind the decisive rule, the pattern definition,
         # and for undocumented activity the nearest documented pattern (to show how far it is from all of them)
         docs = self._policy_docs(final, pattern, query_text)
+        memory = self._case_memory(ctx, ep, query_text)
 
         # NARRATE (step 11)
         T.step = 11
@@ -144,6 +145,7 @@ class Investigation:
                 first = first[:240].rsplit(" ", 1)[0] + " ..."
             evidence.append({"claim": f"{d.get('lead', d['section'])}: {first}{'' if first.endswith(('.', '...')) else '.'}",
                              "source": "document", "ref": f"document:README#{d['id']}", "entity_ids": []})
+        evidence += memory
         answer = {
             "case_id": case["case_id"],
             "case": {
@@ -189,6 +191,30 @@ class Investigation:
         return answer
 
     # ------------------------------------------------------------------
+    def _case_memory(self, ctx, ep, query_text) -> list[dict]:
+        """Case memory on the graph lane: earlier investigations written back into TigerGraph that touch this card or
+        read like this one. They are cited in the evidence (their ids are graph ids, not dataset ids)."""
+        impl = self.tools._impl
+        if not hasattr(impl, "case_memory"):
+            return []
+        out = []
+        try:
+            hits = [h for h in self.tools.call("case_memory", card_ids=[ctx.card_id] + ep.connected_cards[:5])
+                    if h["case_id"] != self.case["case_id"]]
+            for h in hits[:2]:
+                out.append({"claim": f"Case memory: earlier investigation {h['id']} ({h['case_id']}, verdict {h['verdict']}, pattern "
+                                     f"{h['pattern']}) already touches card {h['card_id']}", "source": "graph",
+                            "ref": f"query:case_memory(c={h['card_id']})", "entity_ids": [h["card_id"]]})
+            sims = [s for s in self.tools.call("similar_investigations", text=query_text, k=3)
+                    if s.get("case_id") and s["case_id"] != self.case["case_id"] and (s.get("score") or 0) >= 0.8]
+            for s in sims[:1]:
+                out.append({"claim": f"Case memory: the most similar earlier investigation by summary is {s['id']} ({s['case_id']}, "
+                                     f"verdict {s['verdict']}, similarity {s['score']:.2f})", "source": "graph",
+                            "ref": "query:similar_investigations(vectorSearch InvestigationCase.emb)", "entity_ids": []})
+        except Exception as e:
+            self.say(f"case memory lookup failed: {str(e)[:100]}")
+        return out
+
     PATTERN_DOC = {"card_testing": "PATTERN-1", "card_not_present_fraud": "PATTERN-2", "card_not_present_new_device": "PATTERN-3",
                    "out_of_region_use": "PATTERN-4", "account_takeover": "PATTERN-5"}
 

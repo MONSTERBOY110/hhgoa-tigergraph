@@ -47,6 +47,12 @@
         "source": "document",
         "ref": "document:README#POLICY-R3",
         "entity_ids": []
+      },
+      {
+        "claim": "Case memory: the most similar earlier investigation by summary is CASE-2016-2263 (HHG-018, verdict fraud, similarity 0.84)",
+        "source": "graph",
+        "ref": "query:similar_investigations(vectorSearch InvestigationCase.emb)",
+        "entity_ids": []
       }
     ],
     "similar_prior_cases": [
@@ -56,9 +62,9 @@
       "CC-5537",
       "CC-1447"
     ],
-    "summary": "The alert was triggered when the real-time model scored online transaction 3509359 for $125.08 at a risk score of 0.52. The strongest fraud indicator is that the card's history is 95 % in-person despite this being an online purchase, while the strongest legit indicator is the cardholder's confirmation that they made the purchase and the calibrated model rate showing only 5 % fraud for similar scores. The case was judged legitimate with a fraud probability of 3 percent. The recommended actions are to allow the transaction, create a case record, and close it with no fraud finding.",
-    "written_to_graph": false,
-    "graph_case_id": ""
+    "summary": "The alert was triggered when the real-time model scored online transaction 3509359 for $125.08 at a risk score of 0.52. The strongest fraud indicator is that the purchase was made online while the card's history is 95 % in-person, with 82 prior in-person transactions; the strongest legit indicator is that the customer confirmed they made the purchase and the model's calibrated fraud rate for this score band is only 5 %. The case was judged legitimate with a fraud probability of 0.03. The recommended actions are to allow the transaction, create a case record, and close it with no fraud finding.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-2016-5406"
   },
   "evidence_requests": [
     {
@@ -108,7 +114,7 @@
     "activity_dates": []
   },
   "stop_reason": "The customer's reply settled the question (section 6): probability moved from 0.28 to 0.03. Further steps would not change the actions.",
-  "tool_calls": 10,
-  "tokens": 1127,
-  "latency_s": 140.05
+  "tool_calls": 13,
+  "tokens": 1131,
+  "latency_s": 48.11
 }

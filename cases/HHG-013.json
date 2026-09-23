@@ -39,6 +39,12 @@
         "source": "document",
         "ref": "document:README#POLICY-R3",
         "entity_ids": []
+      },
+      {
+        "claim": "Case memory: the most similar earlier investigation by summary is CASE-2016-2574 (HHG-008, verdict fraud, similarity 0.83)",
+        "source": "graph",
+        "ref": "query:similar_investigations(vectorSearch InvestigationCase.emb)",
+        "entity_ids": []
       }
     ],
     "similar_prior_cases": [
@@ -46,9 +52,9 @@
       "CC-3734",
       "CC-0489"
     ],
-    "summary": "Alert HHG-013 opened because the bank's model scored transaction 3526826 at 0.76 ($35.66, product C, online, 2016-12-09 02:39) on card C07671-K2. The evidence points to the cardholder: Customer confirmed the transaction when asked: Customer confirms they made the purchase; Identity record marks the device (Windows |  | chrome 66.0 | ) as New for this account; 43% of the card's earlier online purchases were also from New devices (in the closed cases a New device is not more common in fraud than in normal traffic for this product). Fraud probability 0.03; the alert is closed as legitimate. Evidence request: Customer confirms they made the purchase.",
-    "written_to_graph": false,
-    "graph_case_id": ""
+    "summary": "The alert was triggered when the real-time model scored transaction 3526826 at 0.76, a $35.66 online purchase on card C07671-K2. The strongest findings are that the customer confirmed they made the purchase when asked, the device used (Windows | | chrome 66.0 |) is marked as new for this account, and 43 % of the card's earlier online purchases were also from new devices, a pattern that is not more common in fraud for this product. The case was judged legitimate with a fraud probability of 3 %. The recommended actions are to allow the transaction, create a case record, and close it with no fraud finding.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-2016-7951"
   },
   "evidence_requests": [
     {
@@ -98,7 +104,7 @@
     "activity_dates": []
   },
   "stop_reason": "The customer's reply settled the question (section 6): probability moved from 0.40 to 0.03. Further steps would not change the actions.",
-  "tool_calls": 10,
-  "tokens": 0,
-  "latency_s": 146.4
+  "tool_calls": 13,
+  "tokens": 1112,
+  "latency_s": 8.18
 }

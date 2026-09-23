@@ -90,11 +90,22 @@ def job_gsql(graph: str) -> str:
     return "\n".join(lines)
 
 
-def load(conn, graph: str, only: list[str] | None = None) -> None:
+def load(conn, graph: str, only: list[str] | None = None, chunk_lines: int = 50_000) -> None:
+    """Post each CSV to the loading job in chunks (keeps every request well under upload limits)."""
+    import tempfile
     for name in JOB_LINES:
         if only and name not in only:
             continue
         path = TG_DIR / f"{name}.csv"
-        t0 = time.time()
-        res = conn.runLoadingJobWithFile(str(path), f"f_{name}", "load_kavach", sep=",", timeout=3_600_000)
-        print(f"loaded {name} in {time.time() - t0:.0f}s: {str(res)[:300]}", flush=True)
+        lines = path.read_text(encoding="utf-8").splitlines(keepends=True)
+        t0, ok = time.time(), 0
+        for i in range(0, len(lines), chunk_lines):
+            with tempfile.NamedTemporaryFile("w", delete=False, suffix=".csv", encoding="utf-8") as tmp:
+                tmp.writelines(lines[i:i + chunk_lines])
+            res = conn.runLoadingJobWithFile(tmp.name, f"f_{name}", "load_kavach", sep=",", timeout=3_600_000)
+            Path(tmp.name).unlink(missing_ok=True)
+            stats = res[0]["statistics"] if isinstance(res, list) and res and "statistics" in res[0] else res
+            ok += min(chunk_lines, len(lines) - i)
+            bad = str(stats).count("invalid") if stats else 0
+            print(f"  {name}: {ok:,}/{len(lines):,} lines posted", flush=True)
+        print(f"loaded {name} ({len(lines):,} lines) in {time.time() - t0:.0f}s; last stats: {str(stats)[:400]}", flush=True)

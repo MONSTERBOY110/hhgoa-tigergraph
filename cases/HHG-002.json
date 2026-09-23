@@ -50,9 +50,9 @@
       "CC-1003",
       "CC-1161"
     ],
-    "summary": "The alert was triggered when the real-time model scored online transaction 3478782 for $292.36 on card C11891-K1 with a risk score of 0.79. The only notable activity is this single online purchase of product C, which is inconsistent with the cardholder's typical behavior. The case is deemed uncertain with a fraud probability of 0.53. The recommended actions are to decline the transaction, create a case, continue monitoring the card, and escalate the matter to an analyst.",
-    "written_to_graph": false,
-    "graph_case_id": ""
+    "summary": "The alert was triggered when the real-time model scored transaction 3478782, an online purchase of $292.36 for product C, at a risk score of 0.79. The strongest findings are that the transaction was made online, involved product code C, and is inconsistent with the cardholder's typical behavior. The case is judged uncertain with a fraud probability of 0.53. The recommended actions are to decline the transaction, create a case, monitor the card, and escalate the matter to an analyst.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-2016-6272"
   },
   "evidence_requests": [
     {
@@ -107,7 +107,7 @@
     "activity_dates": []
   },
   "stop_reason": "The customer did not reply within 24 hours and the remaining graph evidence cannot move the probability (0.53) across a decision threshold, so the case stays open under R4 monitoring and goes to an analyst under R8.",
-  "tool_calls": 9,
-  "tokens": 995,
-  "latency_s": 1.12
+  "tool_calls": 12,
+  "tokens": 1086,
+  "latency_s": 3.24
 }

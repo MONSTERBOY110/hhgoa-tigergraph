@@ -14,7 +14,7 @@ TXN_MAP = {
     "addr1": "addr1", "addr2": "addr2", "dist1": "dist1", "p_email": "P_emaildomain", "r_email": "R_emaildomain",
     "m1": "M1", "m2": "M2", "m3": "M3", "m4": "M4", "m5": "M5", "m6": "M6", "m7": "M7", "m8": "M8", "m9": "M9",
     "c1": "C1", "c2": "C2", "c13": "C13", "c14": "C14", "d1": "D1", "d2": "D2", "d3": "D3", "d4": "D4", "d10": "D10", "d15": "D15",
-    "proxy": "id_23", "device_type": "DeviceType", "card_id": "card_id", "customer_id": "customer_id",
+    "proxy_type": "id_23", "device_type": "DeviceType", "card_id": "card_id", "customer_id": "customer_id",
     "device_key": "device_key", "id_15": "id_15", "id_31": "id_31", "holder_key": "holder_key",
     "card1": "card1", "card4": "card4", "card6": "card6", "ts": "ts",
 }
@@ -61,8 +61,20 @@ class TgTools:
     def __init__(self, conn=None):
         self.conn = conn or connect()
 
+    # installed-query parameters that are typed vertices (JSON {"id": ...}) or sets of them
+    VERTEX_PARAMS = {"c", "cu", "d", "t", "r", "e"}
+    VERTEX_SET_PARAMS = {"cards", "txns", "devices"}
+
     def _q(self, name: str, **params):
-        return self.conn.runInstalledQuery(name, params=params, timeout=120_000)
+        body = {}
+        for k, v in params.items():
+            if k in self.VERTEX_PARAMS:
+                body[k] = {"id": str(v)}
+            elif k in self.VERTEX_SET_PARAMS:
+                body[k] = [{"id": str(x)} for x in v]
+            else:
+                body[k] = v
+        return self.conn.runInstalledQuery(name, params=body, timeout=120_000, usePost=True)
 
     def card_history(self, card_id: str) -> pd.DataFrame:
         return _vertices_to_txn_frame(self._q("card_history", c=card_id)[0]["T"])
@@ -181,12 +193,28 @@ class TgTools:
         return recall.similar(**kw)
 
     def vector_search_cases(self, text: str, k: int = 8) -> list:
-        from kavach import vectors
-        return vectors.search_cases(text, k)
+        """TigerVector search over ClosedCase.emb (analyst-note embeddings)."""
+        from kavach.graph import vectors_tg
+        return vectors_tg.search_closed(self.conn, text, k)
 
     def vector_search_docs(self, text: str, k: int = 2) -> list:
-        from kavach import vectors
-        return vectors.search_docs(text, k)
+        """TigerVector search over PolicyDoc.emb (README patterns and Fraud Policy sections)."""
+        from kavach.graph import vectors_tg
+        return vectors_tg.search_docs(self.conn, text, k)
+
+    def case_memory(self, card_ids) -> list[dict]:
+        """Earlier InvestigationCases written back by the agent that touch these cards (graph memory)."""
+        out = []
+        for cid in card_ids:
+            for v in self._q("case_memory", c=cid)[0]["I"]:
+                out.append({"id": v["v_id"], "case_id": v["attributes"].get("case_id"), "verdict": v["attributes"].get("verdict"),
+                            "pattern": v["attributes"].get("pattern"), "card_id": cid})
+        return out
+
+    def similar_investigations(self, text: str, k: int = 3) -> list[dict]:
+        """Earlier InvestigationCases with the closest summaries (TigerVector)."""
+        from kavach.graph import vectors_tg
+        return vectors_tg.search_investigations(self.conn, text, k)
 
     def card_profile(self, card_id: str, before=None) -> dict:
         from kavach import duckq

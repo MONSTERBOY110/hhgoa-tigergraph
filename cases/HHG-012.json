@@ -40,9 +40,9 @@
       "CC-5132",
       "CC-4118"
     ],
-    "summary": "The alert was triggered when the real-time model scored transaction 3553342 at 0.55, a $30.91 in-person purchase of product W in billing region 494 on 2016-12-18. The strongest findings are that the customer confirmed making the purchase when contacted and that, for product W transactions without an identity record in this score band, only 12 % were confirmed fraud in the July-October sample, indicating a low fraud likelihood despite the model score. The verdict is legitimate with a fraud probability of 3 %. The recommended actions are to allow the transaction, create a case record, and close it with no fraud finding.",
-    "written_to_graph": false,
-    "graph_case_id": ""
+    "summary": "The alert was triggered when the real-time model scored transaction 3553342 at 0.55 for a $30.91 in-person purchase with product code W on card C05876-K2. The strongest findings are that the customer confirmed the purchase when contacted and that, for product W transactions without an identity record in this score band, only 12 % were confirmed fraud in the recent months, indicating a low likelihood of fraud. The verdict is legitimate with a fraud probability of 3 %. The recommended actions are to allow the transaction, create a case record, and close it with no fraud finding.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-2016-8753"
   },
   "evidence_requests": [
     {
@@ -92,7 +92,7 @@
     "activity_dates": []
   },
   "stop_reason": "The customer's reply settled the question (section 6): probability moved from 0.27 to 0.03. Further steps would not change the actions.",
-  "tool_calls": 8,
-  "tokens": 1030,
-  "latency_s": 128.81
+  "tool_calls": 11,
+  "tokens": 1012,
+  "latency_s": 53.46
 }

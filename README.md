@@ -12,26 +12,26 @@ Decisions are deterministic: detectors, a calibrated evidence model and a policy
 
 | Case | Verdict | Pattern | p | Episode | Exposure | Evidence asked | Final actions (route) | SAR | Graph |
 |---|---|---|---|---|---|---|---|---|---|
-| [HHG-001](cases/HHG-001.json) | legitimate | none | 0.06 | 0 | $0.00 | none | ALLOW_TRANSACTION (auto), CLOSE_NO_FRAUD (auto) | no | no |
-| [HHG-002](cases/HHG-002.json) | uncertain | card_not_present_fraud | 0.53 | 1 | $292.36 | No reply from the customer within 24 hours | DECLINE_TRANSACTION (L1), CREATE_CASE (auto), MONITOR_CARD (auto), ESCALATE_TO_ANALYST (auto) | no | no |
-| [HHG-003](cases/HHG-003.json) | fraud | out_of_region_use | 0.93 | 2 | $165.93 | none | BLOCK_CARD (L1), CREATE_CASE (auto) | no | no |
-| [HHG-004](cases/HHG-004.json) | fraud | card_not_present_new_device | 0.88 | 1 | $128.33 | Customer confirms the dispute: they did not make the purchase | BLOCK_CARD (L1), CREATE_CASE (auto) | no | no |
-| [HHG-005](cases/HHG-005.json) | legitimate | none | 0.09 | 0 | $0.00 | none | ALLOW_TRANSACTION (auto), CLOSE_NO_FRAUD (auto) | no | no |
-| [HHG-006](cases/HHG-006.json) | fraud | undocumented | 0.97 | 4 | $1,906.07 | none | BLOCK_CARD (L1), CREATE_CASE (auto), FILE_REPORT (L2), ESCALATE_TO_ANALYST (auto) | yes | no |
-| [HHG-007](cases/HHG-007.json) | fraud | account_takeover | 0.97 | 2 | $228.88 | Customer states they did not make these purchases and still has the card | BLOCK_CARD (L1), CREATE_CASE (auto) | no | no |
-| [HHG-008](cases/HHG-008.json) | fraud | card_not_present_fraud | 0.93 | 3 | $166.97 | none | BLOCK_CARD (L1), CREATE_CASE (auto) | no | no |
-| [HHG-009](cases/HHG-009.json) | fraud | card_not_present_fraud | 0.89 | 1 | $30.02 | Customer confirms the dispute: they did not make the purchase | BLOCK_CARD (L1), CREATE_CASE (auto) | no | no |
-| [HHG-010](cases/HHG-010.json) | legitimate | none | 0.03 | 0 | $0.00 | Customer confirms they made the purchase | ALLOW_TRANSACTION (auto), CREATE_CASE (auto), CLOSE_NO_FRAUD (auto) | no | no |
-| [HHG-011](cases/HHG-011.json) | fraud | card_not_present_new_device | 0.96 | 1 | $131.30 | none | BLOCK_CARD (L1), CREATE_CASE (auto), FILE_REPORT (L2), MONITOR_CONNECTED_CARDS (auto) | yes | no |
-| [HHG-012](cases/HHG-012.json) | legitimate | none | 0.03 | 0 | $0.00 | Customer confirms they made the purchase | ALLOW_TRANSACTION (auto), CREATE_CASE (auto), CLOSE_NO_FRAUD (auto) | no | no |
-| [HHG-013](cases/HHG-013.json) | legitimate | none | 0.03 | 0 | $0.00 | Customer confirms they made the purchase | ALLOW_TRANSACTION (auto), CREATE_CASE (auto), CLOSE_NO_FRAUD (auto) | no | no |
-| [HHG-014](cases/HHG-014.json) | fraud | undocumented | 0.97 | 3 | $439.61 | none | BLOCK_CARD (L1), CREATE_CASE (auto), FILE_REPORT (L2), MONITOR_CONNECTED_CARDS (auto), ESCALATE_TO_ANALYST (auto) | yes | no |
-| [HHG-015](cases/HHG-015.json) | legitimate | none | 0.03 | 0 | $0.00 | Customer confirms they made the purchase | ALLOW_TRANSACTION (auto), CREATE_CASE (auto), CLOSE_NO_FRAUD (auto) | no | no |
-| [HHG-016](cases/HHG-016.json) | fraud | card_not_present_new_device | 0.95 | 1 | $59.67 | none | BLOCK_CARD (L1), CREATE_CASE (auto), FILE_REPORT (L2), MONITOR_CONNECTED_CARDS (auto) | yes | no |
-| [HHG-017](cases/HHG-017.json) | legitimate | none | 0.04 | 0 | $0.00 | none | ALLOW_TRANSACTION (auto), CLOSE_NO_FRAUD (auto) | no | no |
-| [HHG-018](cases/HHG-018.json) | fraud | out_of_region_use | 0.97 | 3 | $124.08 | none | BLOCK_CARD (L1), CREATE_CASE (auto) | no | no |
-| [HHG-019](cases/HHG-019.json) | fraud | card_not_present_new_device | 0.96 | 1 | $99.92 | Customer states they did not make this purchase and still has the card | BLOCK_CARD (L1), CREATE_CASE (auto), FILE_REPORT (L2), MONITOR_CONNECTED_CARDS (auto) | yes | no |
-| [HHG-020](cases/HHG-020.json) | legitimate | none | 0.03 | 0 | $0.00 | Customer confirms they made the purchase | ALLOW_TRANSACTION (auto), CREATE_CASE (auto), CLOSE_NO_FRAUD (auto) | no | no |
+| [HHG-001](cases/HHG-001.json) | legitimate | none | 0.06 | 0 | $0.00 | none | ALLOW_TRANSACTION (auto), CLOSE_NO_FRAUD (auto) | no | CASE-2016-5954 |
+| [HHG-002](cases/HHG-002.json) | uncertain | card_not_present_fraud | 0.53 | 1 | $292.36 | No reply from the customer within 24 hours | DECLINE_TRANSACTION (L1), CREATE_CASE (auto), MONITOR_CARD (auto), ESCALATE_TO_ANALYST (auto) | no | CASE-2016-6272 |
+| [HHG-003](cases/HHG-003.json) | fraud | out_of_region_use | 0.93 | 2 | $165.93 | none | BLOCK_CARD (L1), CREATE_CASE (auto) | no | CASE-2016-4934 |
+| [HHG-004](cases/HHG-004.json) | fraud | card_not_present_new_device | 0.88 | 1 | $128.33 | Customer confirms the dispute: they did not make the purchase | BLOCK_CARD (L1), CREATE_CASE (auto) | no | CASE-2016-5949 |
+| [HHG-005](cases/HHG-005.json) | legitimate | none | 0.09 | 0 | $0.00 | none | ALLOW_TRANSACTION (auto), CLOSE_NO_FRAUD (auto) | no | CASE-2016-9419 |
+| [HHG-006](cases/HHG-006.json) | fraud | undocumented | 0.97 | 4 | $1,906.07 | none | BLOCK_CARD (L1), CREATE_CASE (auto), FILE_REPORT (L2), ESCALATE_TO_ANALYST (auto) | yes | CASE-2016-9537 |
+| [HHG-007](cases/HHG-007.json) | fraud | account_takeover | 0.97 | 2 | $228.88 | Customer states they did not make these purchases and still has the card | BLOCK_CARD (L1), CREATE_CASE (auto) | no | CASE-2016-2575 |
+| [HHG-008](cases/HHG-008.json) | fraud | card_not_present_fraud | 0.93 | 3 | $166.97 | none | BLOCK_CARD (L1), CREATE_CASE (auto) | no | CASE-2016-2574 |
+| [HHG-009](cases/HHG-009.json) | fraud | card_not_present_fraud | 0.89 | 1 | $30.02 | Customer confirms the dispute: they did not make the purchase | BLOCK_CARD (L1), CREATE_CASE (auto) | no | CASE-2016-5040 |
+| [HHG-010](cases/HHG-010.json) | legitimate | none | 0.03 | 0 | $0.00 | Customer confirms they made the purchase | ALLOW_TRANSACTION (auto), CREATE_CASE (auto), CLOSE_NO_FRAUD (auto) | no | CASE-2016-1885 |
+| [HHG-011](cases/HHG-011.json) | fraud | card_not_present_new_device | 0.96 | 1 | $131.30 | none | BLOCK_CARD (L1), CREATE_CASE (auto), FILE_REPORT (L2), MONITOR_CONNECTED_CARDS (auto) | yes | CASE-2016-9691 |
+| [HHG-012](cases/HHG-012.json) | legitimate | none | 0.03 | 0 | $0.00 | Customer confirms they made the purchase | ALLOW_TRANSACTION (auto), CREATE_CASE (auto), CLOSE_NO_FRAUD (auto) | no | CASE-2016-8753 |
+| [HHG-013](cases/HHG-013.json) | legitimate | none | 0.03 | 0 | $0.00 | Customer confirms they made the purchase | ALLOW_TRANSACTION (auto), CREATE_CASE (auto), CLOSE_NO_FRAUD (auto) | no | CASE-2016-7951 |
+| [HHG-014](cases/HHG-014.json) | fraud | undocumented | 0.97 | 3 | $439.61 | none | BLOCK_CARD (L1), CREATE_CASE (auto), FILE_REPORT (L2), MONITOR_CONNECTED_CARDS (auto), ESCALATE_TO_ANALYST (auto) | yes | CASE-2016-2740 |
+| [HHG-015](cases/HHG-015.json) | legitimate | none | 0.03 | 0 | $0.00 | Customer confirms they made the purchase | ALLOW_TRANSACTION (auto), CREATE_CASE (auto), CLOSE_NO_FRAUD (auto) | no | CASE-2016-7234 |
+| [HHG-016](cases/HHG-016.json) | fraud | card_not_present_new_device | 0.95 | 1 | $59.67 | none | BLOCK_CARD (L1), CREATE_CASE (auto), FILE_REPORT (L2), MONITOR_CONNECTED_CARDS (auto) | yes | CASE-2016-8936 |
+| [HHG-017](cases/HHG-017.json) | legitimate | none | 0.04 | 0 | $0.00 | none | ALLOW_TRANSACTION (auto), CLOSE_NO_FRAUD (auto) | no | CASE-2016-8518 |
+| [HHG-018](cases/HHG-018.json) | fraud | out_of_region_use | 0.97 | 3 | $124.08 | none | BLOCK_CARD (L1), CREATE_CASE (auto) | no | CASE-2016-2263 |
+| [HHG-019](cases/HHG-019.json) | fraud | card_not_present_new_device | 0.96 | 1 | $99.92 | Customer states they did not make this purchase and still has the card | BLOCK_CARD (L1), CREATE_CASE (auto), FILE_REPORT (L2), MONITOR_CONNECTED_CARDS (auto) | yes | CASE-2016-3177 |
+| [HHG-020](cases/HHG-020.json) | legitimate | none | 0.03 | 0 | $0.00 | Customer confirms they made the purchase | ALLOW_TRANSACTION (auto), CREATE_CASE (auto), CLOSE_NO_FRAUD (auto) | no | CASE-2016-5406 |
 <!-- /RESULTS_TABLE -->
 
 ## Architecture

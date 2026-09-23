@@ -53,3 +53,158 @@ Ancestor with aria-hidden: <div.wuMMWb> @ https://accounts.google.com/v3/signin/
 [  260492ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://api.tgcloud.io/controller/v4/v2/billing/credit:0
 [  260572ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
 [  264425ms] [WARNING] `preventOverflow` modifier is required by `hide` modifier in order to work, be sure to include it before `hide`! @ https://savanna.tgcloud.io/assets/vendor-BmmToX3A.js:76
+[  320508ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[  320510ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[  358205ms] [WARNING] `preventOverflow` modifier is required by `hide` modifier in order to work, be sure to include it before `hide`! @ https://savanna.tgcloud.io/assets/vendor-BmmToX3A.js:76
+[  359583ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://api.tgcloud.io/controller/v4/v2/billing/credit:0
+[  359583ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[  381365ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[  381368ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[  394024ms] [WARNING] Blocked aria-hidden on an element because its descendant retained focus. The focus must not be hidden from assistive technology users. Avoid using aria-hidden on a focused element or its ancestor. Consider using the inert attribute instead, which will also prevent focus. For more details, see the aria-hidden section of the WAI-ARIA specification at https://w3c.github.io/aria/#aria-hidden.
+Element with focus: <input>
+Ancestor with aria-hidden: <input> @ https://savanna.tgcloud.io/database-secrets:0
+[  442276ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[  442278ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[  503278ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[  503302ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[  564180ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[  564182ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[  625039ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[  625048ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[  686005ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[  686006ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[  746810ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[  746812ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[  807669ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[  807669ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[  869454ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[  869455ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[  939211ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[  939212ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 1009126ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 1009237ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 1070805ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 1070809ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 1131715ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 1131721ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 1195953ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 1195954ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 1256723ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 1256730ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 1317813ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 1317822ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 1379427ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 1379438ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 1459219ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 1459221ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 1521572ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 1521591ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 1582626ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 1582628ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 1626039ms] [ERROR] Access to XMLHttpRequest at 'https://api.tgcloud.io/controller/v4/v2/workgroups' from origin 'https://savanna.tgcloud.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://savanna.tgcloud.io/database-secrets:0
+[ 1626040ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 1626041ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://api.tgcloud.io/controller/v4/v2/workgroups:0
+[ 1672734ms] [ERROR] Access to XMLHttpRequest at 'https://api.tgcloud.io/controller/v4/v2/cloud-providers' from origin 'https://savanna.tgcloud.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://savanna.tgcloud.io/database-secrets:0
+[ 1672735ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 1672736ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 1747350ms] [ERROR] Access to XMLHttpRequest at 'https://api.tgcloud.io/controller/v4/v2/workgroups' from origin 'https://savanna.tgcloud.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://savanna.tgcloud.io/database-secrets:0
+[ 1747351ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 1747351ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://api.tgcloud.io/controller/v4/v2/workgroups:0
+[ 1767188ms] [ERROR] Access to XMLHttpRequest at 'https://api.tgcloud.io/controller/v4/v2/cloud-providers' from origin 'https://savanna.tgcloud.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://savanna.tgcloud.io/database-secrets:0
+[ 1767189ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 1767189ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 1857428ms] [ERROR] Access to XMLHttpRequest at 'https://api.tgcloud.io/controller/v4/v2/cloud-providers' from origin 'https://savanna.tgcloud.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://savanna.tgcloud.io/database-secrets:0
+[ 1857429ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 1857429ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 1868492ms] [ERROR] Access to XMLHttpRequest at 'https://api.tgcloud.io/controller/v4/v2/workgroups' from origin 'https://savanna.tgcloud.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://savanna.tgcloud.io/database-secrets:0
+[ 1868492ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 1868493ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://api.tgcloud.io/controller/v4/v2/workgroups:0
+[ 1949251ms] [ERROR] Access to XMLHttpRequest at 'https://api.tgcloud.io/controller/v4/v2/cloud-providers' from origin 'https://savanna.tgcloud.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://savanna.tgcloud.io/database-secrets:0
+[ 1949252ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 1949252ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 1988727ms] [ERROR] Access to XMLHttpRequest at 'https://api.tgcloud.io/controller/v4/v2/workgroups' from origin 'https://savanna.tgcloud.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://savanna.tgcloud.io/database-secrets:0
+[ 1988728ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 1988729ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://api.tgcloud.io/controller/v4/v2/workgroups:0
+[ 2039218ms] [ERROR] Access to XMLHttpRequest at 'https://api.tgcloud.io/controller/v4/v2/cloud-providers' from origin 'https://savanna.tgcloud.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. @ https://savanna.tgcloud.io/database-secrets:0
+[ 2039219ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 2039219ms] [ERROR] Failed to load resource: net::ERR_FAILED @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 2100658ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 2100659ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 2161791ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 2161792ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 2226435ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 2226436ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 2291329ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 2291331ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 2356047ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 2356276ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 2422059ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 2422060ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 2483043ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 2483044ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 2543804ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 2543805ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 2604976ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 2604979ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 2665844ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 2665846ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 2726652ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 2726655ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 2787444ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 2787445ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 2848263ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 2848265ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 2909401ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 2909402ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 2970544ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 2970548ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 3031626ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 3031626ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 3092694ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 3092695ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 3153520ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 3153521ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 3215146ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 3215149ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 3276009ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 3276011ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 3337022ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 3337023ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 3397950ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 3397953ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 3459134ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 3459151ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 3519909ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 3519910ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 3580786ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 3580787ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 3641692ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 3641695ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 3702496ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 3702498ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 3763415ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 3763416ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 3824349ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 3824351ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 3885282ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 3885284ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 3946200ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 3946202ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 4007651ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 4007658ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 4068671ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 4068682ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 4129501ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 4129503ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 4190424ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 4190425ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 4251355ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 4251356ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 4312486ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 4312487ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 4373488ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 4373489ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 4434473ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 4434474ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69
+[ 4496037ms] [ERROR] Failed to load resource: the server responded with a status of 403 () @ https://api.tgcloud.io/controller/v4/v2/cloud-providers:0
+[ 4496041ms] [ERROR] la @ https://savanna.tgcloud.io/assets/main-CRUrphJC.js:69

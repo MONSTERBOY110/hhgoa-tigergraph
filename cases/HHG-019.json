@@ -65,18 +65,32 @@
         "source": "document",
         "ref": "document:README#PATTERN-3",
         "entity_ids": []
+      },
+      {
+        "claim": "Case memory: earlier investigation CASE-2016-8936 (HHG-016, verdict fraud, pattern card_not_present_new_device) already touches card C06224-K2",
+        "source": "graph",
+        "ref": "query:case_memory(c=C06224-K2)",
+        "entity_ids": [
+          "C06224-K2"
+        ]
+      },
+      {
+        "claim": "Case memory: the most similar earlier investigation by summary is CASE-2016-7951 (HHG-013, verdict legitimate, similarity 0.85)",
+        "source": "graph",
+        "ref": "query:similar_investigations(vectorSearch InvestigationCase.emb)",
+        "entity_ids": []
       }
     ],
     "similar_prior_cases": [
       "CC-0579",
-      "CC-0453",
+      "CC-0832",
       "CC-3398",
       "CC-2548",
       "CC-2774"
     ],
-    "summary": "Alert HHG-019 opened because the bank's model scored transaction 3503878 at 0.90 ($99.92, product R, online, 2016-12-01 17:28) on card C07987-K2. Assessed as card-not-present fraud from a device new to the account with fraud probability 0.96: Rare device profile Windows | other | chrome 61.0 | 1280x720 (5 cards ever) was used on 4 other cards within 30 days, 4 of them for amounts within 2% of this $99.92 purchase (in the closed months this shape was 10.7 times more common in confirmed fraud than in normal online traffic); Customer denied the transaction(s) when asked: Customer states they did not make this purchase and still has the card. The episode covers 1 transaction(s) totalling $99.92, and 4 other card(s) are linked through device profile Windows | other | chrome 61.0 | 1280x720. Evidence request: Customer states they did not make this purchase and still has the card.",
-    "written_to_graph": false,
-    "graph_case_id": ""
+    "summary": "The alert was triggered when the real-time model scored transaction 3503878, an online purchase of $99.92 on product R, with a risk score of 0.90. The strongest findings are that the rare device profile \"Windows | other | chrome 61.0 | 1280x720\" has been used on only five cards ever, appearing on four other cards within 30 days with amounts within 2 % of this purchase, a pattern that is 10.7 times more common in confirmed fraud than in normal traffic, and the cardholder denied making the transaction while still possessing the card. The verdict is fraud with a probability of 0.96. The recommended actions are to block the card, create a case, file a report, and monitor the connected cards.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-2016-3177"
   },
   "evidence_requests": [
     {
@@ -130,7 +144,7 @@
   "sar": {
     "file": true,
     "reason": "R6 and §3a: activity connects to a shared origin (device profile Windows | other | chrome 61.0 | 1280x720)",
-    "narrative": "The cardholder identified as customer C07987 was linked to visa credit card C07987-K2. On 2016-12-01 at 17:28:53 an online purchase of $99.92 was authorized on product code R using device profile Windows | other | chrome 61.0 | 1280x720. The transaction originated from billing region 264 and was recorded under transaction ID 3503878. Investigation revealed that the same rare device profile had been employed on four other cards (C01104-K2, C01983-K1, C06224-K2, C11309-K1) within the prior 30 days, with three of those transactions matching the amount range of this purchase. The pattern was classified as card-not-present activity from a new device, a scenario that has been 10.7 times more common in confirmed fraud than in normal online traffic. When contacted, the cardholder stated they did not make the transaction, did not share the card details, and still possessed the card. Because the purchase was made by an unauthorized party on the cardholder's account, the activity was deemed suspicious and resulted in the card being blocked, the case created, a report filed, and connected cards placed under monitoring.",
+    "narrative": "The cardholder identified as customer C07987, holder of visa credit card C07987-K2, was reported to have an unauthorized transaction on 2016-12-01 at 17:28:53. The flagged purchase, transaction ID 3503878, was for $99.92 and was processed online under product code R in billing region 264. The purchase originated from a Windows device using an \"other\" operating system designation, Chrome 61.0 browser, and a 1280x720 screen resolution. This device profile has been observed on only five cards in total, including four other cards (C01104-K2, C01983-K1, C06224-K2, C11309-K1) within the preceding 30 days, and the amounts on those cards were within 2 % of the $99.92 amount, a pattern that is 10.7 times more common in confirmed fraud than in normal online traffic. The cardholder denied making the purchase, stated they did not share card details, and confirmed they still possess the card. Because the transaction was card-not-present, executed from a rare device profile used across multiple customers, and the cardholder's denial aligns with known fraud indicators, the activity was deemed suspicious and classified as fraud. Subsequent actions included blocking card C07987-K2, creating case HHG-019, filing a Suspicious Activity Report, and monitoring the connected cards.",
     "subjects": [
       "C07987",
       "C07987-K2",
@@ -147,7 +161,7 @@
     ]
   },
   "stop_reason": "The customer's reply settled the question (section 6): probability moved from 0.70 to 0.96 and the episode (1 transaction(s), $99.92) is scoped. Further steps would not change the actions.",
-  "tool_calls": 10,
-  "tokens": 1306,
-  "latency_s": 223.86
+  "tool_calls": 13,
+  "tokens": 2641,
+  "latency_s": 60.12
 }

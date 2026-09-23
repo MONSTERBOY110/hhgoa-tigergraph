@@ -48,9 +48,9 @@
       "CC-2244",
       "CC-5508"
     ],
-    "summary": "The alert was triggered by the customer's message that they never made the $128.33 online purchase (transaction 3583227) on their visa debit card. The strongest finding is the customer's denial of the transaction, confirming they did not make the purchase, did not share card details, and still possess the card. The case is judged to be fraud with a probability of 0.88. The recommended actions are to block the card and create a case.",
-    "written_to_graph": false,
-    "graph_case_id": ""
+    "summary": "The alert was triggered by the customer's message that they never made the $128.33 online purchase (transaction 3583227) on their Visa debit card. The strongest finding is the customer's denial of the transaction, confirming they did not make the purchase, did not share card details, and still possess the card. The case is judged to be fraud with a probability of 0.88. The recommended actions are to block the card and create a case.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-2016-5949"
   },
   "evidence_requests": [
     {
@@ -95,7 +95,7 @@
     "activity_dates": []
   },
   "stop_reason": "The customer's reply settled the question (section 6): probability moved from 0.79 to 0.88 and the episode (1 transaction(s), $128.33) is scoped. Further steps would not change the actions.",
-  "tool_calls": 12,
-  "tokens": 1046,
-  "latency_s": 163.44
+  "tool_calls": 15,
+  "tokens": 1055,
+  "latency_s": 5.72
 }

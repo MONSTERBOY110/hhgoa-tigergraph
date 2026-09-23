@@ -31,8 +31,13 @@ def write_case(conn, answer: dict, card_id: str) -> tuple[bool, str]:
         conn.upsertEdge("InvestigationCase", gid, "CASE_DEVICE", "DeviceProfile", d)
     for cc in c["similar_prior_cases"]:
         conn.upsertEdge("InvestigationCase", gid, "CASE_SIMILAR", "ClosedCase", cc, {"score": 1.0})
+    try:
+        from kavach.graph.vectors_tg import upsert_investigation_vector
+        upsert_investigation_vector(conn, gid, c["summary"])
+    except Exception as e:  # the case vertex still counts as written; the embedding is a bonus for recall
+        print(f"  embedding upsert failed for {gid}: {str(e)[:120]}")
     back = conn.getVerticesById("InvestigationCase", gid)
-    ok = bool(back) and back[0]["attributes"].get("verdict") == c["verdict"]
+    ok = bool(back) and back[0]["attributes"].get("verdict") == c["verdict"] and back[0]["attributes"].get("case_id") == answer["case_id"]
     return ok, gid if ok else ""
 
 

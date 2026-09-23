@@ -13,6 +13,9 @@ Running notes kept while building, for the submission form feedback field. Updat
 - The REST++ `echo` endpoint answers without auth, while `version` and every data endpoint need a token, so a quick connectivity check is misleading.
 - The MCP server defaults to ports 9000/14240 (`TG_RESTPP_PORT`, `TG_GS_PORT`), while Savanna serves everything on 443; the README does not say which values a Savanna user needs. (Verify on the live workspace.)
 
+- `proxy` is a reserved word in vertex attribute lists, but only when another attribute follows it: `(..., proxy STRING)` at the end is accepted, `(..., proxy STRING, card_id STRING)` fails with "Encountered ',' ... expecting ')'" pointing at the preceding comma. We renamed it to `proxy_type`. A clearer error ("proxy is a reserved word") would have saved a bisecting session.
+- A fresh Savanna workspace can arrive with a sample solution already installed whose global vertex types (for example `Card`) collide with a natural schema for the task, so we created our graph with graph-local types in a schema change job.
+
 ## What we wish existed
 - A "Connect from Python" snippet in the Savanna console that works for SSO users end to end (create a DB user or secret, host, port 443, token).
 - A bulk vector loader in the loading-job language, the same as for scalar attributes, instead of upserting lists through REST.

@@ -16,11 +16,17 @@ def _gsql(conn, text: str) -> str:
 
 
 def schema(conn) -> None:
+    """Create the graph with graph-local vertex and edge types (a workspace may already hold unrelated global
+    types, e.g. a sample solution's `Card`), via one schema change job."""
     graph = env("TG_GRAPH", "Fraud")
     body = (GDIR / "schema.gsql").read_text(encoding="utf-8")
-    body = "\n".join(l for l in body.splitlines() if not l.strip().startswith("//"))
-    body = body.replace("CREATE GRAPH Fraud (*)", f"CREATE GRAPH {graph} (*)")
-    _gsql(conn, "USE GLOBAL\n" + body)
+    body = "\n".join(l for l in body.splitlines() if not l.strip().startswith("//") and "CREATE GRAPH" not in l)
+    stmts = [x.strip().replace("CREATE VERTEX", "ADD VERTEX").replace("CREATE DIRECTED EDGE", "ADD DIRECTED EDGE")
+             for x in re.split(r"\n(?=CREATE )", body.strip()) if x.strip()]
+    job = "\n".join("  " + x + ";" for x in stmts)
+    _gsql(conn, f"CREATE GRAPH {graph}()")
+    _gsql(conn, f"USE GRAPH {graph}\nCREATE SCHEMA_CHANGE JOB kavach_schema FOR GRAPH {graph} {{\n{job}\n}}\n"
+                f"RUN SCHEMA_CHANGE JOB kavach_schema\nDROP JOB kavach_schema")
 
 
 def load_job(conn) -> None:

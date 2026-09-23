@@ -5,7 +5,7 @@
     "verdict": "fraud",
     "fraud_probability": 0.97,
     "pattern": "undocumented",
-    "pattern_description": "A stolen card number is cashed out through a tight run of online purchases, each priced just under $500, apparently to stay below a per-transaction authorization or review limit. The same template appears on 15 other customers' cards within three weeks and the bank's model scores it low, so it is repeated, coordinated abuse rather than a one-off. It was found by matching the burst shape across cards and against earlier confirmed cases.",
+    "pattern_description": "The pattern consists of a rapid burst of online purchases of product C, each priced just under the $500 threshold, occurring on a single card within a 30-minute window and using two device profiles (a Windows 7 desktop and an iOS mobile device). It affects the cardholder C07297 (card C07297-K1) whose normal online spend had never exceeded $50.01, and it was identified after the customer disputed transaction 3476682 ($482.12) and analysts noted the sub-threshold template appearing on 15 other cards in the same three-week period.",
     "affected_txn_ids": [
       "3476602",
       "3476633",
@@ -81,6 +81,12 @@
         "source": "document",
         "ref": "document:README#PATTERN-2",
         "entity_ids": []
+      },
+      {
+        "claim": "Case memory: the most similar earlier investigation by summary is CASE-2016-4934 (HHG-003, verdict fraud, similarity 0.81)",
+        "source": "graph",
+        "ref": "query:similar_investigations(vectorSearch InvestigationCase.emb)",
+        "entity_ids": []
       }
     ],
     "similar_prior_cases": [
@@ -89,9 +95,9 @@
       "CC-3907",
       "CC-4086"
     ],
-    "summary": "The alert was triggered when customer C07297 reported that they never made the $482.12 online purchase (transaction 3476682) on their Mastercard debit card. The strongest findings are a burst of four online purchases between $456.96 and $488.04 within a 30-minute window, each just under the $500 threshold, a sudden increase from the card's previous maximum online purchase of $50.01, and the fact that this pattern of three or more sub-threshold purchases within 40 minutes has been seen on fifteen other cards in the past three weeks. The case was judged to be fraud with a probability of 97 percent. The recommended actions are to block the card, create a case file, file a report, and escalate the matter to an analyst.",
-    "written_to_graph": false,
-    "graph_case_id": ""
+    "summary": "The alert was triggered when customer C07297 reported that they never made the $482.12 online purchase (transaction 3476682) on their Mastercard debit card. The strongest findings are a burst of four online purchases ranging from $456.96 to $488.04 within a 30-minute window, each just under the $500 threshold, and the fact that before this burst the card's largest online purchase was only $50.01, matching a known fraud template seen on fifteen other cards in the past three weeks. The case is judged to be fraud with a probability of 0.97. The recommended actions are to block the card, create a case file, file a report, and escalate the matter to an analyst.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-2016-9537"
   },
   "evidence_requests": [],
   "next_best_actions": {
@@ -144,7 +150,7 @@
   "sar": {
     "file": true,
     "reason": "R9 and §3a: coordinated activity fitting no documented pattern",
-    "narrative": "This report concerns customer C07297, card C07297-K1, issued as a mastercard debit. On 2016-11-21, 4 transaction(s) totalling $1,906.07 were identified as part of one fraud episode, beginning with transaction 3476602. The activity took place online, product code(s) C, billing region(s) 264, 476, from device profile(s) Trident/7.0 | Windows 7 | ie 11.0 for desktop | 1920x1080; iOS Device | iOS 11.2.1 | mobile safari 11.0 | 2208x1242. The transactions were a burst of online purchases priced just under a round limit. The activity is assessed as an undocumented coordinated pattern: 4 online purchases of $456.96 to $488.04 within 30 minutes, each just under $500; before this burst the card's largest online purchase was $50.01; Customer C07297 disputes transaction 3476682 ($482.12); in the bank's closed cases every customer-reported alert was confirmed fraud; The same template (three or more online purchases just under $500 within 40 minutes) appears on 15 other cards within three weeks. No other cardholder was found to share a device profile, region cluster or email with this activity. Earlier confirmed cases CC-4124, CC-3748, CC-3907 show the same pattern. The cardholder reported the disputed transaction to the bank and denied making it. The bank has recommended BLOCK_CARD and opened an internal case; the report is filed under R9, §3a.",
+    "narrative": "The cardholder identified as customer C07297, holder of mastercard debit card C07297-K1, was the subject of a series of unauthorized online purchases. Four transactions were executed on 2016-11-21, beginning at 20:00 with transaction 3476602 for $478.95, followed by transaction 3476633 at 20:10 for $456.96, transaction 3476665 at 20:24 for $488.04, and finally transaction 3476682 at 20:30 for $482.12. All purchases were made through the online channel using product code C and originated from billing regions 264 and 476. The first, second, and fourth transactions were generated from a Windows 7 desktop device identified as \"Trident/7.0 | Windows 7 | ie 11.0 for desktop | 1920x1080,\" while the third transaction used an iOS mobile device described as \"iOS Device | iOS 11.2.1 | mobile safari 11.0 | 2208x1242.\" The activity consisted of a burst of online purchases priced just under the $500 threshold, a pattern that matches none of the documented fraud typologies and is classified as undocumented sub-threshold behavior. The cardholder reported the disputed transaction 3476682 to the bank and denied making it, stating that the cardholder reported the disputed transaction to the bank and denied making it. The rapid succession of four high-value purchases, each just under the round limit, after a prior maximum online purchase of $50.01, triggered suspicion and led to the card being blocked, a case created, a report filed, and escalation to an analyst.",
     "subjects": [
       "C07297",
       "C07297-K1"
@@ -156,7 +162,7 @@
     ]
   },
   "stop_reason": "Fraud probability 0.97 is at or above 0.85 with 3 independent evidence groups (sequence, network, customer), so section 6 allows a decision without asking the customer; further queries would not change the actions.",
-  "tool_calls": 11,
-  "tokens": 1523,
-  "latency_s": 352.63
+  "tool_calls": 14,
+  "tokens": 4578,
+  "latency_s": 67.07
 }
