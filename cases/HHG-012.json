@@ -1,0 +1,98 @@
+{
+  "case_id": "HHG-012",
+  "case": {
+    "status": "closed_legitimate",
+    "verdict": "legitimate",
+    "fraud_probability": 0.03,
+    "pattern": "none",
+    "pattern_description": "",
+    "affected_txn_ids": [],
+    "first_suspicious_txn_id": "",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 0.0,
+    "evidence": [
+      {
+        "claim": "Customer confirmed the transaction when asked: Customer confirms they made the purchase",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": []
+      },
+      {
+        "claim": "Model risk score 0.55. For product W transactions without an identity record in this score band, 12% were confirmed fraud in July to October (9,307 transactions), so the score is read at that calibrated rate, not at face value",
+        "source": "document",
+        "ref": "document:weights.json#score_calibration",
+        "entity_ids": [
+          "3553342"
+        ]
+      },
+      {
+        "claim": "Policy applied, Fraud Policy R3: Customer confirms the transaction: Recommend CLOSE_NO_FRAUD.",
+        "source": "document",
+        "ref": "document:README#POLICY-R3",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-2695",
+      "CC-2537",
+      "CC-1645",
+      "CC-5132",
+      "CC-4118"
+    ],
+    "summary": "The alert was triggered when the real-time model scored transaction 3553342 at 0.55, a $30.91 in-person purchase of product W in billing region 494 on 2016-12-18. The strongest findings are that the customer confirmed making the purchase when contacted and that, for product W transactions without an identity record in this score band, only 12 % were confirmed fraud in the July-October sample, indicating a low fraud likelihood despite the model score. The verdict is legitimate with a fraud probability of 3 %. The recommended actions are to allow the transaction, create a case record, and close it with no fraud finding.",
+    "written_to_graph": false,
+    "graph_case_id": ""
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 6,
+      "assumed_response": "Customer confirms they made the purchase"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1 and §5: fraud probability 0.27 is below 0.70; verify with the cardholder before any block"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "§3a: requesting evidence opens a case"
+      }
+    ],
+    "final": [
+      {
+        "action": "ALLOW_TRANSACTION",
+        "route": "auto",
+        "reason": "R3: the flagged transaction is consistent with the cardholder"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "§3a: a dispute or evidence request always opens a case; closed as legitimate"
+      },
+      {
+        "action": "CLOSE_NO_FRAUD",
+        "route": "auto",
+        "reason": "R3: close the alert as legitimate"
+      }
+    ],
+    "what_changed": "The customer's confirmation lowered the fraud probability from 0.27 to 0.03; under R3 the alert closes: ALLOW_TRANSACTION, CREATE_CASE, CLOSE_NO_FRAUD."
+  },
+  "sar": {
+    "file": false,
+    "reason": "§3a: the verdict is not fraud, so no suspicious activity report; the case record is sufficient",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "The customer's reply settled the question (section 6): probability moved from 0.27 to 0.03. Further steps would not change the actions.",
+  "tool_calls": 8,
+  "tokens": 1030,
+  "latency_s": 128.81
+}

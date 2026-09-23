@@ -1,0 +1,43 @@
+// Kavach graph schema: the README's suggested schema plus holder links, case memory and policy docs.
+// V1-V339 stay in the DuckDB lane; the graph carries what the investigation tools traverse.
+
+CREATE VERTEX Customer (PRIMARY_ID id STRING) WITH primary_id_as_attribute="true"
+CREATE VERTEX Card (PRIMARY_ID id STRING, card1 INT, card2 STRING, card3 STRING, card4 STRING, card5 STRING, card6 STRING,
+    home_addr1 INT, n_txn INT) WITH primary_id_as_attribute="true"
+CREATE VERTEX Holder (PRIMARY_ID id STRING) WITH primary_id_as_attribute="true"
+CREATE VERTEX Transaction (PRIMARY_ID id STRING, ts DATETIME, dt INT, amt DOUBLE, product_cd STRING, channel STRING,
+    risk_score DOUBLE, addr1 INT, addr2 INT, dist1 DOUBLE, p_email STRING, r_email STRING,
+    m1 STRING, m2 STRING, m3 STRING, m4 STRING, m5 STRING, m6 STRING, m7 STRING, m8 STRING, m9 STRING,
+    c1 DOUBLE, c2 DOUBLE, c13 DOUBLE, c14 DOUBLE, d1 DOUBLE, d2 DOUBLE, d3 DOUBLE, d4 DOUBLE, d10 DOUBLE, d15 DOUBLE,
+    dev_new BOOL, proxy STRING, device_type STRING, card_id STRING, customer_id STRING, device_key STRING, id_15 STRING, id_31 STRING,
+    holder_key STRING, card1 INT, card4 STRING, card6 STRING) WITH primary_id_as_attribute="true"
+CREATE VERTEX DeviceProfile (PRIMARY_ID id STRING, device_info STRING, os STRING, browser STRING, screen STRING,
+    n_cards INT) WITH primary_id_as_attribute="true"
+CREATE VERTEX EmailDomain (PRIMARY_ID id STRING) WITH primary_id_as_attribute="true"
+CREATE VERTEX BillingRegion (PRIMARY_ID id STRING) WITH primary_id_as_attribute="true"
+CREATE VERTEX ClosedCase (PRIMARY_ID id STRING, outcome STRING, pattern STRING, opened_at DATETIME, closed_at DATETIME,
+    exposure_usd DOUBLE, n_txns INT, report_filed STRING, actions_taken STRING, analyst_notes STRING)
+    WITH primary_id_as_attribute="true"
+CREATE VERTEX InvestigationCase (PRIMARY_ID id STRING, case_id STRING, status STRING, verdict STRING, p DOUBLE,
+    pattern STRING, exposure_usd DOUBLE, summary STRING, sar_filed BOOL, created_at DATETIME)
+    WITH primary_id_as_attribute="true"
+CREATE VERTEX PolicyDoc (PRIMARY_ID id STRING, source STRING, section STRING, text STRING) WITH primary_id_as_attribute="true"
+
+CREATE DIRECTED EDGE OWNS (FROM Customer, TO Card) WITH REVERSE_EDGE="OWNED_BY"
+CREATE DIRECTED EDGE MADE (FROM Card, TO Transaction) WITH REVERSE_EDGE="MADE_BY"
+CREATE DIRECTED EDGE FROM_DEVICE (FROM Transaction, TO DeviceProfile) WITH REVERSE_EDGE="DEVICE_OF"
+CREATE DIRECTED EDGE PURCHASER_EMAIL (FROM Transaction, TO EmailDomain) WITH REVERSE_EDGE="PURCHASER_EMAIL_OF"
+CREATE DIRECTED EDGE RECIPIENT_EMAIL (FROM Transaction, TO EmailDomain) WITH REVERSE_EDGE="RECIPIENT_EMAIL_OF"
+CREATE DIRECTED EDGE BILLED_IN (FROM Transaction, TO BillingRegion) WITH REVERSE_EDGE="REGION_OF"
+CREATE DIRECTED EDGE NEXT_TXN (FROM Transaction, TO Transaction, gap_s INT) WITH REVERSE_EDGE="PREV_TXN"
+CREATE DIRECTED EDGE HOLDER_CARD (FROM Holder, TO Card) WITH REVERSE_EDGE="CARD_HOLDER"
+CREATE DIRECTED EDGE INVOLVES (FROM ClosedCase, TO Transaction) WITH REVERSE_EDGE="INVOLVED_IN"
+CREATE DIRECTED EDGE ON_CARD (FROM ClosedCase, TO Card) WITH REVERSE_EDGE="CARD_CASE"
+CREATE DIRECTED EDGE CONNECTED_TO (FROM ClosedCase, TO Card) WITH REVERSE_EDGE="CONNECTED_CASE"
+CREATE DIRECTED EDGE CASE_TXN (FROM InvestigationCase, TO Transaction) WITH REVERSE_EDGE="TXN_INV_CASE"
+CREATE DIRECTED EDGE CASE_CARD (FROM InvestigationCase, TO Card) WITH REVERSE_EDGE="CARD_INV_CASE"
+CREATE DIRECTED EDGE CASE_DEVICE (FROM InvestigationCase, TO DeviceProfile) WITH REVERSE_EDGE="DEVICE_INV_CASE"
+CREATE DIRECTED EDGE CASE_SIMILAR (FROM InvestigationCase, TO ClosedCase, score DOUBLE) WITH REVERSE_EDGE="SIMILAR_INV_CASE"
+CREATE DIRECTED EDGE CASE_OF (FROM InvestigationCase, TO Card) WITH REVERSE_EDGE="HAS_INV_CASE"
+
+CREATE GRAPH Fraud (*)

@@ -1,0 +1,110 @@
+{
+  "case_id": "HHG-001",
+  "case": {
+    "status": "closed_legitimate",
+    "verdict": "legitimate",
+    "fraud_probability": 0.06,
+    "pattern": "none",
+    "pattern_description": "",
+    "affected_txn_ids": [],
+    "first_suspicious_txn_id": "",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 0.0,
+    "evidence": [
+      {
+        "claim": "Recurring weekly charge: 2 earlier W charges of about $77.07 on the same account (holder 21139|444.0|73) at weekly intervals",
+        "source": "graph",
+        "ref": "query:recurring_check(card_id=C12382-K1, amt=77.07)",
+        "entity_ids": [
+          "3471020",
+          "3490282",
+          "3514030"
+        ]
+      },
+      {
+        "claim": "The flagged transaction continues account 21139|444.0|73, which has 10 earlier transactions and no confirmed-fraud case",
+        "source": "graph",
+        "ref": "query:holder_fraud_history(card_id=C12382-K1)",
+        "entity_ids": [
+          "3441958",
+          "3471020",
+          "3490282",
+          "3514030"
+        ]
+      },
+      {
+        "claim": "The same amount ($77.08, product W) was charged on account 21139|444.0|73 before, on 2016-11-26",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C12382-K1)",
+        "entity_ids": [
+          "3490282",
+          "3514030"
+        ]
+      },
+      {
+        "claim": "Model risk score 0.61. For product W transactions without an identity record in this score band, 38% were confirmed fraud in July to October (3,436 transactions), so the score is read at that calibrated rate, not at face value",
+        "source": "document",
+        "ref": "document:weights.json#score_calibration",
+        "entity_ids": [
+          "3514030"
+        ]
+      },
+      {
+        "claim": "Policy applied, Fraud Policy 6. Stopping: Stop investigating when one of these holds:\n\n- Fraud probability is at or above 0.85, or at or below 0.15, supported by at least two independent pieces of evidence\n- A verification response settles the question\n- Further steps are unlikely ...",
+        "source": "document",
+        "ref": "document:README#POLICY-6",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-1709",
+      "CC-1645",
+      "CC-5132",
+      "CC-4118"
+    ],
+    "summary": "The alert was triggered when the real-time model scored transaction 3514030 at 0.61, a $77.07 in-person purchase on card C12382-K1. The strongest findings are that this is a recurring weekly charge, with two earlier W-type purchases of about $77.07 on the same account (holder 21139|444.0|73) at weekly intervals, that the flagged transaction continues a pattern on account 21139|444.0|73 which already has ten prior transactions and no confirmed fraud, and that an identical amount of $77.08 for product W was previously charged on 2016-11-26. The case was judged legitimate with a fraud probability of 0.06. The recommended actions are to allow the transaction and close the case with no fraud finding.",
+    "written_to_graph": false,
+    "graph_case_id": ""
+  },
+  "evidence_requests": [],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "ALLOW_TRANSACTION",
+        "route": "auto",
+        "reason": "§6: the flagged transaction is consistent with the cardholder"
+      },
+      {
+        "action": "CLOSE_NO_FRAUD",
+        "route": "auto",
+        "reason": "§6: close the alert as legitimate"
+      }
+    ],
+    "final": [
+      {
+        "action": "ALLOW_TRANSACTION",
+        "route": "auto",
+        "reason": "§6: the flagged transaction is consistent with the cardholder"
+      },
+      {
+        "action": "CLOSE_NO_FRAUD",
+        "route": "auto",
+        "reason": "§6: close the alert as legitimate"
+      }
+    ],
+    "what_changed": "nothing"
+  },
+  "sar": {
+    "file": false,
+    "reason": "§3a: the verdict is not fraud, so no suspicious activity report; the case record is sufficient",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "Fraud probability 0.06 is at or below 0.15 with 2 independent evidence groups (sequence, history), so section 6 allows a decision without asking the customer; further queries would not change the actions.",
+  "tool_calls": 8,
+  "tokens": 1134,
+  "latency_s": 5.7
+}

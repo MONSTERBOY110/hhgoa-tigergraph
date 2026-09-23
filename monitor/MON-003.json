@@ -1,0 +1,224 @@
+{
+  "case_id": "MON-003",
+  "case": {
+    "status": "escalated",
+    "verdict": "fraud",
+    "fraud_probability": 0.95,
+    "pattern": "undocumented",
+    "pattern_description": "The pattern involves a single Android device profile (SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080) that was used to make online purchases of product C on multiple customers' cards, including card C07472-K1, with all transactions marked as New and routed through an anonymous proxy. It affects debit-card holders in billing region 315, as the device appeared on 28 different cards (52 cards total) within 19 days and was linked to four previously confirmed fraud cases. The activity was discovered through a monitor sweep that flagged the device profile shared across several cards, prompting an analyst review and resulting in a fraud verdict.",
+    "affected_txn_ids": [
+      "3500431",
+      "3512563"
+    ],
+    "first_suspicious_txn_id": "3500431",
+    "connected_card_ids": [
+      "C01289-K1",
+      "C01996-K2",
+      "C02910-K1",
+      "C02975-K1",
+      "C03676-K2",
+      "C04108-K2",
+      "C04274-K1",
+      "C05448-K2",
+      "C06031-K2",
+      "C06650-K2",
+      "C06710-K1",
+      "C08168-K1",
+      "C08972-K2",
+      "C09049-K1",
+      "C09195-K1",
+      "C09906-K1",
+      "C09975-K1",
+      "C10020-K1",
+      "C10193-K2",
+      "C10326-K1",
+      "C11082-K1",
+      "C11670-K2",
+      "C11702-K1",
+      "C12645-K1",
+      "C12796-K1",
+      "C13291-K1",
+      "C13487-K1"
+    ],
+    "connected_device_profiles": [
+      "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080"
+    ],
+    "exposure_usd": 265.85,
+    "evidence": [
+      {
+        "claim": "Device profile SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080 (seen on only 52 cards ever) made 60 purchases on 28 different customers' cards within 19 days, 100% marked New and 100% behind an anonymous proxy",
+        "source": "graph",
+        "ref": "query:device_neighbors(device_key=SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080, days=30)",
+        "entity_ids": [
+          "C01289-K1",
+          "C01996-K2",
+          "C02910-K1",
+          "C02975-K1",
+          "C03676-K2",
+          "C04108-K2",
+          "C04274-K1",
+          "C05448-K2",
+          "C06031-K2",
+          "C06650-K2"
+        ]
+      },
+      {
+        "claim": "Device profile SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080 appears in 4 confirmed-fraud closed case(s) (CC-2649, CC-2971, CC-2985, CC-3035), labelled undocumented by the analysts",
+        "source": "graph",
+        "ref": "query:closed_cases_for(card_id=C07472-K1)",
+        "entity_ids": [
+          "CC-2649",
+          "CC-2971",
+          "CC-2985",
+          "CC-3035"
+        ]
+      },
+      {
+        "claim": "Model risk score 0.10. For product C transactions with an identity record in this score band, 3% were confirmed fraud in July to October (27,303 transactions), so the score is read at that calibrated rate, not at face value",
+        "source": "graph",
+        "ref": "document:weights.json#score_calibration",
+        "entity_ids": [
+          "3512563"
+        ]
+      },
+      {
+        "claim": "Purchaser email domain gmail.com is this card's usual one (44 earlier transactions, 73% of those with an email)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C07472-K1)",
+        "entity_ids": [
+          "3512563"
+        ]
+      },
+      {
+        "claim": "Connection through an anonymous proxy (id_23)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C07472-K1)",
+        "entity_ids": [
+          "3512563"
+        ]
+      },
+      {
+        "claim": "Identity record marks the device (SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080) as New for this account; 67% of the card's earlier online purchases were also from New devices (in the closed cases a New device is not more common in fraud than in normal traffic for this product)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C07472-K1)",
+        "entity_ids": [
+          "3512563"
+        ]
+      },
+      {
+        "claim": "Policy applied, Fraud Policy R9: Undocumented patterns: When activity fits none of the known patterns but the evidence shows coordinated or repeated abuse across customers, recommend CREATE_CASE, FILE_REPORT, and ESCALATE_TO_ANALYST, and describe the pattern in your own words.",
+        "source": "document",
+        "ref": "document:README#POLICY-R9",
+        "entity_ids": []
+      },
+      {
+        "claim": "Nearest documented pattern by text similarity is Known fraud patterns: Card-not-present fraud from a new device (cosine 0.71), which does not describe a coordinated template across customers; its definition: Same as above, with the identity record marking the device as New for this account, sometimes behind a proxy.",
+        "source": "document",
+        "ref": "document:README#PATTERN-3",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-2649",
+      "CC-2971",
+      "CC-2985",
+      "CC-3035",
+      "CC-3907",
+      "CC-4086"
+    ],
+    "summary": "The alert was triggered by a monitor sweep that identified the device profile SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080 being used on 28 cards in November and December, all behind an anonymous proxy. The strongest fraud indicators are that this device profile has been seen on only 52 cards ever but made 60 purchases on 28 different customers' cards within 19 days, appears in four confirmed-fraud cases and is labelled undocumented, while the model risk score of 0.10 for the flagged transaction translates to a calibrated fraud rate of 3 % for product C in the same score band. The case is judged to be fraud with a probability of 95 %. The recommended actions are to block the card, open a new case, file a report, monitor the connected cards and escalate the matter to an analyst.",
+    "written_to_graph": false,
+    "graph_case_id": ""
+  },
+  "evidence_requests": [],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R9: block and reissue; exposure $265.85 is under $2,500"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R9 and §3a: open the internal fraud case with the evidence attached"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R9 and §3a: coordinated activity fitting no documented pattern"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: 27 other card(s) share device profile SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080; place them under monitoring"
+      },
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R9: undocumented coordinated pattern, hand to an analyst"
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R9: block and reissue; exposure $265.85 is under $2,500"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R9 and §3a: open the internal fraud case with the evidence attached"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R9 and §3a: coordinated activity fitting no documented pattern"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: 27 other card(s) share device profile SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080; place them under monitoring"
+      },
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R9: undocumented coordinated pattern, hand to an analyst"
+      }
+    ],
+    "what_changed": "nothing"
+  },
+  "sar": {
+    "file": true,
+    "reason": "R9 and §3a: coordinated activity fitting no documented pattern",
+    "narrative": "The cardholder identified as customer C07472, holder of visa debit card C07472-K1, was the subject of two unauthorized online purchases using product code C in billing region 315. The first transaction, id 3500431 for $56.19, occurred on 2016-11-30 at 15:47, and the second, flagged transaction id 3512563 for $209.66, occurred on 2016-12-04 at 11:47. Both purchases were executed from the same device profile \"SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080\" and originated through the online channel. Analysis shows that this device profile has been observed on only 52 cards, yet it was used for 60 purchases on 28 different customers' cards within 19 days, all marked New and routed through an anonymous proxy. The device also appears in four previously closed confirmed-fraud cases (CC-2649, CC-2971, CC-2985, CC-3035) and is linked to 27 other cards, including C01289-K1, C01996-K2, C02910-K1, C02975-K1, C03676-K2, C04108-K2, C04274-K1, and C05448-K2. The pattern of activity matches none of the documented fraud typologies and is classified as an undocumented device-ring scheme. Because the transactions were made by an unauthorized party, the activity is deemed suspicious and warranted immediate containment actions, including blocking the card and monitoring connected cards. The cardholder has not yet been contacted.",
+    "subjects": [
+      "C07472",
+      "C07472-K1",
+      "C01289-K1",
+      "C01996-K2",
+      "C02910-K1",
+      "C02975-K1",
+      "C03676-K2",
+      "C04108-K2",
+      "C04274-K1",
+      "C05448-K2",
+      "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080"
+    ],
+    "total_amount_usd": 265.85,
+    "activity_dates": [
+      "2016-11-30",
+      "2016-12-04"
+    ]
+  },
+  "stop_reason": "Fraud probability 0.95 is at or above 0.85 with 2 independent evidence groups (network, history), so section 6 allows a decision without asking the customer; further queries would not change the actions.",
+  "tool_calls": 11,
+  "tokens": 4914,
+  "latency_s": 34.31,
+  "monitor": {
+    "sweep": "scripted_device_ring",
+    "trigger_text": "Monitor sweep: device profile SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080 used on 28 cards in November and December, 100% New and 100% behind an anonymous proxy.",
+    "flagged_txn_id": "3512563",
+    "card_id": "C07472-K1"
+  }
+}

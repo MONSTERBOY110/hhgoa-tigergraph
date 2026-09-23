@@ -1,0 +1,171 @@
+{
+  "case_id": "MON-004",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.96,
+    "pattern": "card_not_present_fraud",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3436636"
+    ],
+    "first_suspicious_txn_id": "3436636",
+    "connected_card_ids": [
+      "C00294-K2",
+      "C01002-K1",
+      "C04125-K2",
+      "C05307-K2",
+      "C06362-K1",
+      "C06630-K2",
+      "C08450-K2",
+      "C09492-K1",
+      "C10957-K2"
+    ],
+    "connected_device_profiles": [
+      "GT-I9060M Build/KTU84P |  | chrome 65.0 for android | "
+    ],
+    "exposure_usd": 58.38,
+    "evidence": [
+      {
+        "claim": "Rare device profile GT-I9060M Build/KTU84P |  | chrome 65.0 for android |  (10 cards ever) was used on 9 other cards within 30 days, 7 of them for amounts within 2% of this $58.38 purchase (in the closed months this shape was 10.7 times more common in confirmed fraud than in normal online traffic)",
+        "source": "graph",
+        "ref": "query:device_neighbors(device_key=GT-I9060M Build/KTU84P |  | chrome 65.0 for android | , days=30)",
+        "entity_ids": [
+          "C00294-K2",
+          "C01002-K1",
+          "C04125-K2",
+          "C05307-K2",
+          "C06362-K1",
+          "C06630-K2",
+          "C08450-K2",
+          "C09492-K1",
+          "C10957-K2"
+        ]
+      },
+      {
+        "claim": "Customer denied the transaction(s) when asked: Customer states they did not make this purchase and still has the card",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": []
+      },
+      {
+        "claim": "Model risk score 0.32. For product C transactions with an identity record in this score band, 14% were confirmed fraud in July to October (8,416 transactions), so the score is read at that calibrated rate, not at face value",
+        "source": "graph",
+        "ref": "document:weights.json#score_calibration",
+        "entity_ids": [
+          "3436636"
+        ]
+      },
+      {
+        "claim": "Purchaser email domain gmail.com is this card's usual one (10 earlier transactions, 62% of those with an email)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C09588-K1)",
+        "entity_ids": [
+          "3436636"
+        ]
+      },
+      {
+        "claim": "Policy applied, Fraud Policy R6: Shared origin: When several cards show fraud from the same device profile, the same billing region, or the same recipient email in one window, name the shared element, recommend CREATE_CASE and FILE_REPORT, and MONITOR_CONNECTED_CARDS for every card that ",
+        "source": "document",
+        "ref": "document:README#POLICY-R6",
+        "entity_ids": []
+      },
+      {
+        "claim": "Pattern definition, Known fraud patterns: Card-not-present fraud: The number is used online without the card.",
+        "source": "document",
+        "ref": "document:README#PATTERN-2",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-3778",
+      "CC-4917",
+      "CC-4991"
+    ],
+    "summary": "The alert was triggered by a monitor sweep that identified a rare device profile (GT-I9060M Build/KTU84P | | chrome 65.0 for android) used for a $58.38 online purchase on card C09588-K1. The strongest fraud indicators are that this device has been seen on only ten cards ever but was used on nine other cards within 30 days, with seven of those transactions matching the amount within 2%, a pattern that is 10.7 times more common in confirmed fraud, and the customer denied making the purchase and still possesses the card; the strongest legit indicator is a model risk score of 0.32, which historically corresponds to a 14% fraud rate for product C transactions, and the purchaser's email domain (gmail.com) matches the card's usual usage. The case is judged fraud with a probability of 0.96. The recommended actions are to block the card, create a new case, file a report, and monitor the connected cards.",
+    "written_to_graph": false,
+    "graph_case_id": ""
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 6,
+      "assumed_response": "Customer states they did not make this purchase and still has the card"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1 and §5: probability 0.74; confirm with the cardholder before blocking"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "§3a: requesting evidence opens a case"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: cards sharing device profile GT-I9060M Build/KTU84P |  | chrome 65.0 for android |  go under monitoring while we verify"
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: block and reissue; exposure $58.38 is under $2,500"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2 and §3a: open the internal fraud case with the evidence attached"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R6 and §3a: activity connects to a shared origin (device profile GT-I9060M Build/KTU84P |  | chrome 65.0 for android | )"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: 9 other card(s) share device profile GT-I9060M Build/KTU84P |  | chrome 65.0 for android | ; place them under monitoring"
+      }
+    ],
+    "what_changed": "The customer's denial raised the fraud probability from 0.74 to 0.96, which supports containment under R2: BLOCK_CARD, CREATE_CASE, FILE_REPORT, MONITOR_CONNECTED_CARDS."
+  },
+  "sar": {
+    "file": true,
+    "reason": "R6 and §3a: activity connects to a shared origin (device profile GT-I9060M Build/KTU84P |  | chrome 65.0 for android | )",
+    "narrative": "This report concerns customer C09588, card C09588-K1, issued as a visa credit. On 2016-11-06, 1 transaction(s) totalling $58.38 were identified as part of one fraud episode, beginning with transaction 3436636. The activity took place online, product code(s) C, from device profile(s) GT-I9060M Build/KTU84P |  | chrome 65.0 for android | . The transactions were purchases from one device profile used across several customers' cards. The activity is assessed as card-not-present fraud: Rare device profile GT-I9060M Build/KTU84P |  | chrome 65.0 for android |  (10 cards ever) was used on 9 other cards within 30 days, 7 of them for amounts within 2% of this $58.38 purchase (in the closed months this shape was 10.7 times more common in confirmed fraud than in normal online traffic); Customer denied the transaction(s) when asked: Customer states they did not make this purchase and still has the card. The same device profile GT-I9060M Build/KTU84P |  | chrome 65.0 for android |  links this activity to 9 other card(s), including C00294-K2, C01002-K1, C04125-K2, C05307-K2, which indicates a common actor across cardholders. Earlier confirmed cases CC-3778, CC-4917, CC-4991 show the same pattern. When contacted, the cardholder stated they did not make the transaction(s), did not share the card details, and still has the card. The bank has recommended BLOCK_CARD, MONITOR_CONNECTED_CARDS and opened an internal case; the report is filed under R6, §3a.",
+    "subjects": [
+      "C09588",
+      "C09588-K1",
+      "C00294-K2",
+      "C01002-K1",
+      "C04125-K2",
+      "C05307-K2",
+      "C06362-K1",
+      "C06630-K2",
+      "C08450-K2",
+      "C09492-K1",
+      "GT-I9060M Build/KTU84P |  | chrome 65.0 for android | "
+    ],
+    "total_amount_usd": 58.38,
+    "activity_dates": [
+      "2016-11-06",
+      "2016-11-06"
+    ]
+  },
+  "stop_reason": "The customer's reply settled the question (section 6): probability moved from 0.74 to 0.96 and the episode (1 transaction(s), $58.38) is scoped. Further steps would not change the actions.",
+  "tool_calls": 10,
+  "tokens": 1496,
+  "latency_s": 36.57,
+  "monitor": {
+    "sweep": "rare_device_ring",
+    "trigger_text": "Monitor sweep: rare device profile GT-I9060M Build/KTU84P |  | chrome 65.0 for android |  paid about $58 on 8 cards within 7 days.",
+    "flagged_txn_id": "3436636",
+    "card_id": "C09588-K1"
+  }
+}

@@ -1,0 +1,142 @@
+// Installed queries: the agent's graph tools on the TigerGraph lane.
+// Each mirrors the function of the same name in kavach/duckq.py.
+
+CREATE OR REPLACE QUERY card_history(VERTEX<Card> c) FOR GRAPH Fraud SYNTAX V2 {
+  S = {c};
+  T = SELECT t FROM S:s -(MADE>)- Transaction:t ORDER BY t.ts ASC LIMIT 100000;
+  PRINT T;
+}
+
+CREATE OR REPLACE QUERY card_window(VERTEX<Card> c, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
+  S = {c};
+  T = SELECT t FROM S:s -(MADE>)- Transaction:t WHERE t.ts >= t_from AND t.ts <= t_to ORDER BY t.ts ASC LIMIT 100000;
+  PRINT T;
+}
+
+CREATE OR REPLACE QUERY txn_detail(VERTEX<Transaction> t) FOR GRAPH Fraud SYNTAX V2 {
+  S = {t};
+  PRINT S;
+}
+
+CREATE OR REPLACE QUERY customer_cards(VERTEX<Customer> cu) FOR GRAPH Fraud SYNTAX V2 {
+  SumAccum<INT> @n; MinAccum<DATETIME> @first_ts; MaxAccum<DATETIME> @last_ts;
+  S = {cu};
+  C = SELECT c FROM S:s -(OWNS>)- Card:c;
+  C = SELECT c FROM C:c -(MADE>)- Transaction:t ACCUM c.@n += 1, c.@first_ts += t.ts, c.@last_ts += t.ts;
+  PRINT C[C.card4, C.card6, C.@n, C.@first_ts, C.@last_ts];
+}
+
+CREATE OR REPLACE QUERY device_neighbors(VERTEX<DeviceProfile> d, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
+  SumAccum<INT> @n; SumAccum<DOUBLE> @amt; MinAccum<DATETIME> @first_ts; MaxAccum<DATETIME> @last_ts;
+  AvgAccum @mean_risk; SumAccum<INT> @n_new;
+  S = {d};
+  T = SELECT t FROM S:s -(DEVICE_OF>)- Transaction:t WHERE t.ts >= t_from AND t.ts <= t_to;
+  C = SELECT c FROM T:t -(MADE_BY>)- Card:c
+      ACCUM c.@n += 1, c.@amt += t.amt, c.@first_ts += t.ts, c.@last_ts += t.ts, c.@mean_risk += t.risk_score,
+            IF t.dev_new THEN c.@n_new += 1 END;
+  PRINT C[C.@n, C.@amt, C.@first_ts, C.@last_ts, C.@mean_risk, C.@n_new];
+}
+
+CREATE OR REPLACE QUERY device_txns(VERTEX<DeviceProfile> d, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
+  S = {d};
+  T = SELECT t FROM S:s -(DEVICE_OF>)- Transaction:t WHERE t.ts >= t_from AND t.ts <= t_to ORDER BY t.ts ASC LIMIT 100000;
+  PRINT T;
+}
+
+CREATE OR REPLACE QUERY device_popularity(VERTEX<DeviceProfile> d) FOR GRAPH Fraud SYNTAX V2 {
+  S = {d};
+  PRINT S[S.n_cards];
+}
+
+CREATE OR REPLACE QUERY region_activity(VERTEX<BillingRegion> r, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
+  // cards transacting in a region in the window; first_time = no earlier txn of that card in the region
+  SumAccum<INT> @n; SumAccum<DOUBLE> @amt; MinAccum<DATETIME> @first_ts; MaxAccum<DATETIME> @last_ts;
+  AvgAccum @mean_risk; OrAccum @seen_before;
+  S = {r};
+  T = SELECT t FROM S:s -(REGION_OF>)- Transaction:t WHERE t.ts <= t_to;
+  C = SELECT c FROM T:t -(MADE_BY>)- Card:c
+      ACCUM IF t.ts < t_from THEN c.@seen_before += TRUE
+            ELSE c.@n += 1, c.@amt += t.amt, c.@first_ts += t.ts, c.@last_ts += t.ts, c.@mean_risk += t.risk_score END
+      HAVING c.@n > 0;
+  PRINT C[C.@n, C.@amt, C.@first_ts, C.@last_ts, C.@mean_risk, C.@seen_before];
+}
+
+CREATE OR REPLACE QUERY email_neighbors_r(VERTEX<EmailDomain> e, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
+  SumAccum<INT> @n; SumAccum<DOUBLE> @amt; MinAccum<DATETIME> @first_ts; MaxAccum<DATETIME> @last_ts; AvgAccum @mean_risk;
+  S = {e};
+  T = SELECT t FROM S:s -(RECIPIENT_EMAIL_OF>)- Transaction:t WHERE t.ts >= t_from AND t.ts <= t_to;
+  C = SELECT c FROM T:t -(MADE_BY>)- Card:c
+      ACCUM c.@n += 1, c.@amt += t.amt, c.@first_ts += t.ts, c.@last_ts += t.ts, c.@mean_risk += t.risk_score;
+  PRINT C[C.@n, C.@amt, C.@first_ts, C.@last_ts, C.@mean_risk];
+}
+
+CREATE OR REPLACE QUERY email_neighbors_p(VERTEX<EmailDomain> e, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
+  SumAccum<INT> @n; SumAccum<DOUBLE> @amt; MinAccum<DATETIME> @first_ts; MaxAccum<DATETIME> @last_ts; AvgAccum @mean_risk;
+  S = {e};
+  T = SELECT t FROM S:s -(PURCHASER_EMAIL_OF>)- Transaction:t WHERE t.ts >= t_from AND t.ts <= t_to;
+  C = SELECT c FROM T:t -(MADE_BY>)- Card:c
+      ACCUM c.@n += 1, c.@amt += t.amt, c.@first_ts += t.ts, c.@last_ts += t.ts, c.@mean_risk += t.risk_score;
+  PRINT C[C.@n, C.@amt, C.@first_ts, C.@last_ts, C.@mean_risk];
+}
+
+CREATE OR REPLACE QUERY holder_cards(VERTEX<Card> c) FOR GRAPH Fraud SYNTAX V2 {
+  SumAccum<INT> @n;
+  S = {c};
+  H = SELECT h FROM S:s -(CARD_HOLDER>)- Holder:h;
+  C = SELECT k FROM H:h -(HOLDER_CARD>)- Card:k ACCUM k.@n += 1;
+  PRINT C[C.@n];
+}
+
+CREATE OR REPLACE QUERY closed_cases_for(SET<VERTEX<Card>> cards, SET<VERTEX<Transaction>> txns, SET<VERTEX<DeviceProfile>> devices) FOR GRAPH Fraud SYNTAX V2 {
+  // closed cases touching the cards (as subject or connected), their transactions, or transactions on the devices
+  SetAccum<STRING> @via;
+  C = cards;
+  X1 = SELECT cc FROM C:c -(CARD_CASE>)- ClosedCase:cc ACCUM cc.@via += "card";
+  X2 = SELECT cc FROM C:c -(CONNECTED_CASE>)- ClosedCase:cc ACCUM cc.@via += "connected_card";
+  T = txns;
+  X3 = SELECT cc FROM T:t -(INVOLVED_IN>)- ClosedCase:cc ACCUM cc.@via += "txn";
+  D = devices;
+  DT = SELECT t FROM D:d -(DEVICE_OF>)- Transaction:t;
+  X4 = SELECT cc FROM DT:t -(INVOLVED_IN>)- ClosedCase:cc ACCUM cc.@via += "device";
+  R = X1 UNION X2 UNION X3 UNION X4;
+  PRINT R[R.outcome, R.pattern, R.opened_at, R.n_txns, R.exposure_usd, R.report_filed, R.analyst_notes, R.@via];
+}
+
+CREATE OR REPLACE QUERY case_memory(VERTEX<Card> c) FOR GRAPH Fraud SYNTAX V2 {
+  // earlier investigation cases written back by the agent that touch this card
+  S = {c};
+  I = SELECT i FROM S:s -(CARD_INV_CASE>)- InvestigationCase:i;
+  PRINT I;
+}
+
+CREATE OR REPLACE QUERY holder_fraud_history(SET<STRING> keys, DATETIME before) FOR GRAPH Fraud SYNTAX V2 {
+  // closed cases whose transactions belong to the same underlying accounts (Holder = card1|addr1|start day)
+  SetAccum<STRING> @hk;
+  H = to_vertex_set(keys, "Holder");
+  C = SELECT c FROM H:h -(HOLDER_CARD>)- Card:c;
+  T = SELECT t FROM C:c -(MADE>)- Transaction:t WHERE t.holder_key IN keys;
+  X = SELECT cc FROM T:t -(INVOLVED_IN>)- ClosedCase:cc WHERE cc.opened_at < before ACCUM cc.@hk += t.holder_key;
+  PRINT X[X.outcome, X.pattern, X.opened_at, X.@hk];
+}
+
+CREATE OR REPLACE QUERY amount_peers_r(VERTEX<EmailDomain> e, STRING product, DOUBLE lo, DOUBLE hi, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
+  // online transactions on any card with the same product and an amount in [lo, hi] through one email domain
+  S = {e};
+  T = SELECT t FROM S:s -(RECIPIENT_EMAIL_OF>)- Transaction:t
+      WHERE t.product_cd == product AND t.channel == "online" AND t.amt >= lo AND t.amt <= hi AND t.ts >= t_from AND t.ts <= t_to;
+  PRINT T;
+}
+
+CREATE OR REPLACE QUERY amount_peers_p(VERTEX<EmailDomain> e, STRING product, DOUBLE lo, DOUBLE hi, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
+  // online transactions on any card with the same product and an amount in [lo, hi] through one email domain
+  S = {e};
+  T = SELECT t FROM S:s -(PURCHASER_EMAIL_OF>)- Transaction:t
+      WHERE t.product_cd == product AND t.channel == "online" AND t.amt >= lo AND t.amt <= hi AND t.ts >= t_from AND t.ts <= t_to;
+  PRINT T;
+}
+
+CREATE OR REPLACE QUERY band_txns(DOUBLE lo, DOUBLE hi, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
+  // online transactions in an amount band (the sub-threshold template scan); bursts are grouped client side
+  T = SELECT t FROM Transaction:t WHERE t.channel == "online" AND t.amt >= lo AND t.amt < hi AND t.ts >= t_from AND t.ts <= t_to;
+  PRINT T[T.card_id, T.ts, T.amt];
+}

@@ -1,0 +1,110 @@
+{
+  "case_id": "HHG-009",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.89,
+    "pattern": "card_not_present_fraud",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3581141"
+    ],
+    "first_suspicious_txn_id": "3581141",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 30.02,
+    "evidence": [
+      {
+        "claim": "Customer denied the transaction(s) when asked: Customer confirms the dispute: they did not make the purchase, did not share the card details, and still has the card",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": []
+      },
+      {
+        "claim": "The same amount ($29.97, product S) was charged on card C08299-K1 before, on 2016-12-15",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C08299-K1)",
+        "entity_ids": [
+          "3545489",
+          "3581141"
+        ]
+      },
+      {
+        "claim": "Vesta count C1 = 24 on this transaction against a median of 1 on card C08299-K1 (unnamed count features; on product C, C2 of 30 or more was about five times as often fraud in the closed months)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C08299-K1)",
+        "entity_ids": [
+          "3581141"
+        ]
+      },
+      {
+        "claim": "Policy applied, Fraud Policy R2: Customer denies the transaction: Recommend BLOCK_CARD and CREATE_CASE.",
+        "source": "document",
+        "ref": "document:README#POLICY-R2",
+        "entity_ids": []
+      },
+      {
+        "claim": "Pattern definition, Known fraud patterns: Card-not-present fraud: The number is used online without the card.",
+        "source": "document",
+        "ref": "document:README#PATTERN-2",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-2408",
+      "CC-2897",
+      "CC-2449",
+      "CC-2611",
+      "CC-0080"
+    ],
+    "summary": "Alert HHG-009 opened because customer C08299 disputed transaction 3581141 ($30.02, product S, online, 2016-12-28 12:10) on card C08299-K1. Assessed as card-not-present fraud with fraud probability 0.89: Customer denied the transaction(s) when asked: Customer confirms the dispute: they did not make the purchase, did not share the card details, and still has the card; Vesta count C1 = 24 on this transaction against a median of 1 on card C08299-K1 (unnamed count features; on product C, C2 of 30 or more was about five times as often fraud in the closed months). The episode covers 1 transaction(s) totalling $30.02. Evidence request: Customer confirms the dispute: they did not make the purchase, did not share the card details, and still has the card.",
+    "written_to_graph": false,
+    "graph_case_id": ""
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 6,
+      "assumed_response": "Customer confirms the dispute: they did not make the purchase, did not share the card details, and still has the card"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1 and R2: confirm which of the related transactions the customer disputes before blocking"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "§3a: requesting evidence opens a case"
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: block and reissue; exposure $30.02 is under $2,500"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2 and §3a: open the internal fraud case with the evidence attached"
+      }
+    ],
+    "what_changed": "The customer's denial raised the fraud probability from 0.80 to 0.89, which supports containment under R2: BLOCK_CARD, CREATE_CASE."
+  },
+  "sar": {
+    "file": false,
+    "reason": "§3a: fraud confirmed but exposure $30.02 is under $1,000 with no shared device, region cluster or link to another customer's fraud, so a case without a report",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "The customer's reply settled the question (section 6): probability moved from 0.80 to 0.89 and the episode (1 transaction(s), $30.02) is scoped. Further steps would not change the actions.",
+  "tool_calls": 8,
+  "tokens": 0,
+  "latency_s": 146.43
+}

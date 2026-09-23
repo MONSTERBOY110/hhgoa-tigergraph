@@ -1,0 +1,143 @@
+{
+  "case_id": "HHG-011",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.96,
+    "pattern": "card_not_present_new_device",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3583368"
+    ],
+    "first_suspicious_txn_id": "3583368",
+    "connected_card_ids": [
+      "C03938-K1",
+      "C05595-K1",
+      "C05678-K1"
+    ],
+    "connected_device_profiles": [
+      "SM-G610F Build/NRD90M |  | chrome 66.0 for android | "
+    ],
+    "exposure_usd": 131.3,
+    "evidence": [
+      {
+        "claim": "Rare device profile SM-G610F Build/NRD90M |  | chrome 66.0 for android |  (4 cards ever) was used on 3 other cards within 30 days, 1 of them for amounts within 2% of this $131.30 purchase (in the closed months this shape was 6.8 times more common in confirmed fraud than in normal online traffic)",
+        "source": "graph",
+        "ref": "query:device_neighbors(device_key=SM-G610F Build/NRD90M |  | chrome 66.0 for android | , days=30)",
+        "entity_ids": [
+          "C03938-K1",
+          "C05595-K1",
+          "C05678-K1"
+        ]
+      },
+      {
+        "claim": "Customer C11923 disputes transaction 3583368 ($131.30); in the bank's closed cases every customer-reported alert was confirmed fraud",
+        "source": "customer",
+        "ref": "case_pack:trigger_text",
+        "entity_ids": [
+          "3583368",
+          "C11923"
+        ]
+      },
+      {
+        "claim": "Identity record marks the device (SM-G610F Build/NRD90M |  | chrome 66.0 for android | ) as New for this account; 41% of the card's earlier online purchases were also from New devices (in the closed cases a New device is not more common in fraud than in normal traffic for this product)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C11923-K2)",
+        "entity_ids": [
+          "3583368"
+        ]
+      },
+      {
+        "claim": "Policy applied, Fraud Policy R6: Shared origin: When several cards show fraud from the same device profile, the same billing region, or the same recipient email in one window, name the shared element, recommend CREATE_CASE and FILE_REPORT, and MONITOR_CONNECTED_CARDS for every card that ...",
+        "source": "document",
+        "ref": "document:README#POLICY-R6",
+        "entity_ids": []
+      },
+      {
+        "claim": "Pattern definition, Known fraud patterns: Card-not-present fraud from a new device: Same as above, with the identity record marking the device as New for this account, sometimes behind a proxy.",
+        "source": "document",
+        "ref": "document:README#PATTERN-3",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-3683",
+      "CC-2198",
+      "CC-2244",
+      "CC-5508"
+    ],
+    "summary": "The alert was triggered when customer C11923 reported that they never made the $131.30 online purchase (transaction 3583368) on their visa debit card C11923-K2. The strongest finding is that the rare device profile SM-G610F Build/NRD90M | | chrome 66.0 for android |, used on only four cards, was also used on three other cards within 30 days, with one of those transactions matching the amount within 2 %; additionally, in the bank's closed cases every customer-reported alert of this type was confirmed fraud. The case verdict is fraud with a probability of 0.96. The recommended actions are to block the card, create a case file, file a report, and monitor the connected cards.",
+    "written_to_graph": false,
+    "graph_case_id": ""
+  },
+  "evidence_requests": [],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: block and reissue; exposure $131.30 is under $2,500"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2 and §3a: open the internal fraud case with the evidence attached"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R6 and §3a: activity connects to a shared origin (device profile SM-G610F Build/NRD90M |  | chrome 66.0 for android | )"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: 3 other card(s) share device profile SM-G610F Build/NRD90M |  | chrome 66.0 for android | ; place them under monitoring"
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: block and reissue; exposure $131.30 is under $2,500"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2 and §3a: open the internal fraud case with the evidence attached"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R6 and §3a: activity connects to a shared origin (device profile SM-G610F Build/NRD90M |  | chrome 66.0 for android | )"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: 3 other card(s) share device profile SM-G610F Build/NRD90M |  | chrome 66.0 for android | ; place them under monitoring"
+      }
+    ],
+    "what_changed": "nothing"
+  },
+  "sar": {
+    "file": true,
+    "reason": "R6 and §3a: activity connects to a shared origin (device profile SM-G610F Build/NRD90M |  | chrome 66.0 for android | )",
+    "narrative": "This report concerns customer C11923, card C11923-K2, issued as a visa debit. On 2016-12-29, 1 transaction(s) totalling $131.30 were identified as part of one fraud episode, beginning with transaction 3583368. The activity took place online, product code(s) C, from device profile(s) SM-G610F Build/NRD90M |  | chrome 66.0 for android | . The transactions were purchases from one device profile used across several customers' cards. The activity is assessed as card-not-present fraud from a device new to the account: Rare device profile SM-G610F Build/NRD90M |  | chrome 66.0 for android |  (4 cards ever) was used on 3 other cards within 30 days, 1 of them for amounts within 2% of this $131.30 purchase (in the closed months this shape was 6.8 times more common in confirmed fraud than in normal online traffic); Customer C11923 disputes transaction 3583368 ($131.30); in the bank's closed cases every customer-reported alert was confirmed fraud. The same device profile SM-G610F Build/NRD90M |  | chrome 66.0 for android |  links this activity to 3 other card(s), including C03938-K1, C05595-K1, C05678-K1, which indicates a common actor across cardholders. Earlier confirmed cases CC-3683, CC-2198, CC-2244 show the same pattern. The cardholder reported the disputed transaction to the bank and denied making it. The bank has recommended BLOCK_CARD, MONITOR_CONNECTED_CARDS and opened an internal case; the report is filed under R6, §3a.",
+    "subjects": [
+      "C11923",
+      "C11923-K2",
+      "C03938-K1",
+      "C05595-K1",
+      "C05678-K1",
+      "SM-G610F Build/NRD90M |  | chrome 66.0 for android | "
+    ],
+    "total_amount_usd": 131.3,
+    "activity_dates": [
+      "2016-12-29",
+      "2016-12-29"
+    ]
+  },
+  "stop_reason": "Fraud probability 0.96 is at or above 0.85 with 2 independent evidence groups (network, customer), so section 6 allows a decision without asking the customer; further queries would not change the actions.",
+  "tool_calls": 10,
+  "tokens": 1306,
+  "latency_s": 288.66
+}

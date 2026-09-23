@@ -1,0 +1,1072 @@
+{
+  "C": {
+    "device_new_for_account": {
+      "n_fraud": 1320,
+      "n_cleared": 90,
+      "p_fraud": 0.2311,
+      "p_population": 0.3427,
+      "LR_pop": 0.684,
+      "p_fraud_high_score": 0.2623,
+      "p_cleared": 0.9778,
+      "LR_hi": 0.283
+    },
+    "proxy": {
+      "n_fraud": 1320,
+      "n_cleared": 90,
+      "p_fraud": 0.0174,
+      "p_population": 0.0088,
+      "LR_pop": 1.456,
+      "p_fraud_high_score": 0.0031,
+      "p_cleared": 0.0,
+      "LR_hi": 1.154
+    },
+    "product_unseen": {
+      "n_fraud": 1320,
+      "n_cleared": 90,
+      "p_fraud": 0.028,
+      "p_population": 0.006,
+      "LR_pop": 2.381,
+      "p_fraud_high_score": 0.0216,
+      "p_cleared": 0.0,
+      "LR_hi": 2.08
+    },
+    "region_unseen": {
+      "n_fraud": 1320,
+      "n_cleared": 90,
+      "p_fraud": 0.0159,
+      "p_population": 0.0098,
+      "LR_pop": 1.307,
+      "p_fraud_high_score": 0.0154,
+      "p_cleared": 0.0444,
+      "LR_hi": 0.55
+    },
+    "device_unseen_on_card": {
+      "n_fraud": 1320,
+      "n_cleared": 90,
+      "p_fraud": 0.4144,
+      "p_population": 0.2198,
+      "LR_pop": 1.847,
+      "p_fraud_high_score": 0.4043,
+      "p_cleared": 0.3222,
+      "LR_hi": 1.24
+    },
+    "email_unseen_on_card": {
+      "n_fraud": 1320,
+      "n_cleared": 90,
+      "p_fraud": 0.0402,
+      "p_population": 0.0188,
+      "LR_pop": 1.742,
+      "p_fraud_high_score": 0.0556,
+      "p_cleared": 0.0667,
+      "LR_hi": 0.872
+    },
+    "amount_outlier": {
+      "n_fraud": 1320,
+      "n_cleared": 90,
+      "p_fraud": 0.0379,
+      "p_population": 0.022,
+      "LR_pop": 1.497,
+      "p_fraud_high_score": 0.0463,
+      "p_cleared": 0.0778,
+      "LR_hi": 0.678
+    },
+    "amount_above_card_max": {
+      "n_fraud": 1320,
+      "n_cleared": 90,
+      "p_fraud": 0.0371,
+      "p_population": 0.011,
+      "LR_pop": 2.249,
+      "p_fraud_high_score": 0.0278,
+      "p_cleared": 0.0778,
+      "LR_hi": 0.489
+    },
+    "burst_1h": {
+      "n_fraud": 1320,
+      "n_cleared": 90,
+      "p_fraud": 0.0341,
+      "p_population": 0.3188,
+      "LR_pop": 0.134,
+      "p_fraud_high_score": 0.0432,
+      "p_cleared": 0.0556,
+      "LR_hi": 0.837
+    },
+    "new_card": {
+      "n_fraud": 1320,
+      "n_cleared": 90,
+      "p_fraud": 0.0955,
+      "p_population": 0.0625,
+      "LR_pop": 1.454,
+      "p_fraud_high_score": 0.1019,
+      "p_cleared": 0.2333,
+      "LR_hi": 0.481
+    },
+    "m4_m2": {
+      "n_fraud": 1320,
+      "n_cleared": 90,
+      "p_fraud": 0.7886,
+      "p_population": 0.8131,
+      "LR_pop": 0.97,
+      "p_fraud_high_score": 0.787,
+      "p_cleared": 0.8444,
+      "LR_hi": 0.934
+    },
+    "m5_true": {
+      "n_fraud": 1320,
+      "n_cleared": 90,
+      "p_fraud": 0.0,
+      "p_population": 0.0,
+      "LR_pop": 1.0,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    },
+    "m6_false": {
+      "n_fraud": 1320,
+      "n_cleared": 90,
+      "p_fraud": 0.0,
+      "p_population": 0.0,
+      "LR_pop": 1.0,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    },
+    "dist1_far": {
+      "n_fraud": 1320,
+      "n_cleared": 90,
+      "p_fraud": 0.0,
+      "p_population": 0.0,
+      "LR_pop": 1.0,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    },
+    "risk_high": {
+      "n_fraud": 1320,
+      "n_cleared": 90,
+      "p_fraud": 0.2455,
+      "p_population": 0.0473,
+      "LR_pop": 4.457,
+      "p_fraud_high_score": 1.0,
+      "p_cleared": 1.0,
+      "LR_hi": 1.0
+    },
+    "risk_mid": {
+      "n_fraud": 1320,
+      "n_cleared": 90,
+      "p_fraud": 0.3174,
+      "p_population": 0.0871,
+      "LR_pop": 3.372,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    },
+    "risk_low": {
+      "n_fraud": 1320,
+      "n_cleared": 90,
+      "p_fraud": 0.1947,
+      "p_population": 0.6603,
+      "LR_pop": 0.305,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    }
+  },
+  "H": {
+    "device_new_for_account": {
+      "n_fraud": 619,
+      "n_cleared": 243,
+      "p_fraud": 0.4039,
+      "p_population": 0.485,
+      "LR_pop": 0.836,
+      "p_fraud_high_score": 0.3966,
+      "p_cleared": 0.9918,
+      "LR_hi": 0.412
+    },
+    "proxy": {
+      "n_fraud": 619,
+      "n_cleared": 243,
+      "p_fraud": 0.0727,
+      "p_population": 0.0501,
+      "LR_pop": 1.376,
+      "p_fraud_high_score": 0.1034,
+      "p_cleared": 0.0947,
+      "LR_hi": 1.077
+    },
+    "product_unseen": {
+      "n_fraud": 619,
+      "n_cleared": 243,
+      "p_fraud": 0.063,
+      "p_population": 0.0291,
+      "LR_pop": 1.866,
+      "p_fraud_high_score": 0.0402,
+      "p_cleared": 0.0535,
+      "LR_hi": 0.819
+    },
+    "region_unseen": {
+      "n_fraud": 619,
+      "n_cleared": 243,
+      "p_fraud": 0.1309,
+      "p_population": 0.0839,
+      "LR_pop": 1.499,
+      "p_fraud_high_score": 0.1322,
+      "p_cleared": 0.2305,
+      "LR_hi": 0.608
+    },
+    "device_unseen_on_card": {
+      "n_fraud": 619,
+      "n_cleared": 243,
+      "p_fraud": 0.5428,
+      "p_population": 0.495,
+      "LR_pop": 1.095,
+      "p_fraud_high_score": 0.5632,
+      "p_cleared": 0.5514,
+      "LR_hi": 1.021
+    },
+    "email_unseen_on_card": {
+      "n_fraud": 619,
+      "n_cleared": 243,
+      "p_fraud": 0.0792,
+      "p_population": 0.0618,
+      "LR_pop": 1.241,
+      "p_fraud_high_score": 0.0862,
+      "p_cleared": 0.1317,
+      "LR_hi": 0.7
+    },
+    "amount_outlier": {
+      "n_fraud": 619,
+      "n_cleared": 243,
+      "p_fraud": 0.0533,
+      "p_population": 0.0087,
+      "LR_pop": 3.387,
+      "p_fraud_high_score": 0.046,
+      "p_cleared": 0.0123,
+      "LR_hi": 2.04
+    },
+    "amount_above_card_max": {
+      "n_fraud": 619,
+      "n_cleared": 243,
+      "p_fraud": 0.0404,
+      "p_population": 0.0042,
+      "LR_pop": 3.546,
+      "p_fraud_high_score": 0.0172,
+      "p_cleared": 0.0082,
+      "LR_hi": 1.319
+    },
+    "burst_1h": {
+      "n_fraud": 619,
+      "n_cleared": 243,
+      "p_fraud": 0.0517,
+      "p_population": 0.293,
+      "LR_pop": 0.204,
+      "p_fraud_high_score": 0.0345,
+      "p_cleared": 0.0576,
+      "LR_hi": 0.702
+    },
+    "new_card": {
+      "n_fraud": 619,
+      "n_cleared": 243,
+      "p_fraud": 0.2165,
+      "p_population": 0.1151,
+      "LR_pop": 1.81,
+      "p_fraud_high_score": 0.1782,
+      "p_cleared": 0.2305,
+      "LR_hi": 0.791
+    },
+    "m4_m2": {
+      "n_fraud": 619,
+      "n_cleared": 243,
+      "p_fraud": 0.0,
+      "p_population": 0.0,
+      "LR_pop": 1.0,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    },
+    "m5_true": {
+      "n_fraud": 619,
+      "n_cleared": 243,
+      "p_fraud": 0.0,
+      "p_population": 0.0,
+      "LR_pop": 1.0,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    },
+    "m6_false": {
+      "n_fraud": 619,
+      "n_cleared": 243,
+      "p_fraud": 0.0,
+      "p_population": 0.0,
+      "LR_pop": 1.0,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    },
+    "dist1_far": {
+      "n_fraud": 619,
+      "n_cleared": 243,
+      "p_fraud": 0.0,
+      "p_population": 0.0,
+      "LR_pop": 1.0,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    },
+    "risk_high": {
+      "n_fraud": 619,
+      "n_cleared": 243,
+      "p_fraud": 0.2811,
+      "p_population": 0.1086,
+      "LR_pop": 2.455,
+      "p_fraud_high_score": 1.0,
+      "p_cleared": 1.0,
+      "LR_hi": 1.0
+    },
+    "risk_mid": {
+      "n_fraud": 619,
+      "n_cleared": 243,
+      "p_fraud": 0.3344,
+      "p_population": 0.1949,
+      "LR_pop": 1.68,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    },
+    "risk_low": {
+      "n_fraud": 619,
+      "n_cleared": 243,
+      "p_fraud": 0.1616,
+      "p_population": 0.5171,
+      "LR_pop": 0.325,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    }
+  },
+  "R": {
+    "device_new_for_account": {
+      "n_fraud": 512,
+      "n_cleared": 365,
+      "p_fraud": 0.4375,
+      "p_population": 0.5002,
+      "LR_pop": 0.877,
+      "p_fraud_high_score": 0.4918,
+      "p_cleared": 0.9808,
+      "LR_hi": 0.511
+    },
+    "proxy": {
+      "n_fraud": 512,
+      "n_cleared": 365,
+      "p_fraud": 0.1172,
+      "p_population": 0.0542,
+      "LR_pop": 1.981,
+      "p_fraud_high_score": 0.1475,
+      "p_cleared": 0.0877,
+      "LR_hi": 1.556
+    },
+    "product_unseen": {
+      "n_fraud": 512,
+      "n_cleared": 365,
+      "p_fraud": 0.0566,
+      "p_population": 0.0283,
+      "LR_pop": 1.74,
+      "p_fraud_high_score": 0.0328,
+      "p_cleared": 0.0466,
+      "LR_hi": 0.793
+    },
+    "region_unseen": {
+      "n_fraud": 512,
+      "n_cleared": 365,
+      "p_fraud": 0.1523,
+      "p_population": 0.0877,
+      "LR_pop": 1.661,
+      "p_fraud_high_score": 0.1393,
+      "p_cleared": 0.263,
+      "LR_hi": 0.563
+    },
+    "device_unseen_on_card": {
+      "n_fraud": 512,
+      "n_cleared": 365,
+      "p_fraud": 0.6055,
+      "p_population": 0.4606,
+      "LR_pop": 1.308,
+      "p_fraud_high_score": 0.5574,
+      "p_cleared": 0.5479,
+      "LR_hi": 1.017
+    },
+    "email_unseen_on_card": {
+      "n_fraud": 512,
+      "n_cleared": 365,
+      "p_fraud": 0.0781,
+      "p_population": 0.06,
+      "LR_pop": 1.26,
+      "p_fraud_high_score": 0.0902,
+      "p_cleared": 0.137,
+      "LR_hi": 0.702
+    },
+    "amount_outlier": {
+      "n_fraud": 512,
+      "n_cleared": 365,
+      "p_fraud": 0.0625,
+      "p_population": 0.0288,
+      "LR_pop": 1.866,
+      "p_fraud_high_score": 0.0574,
+      "p_cleared": 0.0712,
+      "LR_hi": 0.848
+    },
+    "amount_above_card_max": {
+      "n_fraud": 512,
+      "n_cleared": 365,
+      "p_fraud": 0.0371,
+      "p_population": 0.0203,
+      "LR_pop": 1.556,
+      "p_fraud_high_score": 0.041,
+      "p_cleared": 0.0438,
+      "LR_hi": 0.955
+    },
+    "burst_1h": {
+      "n_fraud": 512,
+      "n_cleared": 365,
+      "p_fraud": 0.0449,
+      "p_population": 0.2586,
+      "LR_pop": 0.204,
+      "p_fraud_high_score": 0.0246,
+      "p_cleared": 0.0219,
+      "LR_hi": 1.064
+    },
+    "new_card": {
+      "n_fraud": 512,
+      "n_cleared": 365,
+      "p_fraud": 0.1836,
+      "p_population": 0.128,
+      "LR_pop": 1.403,
+      "p_fraud_high_score": 0.2213,
+      "p_cleared": 0.2356,
+      "LR_hi": 0.944
+    },
+    "m4_m2": {
+      "n_fraud": 512,
+      "n_cleared": 365,
+      "p_fraud": 0.0,
+      "p_population": 0.0,
+      "LR_pop": 1.0,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    },
+    "m5_true": {
+      "n_fraud": 512,
+      "n_cleared": 365,
+      "p_fraud": 0.0,
+      "p_population": 0.0,
+      "LR_pop": 1.0,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    },
+    "m6_false": {
+      "n_fraud": 512,
+      "n_cleared": 365,
+      "p_fraud": 0.0,
+      "p_population": 0.0,
+      "LR_pop": 1.0,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    },
+    "dist1_far": {
+      "n_fraud": 512,
+      "n_cleared": 365,
+      "p_fraud": 0.0,
+      "p_population": 0.0,
+      "LR_pop": 1.0,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    },
+    "risk_high": {
+      "n_fraud": 512,
+      "n_cleared": 365,
+      "p_fraud": 0.2383,
+      "p_population": 0.12,
+      "LR_pop": 1.91,
+      "p_fraud_high_score": 1.0,
+      "p_cleared": 1.0,
+      "LR_hi": 1.0
+    },
+    "risk_mid": {
+      "n_fraud": 512,
+      "n_cleared": 365,
+      "p_fraud": 0.3457,
+      "p_population": 0.2171,
+      "LR_pop": 1.566,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    },
+    "risk_low": {
+      "n_fraud": 512,
+      "n_cleared": 365,
+      "p_fraud": 0.1621,
+      "p_population": 0.4961,
+      "LR_pop": 0.34,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    }
+  },
+  "S": {
+    "device_new_for_account": {
+      "n_fraud": 142,
+      "n_cleared": 65,
+      "p_fraud": 0.4507,
+      "p_population": 0.2667,
+      "LR_pop": 1.665,
+      "p_fraud_high_score": 0.3846,
+      "p_cleared": 0.9538,
+      "LR_hi": 0.415
+    },
+    "proxy": {
+      "n_fraud": 142,
+      "n_cleared": 65,
+      "p_fraud": 0.0986,
+      "p_population": 0.0835,
+      "LR_pop": 1.161,
+      "p_fraud_high_score": 0.2308,
+      "p_cleared": 0.0923,
+      "LR_hi": 2.233
+    },
+    "product_unseen": {
+      "n_fraud": 142,
+      "n_cleared": 65,
+      "p_fraud": 0.0986,
+      "p_population": 0.0521,
+      "LR_pop": 1.748,
+      "p_fraud_high_score": 0.0769,
+      "p_cleared": 0.2154,
+      "LR_hi": 0.412
+    },
+    "region_unseen": {
+      "n_fraud": 142,
+      "n_cleared": 65,
+      "p_fraud": 0.0563,
+      "p_population": 0.0409,
+      "LR_pop": 1.304,
+      "p_fraud_high_score": 0.1154,
+      "p_cleared": 0.1692,
+      "LR_hi": 0.715
+    },
+    "device_unseen_on_card": {
+      "n_fraud": 142,
+      "n_cleared": 65,
+      "p_fraud": 0.5141,
+      "p_population": 0.3209,
+      "LR_pop": 1.584,
+      "p_fraud_high_score": 0.5769,
+      "p_cleared": 0.5231,
+      "LR_hi": 1.099
+    },
+    "email_unseen_on_card": {
+      "n_fraud": 142,
+      "n_cleared": 65,
+      "p_fraud": 0.0,
+      "p_population": 0.0,
+      "LR_pop": 1.0,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    },
+    "amount_outlier": {
+      "n_fraud": 142,
+      "n_cleared": 65,
+      "p_fraud": 0.0141,
+      "p_population": 0.0043,
+      "LR_pop": 1.679,
+      "p_fraud_high_score": 0.0385,
+      "p_cleared": 0.0,
+      "LR_hi": 2.923
+    },
+    "amount_above_card_max": {
+      "n_fraud": 142,
+      "n_cleared": 65,
+      "p_fraud": 0.0,
+      "p_population": 0.0033,
+      "LR_pop": 0.751,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    },
+    "burst_1h": {
+      "n_fraud": 142,
+      "n_cleared": 65,
+      "p_fraud": 0.0915,
+      "p_population": 0.2701,
+      "LR_pop": 0.363,
+      "p_fraud_high_score": 0.1154,
+      "p_cleared": 0.0923,
+      "LR_hi": 1.205
+    },
+    "new_card": {
+      "n_fraud": 142,
+      "n_cleared": 65,
+      "p_fraud": 0.0915,
+      "p_population": 0.0703,
+      "LR_pop": 1.265,
+      "p_fraud_high_score": 0.0769,
+      "p_cleared": 0.2,
+      "LR_hi": 0.441
+    },
+    "m4_m2": {
+      "n_fraud": 142,
+      "n_cleared": 65,
+      "p_fraud": 0.0,
+      "p_population": 0.0,
+      "LR_pop": 1.0,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    },
+    "m5_true": {
+      "n_fraud": 142,
+      "n_cleared": 65,
+      "p_fraud": 0.0,
+      "p_population": 0.0,
+      "LR_pop": 1.0,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    },
+    "m6_false": {
+      "n_fraud": 142,
+      "n_cleared": 65,
+      "p_fraud": 0.0,
+      "p_population": 0.0,
+      "LR_pop": 1.0,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    },
+    "dist1_far": {
+      "n_fraud": 142,
+      "n_cleared": 65,
+      "p_fraud": 0.0,
+      "p_population": 0.0,
+      "LR_pop": 1.0,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    },
+    "risk_high": {
+      "n_fraud": 142,
+      "n_cleared": 65,
+      "p_fraud": 0.1831,
+      "p_population": 0.0738,
+      "LR_pop": 2.303,
+      "p_fraud_high_score": 1.0,
+      "p_cleared": 1.0,
+      "LR_hi": 1.0
+    },
+    "risk_mid": {
+      "n_fraud": 142,
+      "n_cleared": 65,
+      "p_fraud": 0.2817,
+      "p_population": 0.1203,
+      "LR_pop": 2.238,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    },
+    "risk_low": {
+      "n_fraud": 142,
+      "n_cleared": 65,
+      "p_fraud": 0.2465,
+      "p_population": 0.6185,
+      "LR_pop": 0.408,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    }
+  },
+  "W": {
+    "device_new_for_account": {
+      "n_fraud": 2072,
+      "n_cleared": 137,
+      "p_fraud": 0.0,
+      "p_population": 0.0,
+      "LR_pop": 1.0,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    },
+    "proxy": {
+      "n_fraud": 2072,
+      "n_cleared": 137,
+      "p_fraud": 0.0,
+      "p_population": 0.0,
+      "LR_pop": 1.0,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    },
+    "product_unseen": {
+      "n_fraud": 2072,
+      "n_cleared": 137,
+      "p_fraud": 0.001,
+      "p_population": 0.0003,
+      "LR_pop": 1.068,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    },
+    "region_unseen": {
+      "n_fraud": 2072,
+      "n_cleared": 137,
+      "p_fraud": 0.0613,
+      "p_population": 0.026,
+      "LR_pop": 1.978,
+      "p_fraud_high_score": 0.0698,
+      "p_cleared": 0.1387,
+      "LR_hi": 0.566
+    },
+    "device_unseen_on_card": {
+      "n_fraud": 2072,
+      "n_cleared": 137,
+      "p_fraud": 0.0,
+      "p_population": 0.0,
+      "LR_pop": 1.0,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    },
+    "email_unseen_on_card": {
+      "n_fraud": 2072,
+      "n_cleared": 137,
+      "p_fraud": 0.0352,
+      "p_population": 0.0222,
+      "LR_pop": 1.403,
+      "p_fraud_high_score": 0.0283,
+      "p_cleared": 0.0657,
+      "LR_hi": 0.564
+    },
+    "amount_outlier": {
+      "n_fraud": 2072,
+      "n_cleared": 137,
+      "p_fraud": 0.0941,
+      "p_population": 0.0533,
+      "LR_pop": 1.646,
+      "p_fraud_high_score": 0.0887,
+      "p_cleared": 0.8905,
+      "LR_hi": 0.119
+    },
+    "amount_above_card_max": {
+      "n_fraud": 2072,
+      "n_cleared": 137,
+      "p_fraud": 0.0468,
+      "p_population": 0.0172,
+      "LR_pop": 2.088,
+      "p_fraud_high_score": 0.0434,
+      "p_cleared": 0.4015,
+      "LR_hi": 0.15
+    },
+    "burst_1h": {
+      "n_fraud": 2072,
+      "n_cleared": 137,
+      "p_fraud": 0.0951,
+      "p_population": 0.221,
+      "LR_pop": 0.455,
+      "p_fraud_high_score": 0.0868,
+      "p_cleared": 0.0657,
+      "LR_hi": 1.246
+    },
+    "new_card": {
+      "n_fraud": 2072,
+      "n_cleared": 137,
+      "p_fraud": 0.0864,
+      "p_population": 0.0455,
+      "LR_pop": 1.736,
+      "p_fraud_high_score": 0.0774,
+      "p_cleared": 0.0365,
+      "LR_hi": 1.723
+    },
+    "m4_m2": {
+      "n_fraud": 2072,
+      "n_cleared": 137,
+      "p_fraud": 0.0203,
+      "p_population": 0.0087,
+      "LR_pop": 1.622,
+      "p_fraud_high_score": 0.0264,
+      "p_cleared": 0.0073,
+      "LR_hi": 1.7
+    },
+    "m5_true": {
+      "n_fraud": 2072,
+      "n_cleared": 137,
+      "p_fraud": 0.4184,
+      "p_population": 0.2464,
+      "LR_pop": 1.671,
+      "p_fraud_high_score": 0.434,
+      "p_cleared": 0.1387,
+      "LR_hi": 2.861
+    },
+    "m6_false": {
+      "n_fraud": 2072,
+      "n_cleared": 137,
+      "p_fraud": 0.5763,
+      "p_population": 0.518,
+      "LR_pop": 1.11,
+      "p_fraud_high_score": 0.5792,
+      "p_cleared": 0.4818,
+      "LR_hi": 1.194
+    },
+    "dist1_far": {
+      "n_fraud": 2072,
+      "n_cleared": 137,
+      "p_fraud": 0.1086,
+      "p_population": 0.0751,
+      "LR_pop": 1.393,
+      "p_fraud_high_score": 0.117,
+      "p_cleared": 0.0803,
+      "LR_hi": 1.366
+    },
+    "risk_high": {
+      "n_fraud": 2072,
+      "n_cleared": 137,
+      "p_fraud": 0.2558,
+      "p_population": 0.0106,
+      "LR_pop": 12.875,
+      "p_fraud_high_score": 1.0,
+      "p_cleared": 1.0,
+      "LR_hi": 1.0
+    },
+    "risk_mid": {
+      "n_fraud": 2072,
+      "n_cleared": 137,
+      "p_fraud": 0.3118,
+      "p_population": 0.0398,
+      "LR_pop": 6.461,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    },
+    "risk_low": {
+      "n_fraud": 2072,
+      "n_cleared": 137,
+      "p_fraud": 0.1882,
+      "p_population": 0.7475,
+      "LR_pop": 0.262,
+      "p_fraud_high_score": 0.0,
+      "p_cleared": 0.0,
+      "LR_hi": 1.0
+    }
+  },
+  "score_calibration": {
+    "R|1|4": {
+      "n": 1614,
+      "p": 0.0873
+    },
+    "H|1|4": {
+      "n": 1380,
+      "p": 0.1469
+    },
+    "H|0|0": {
+      "n": 71,
+      "p": 0.0274
+    },
+    "H|1|3": {
+      "n": 3790,
+      "p": 0.0794
+    },
+    "R|1|3": {
+      "n": 4365,
+      "p": 0.0543
+    },
+    "S|0|2": {
+      "n": 1,
+      "p": 0.1272
+    },
+    "C|0|0": {
+      "n": 3721,
+      "p": 0.0158
+    },
+    "S|1|1": {
+      "n": 1253,
+      "p": 0.0932
+    },
+    "R|0|1": {
+      "n": 25,
+      "p": 0.0741
+    },
+    "C|1|3": {
+      "n": 2211,
+      "p": 0.4709
+    },
+    "C|0|4": {
+      "n": 36,
+      "p": 0.9474
+    },
+    "S|0|0": {
+      "n": 24,
+      "p": 0.0385
+    },
+    "W|0|1": {
+      "n": 57524,
+      "p": 0.0254
+    },
+    "C|1|4": {
+      "n": 1091,
+      "p": 0.6029
+    },
+    "C|0|3": {
+      "n": 84,
+      "p": 0.7209
+    },
+    "H|0|2": {
+      "n": 2,
+      "p": 0.0777
+    },
+    "S|1|4": {
+      "n": 277,
+      "p": 0.1685
+    },
+    "S|0|1": {
+      "n": 1,
+      "p": 0.0932
+    },
+    "S|1|0": {
+      "n": 4109,
+      "p": 0.019
+    },
+    "C|0|1": {
+      "n": 1054,
+      "p": 0.0748
+    },
+    "W|0|3": {
+      "n": 3436,
+      "p": 0.377
+    },
+    "R|0|0": {
+      "n": 94,
+      "p": 0.0208
+    },
+    "C|1|0": {
+      "n": 27303,
+      "p": 0.033
+    },
+    "H|1|2": {
+      "n": 3187,
+      "p": 0.0778
+    },
+    "R|1|2": {
+      "n": 3908,
+      "p": 0.0512
+    },
+    "R|1|0": {
+      "n": 14702,
+      "p": 0.0134
+    },
+    "H|1|0": {
+      "n": 14414,
+      "p": 0.0142
+    },
+    "C|1|2": {
+      "n": 2599,
+      "p": 0.3468
+    },
+    "H|0|4": {
+      "n": 1,
+      "p": 0.1475
+    },
+    "C|1|1": {
+      "n": 8416,
+      "p": 0.1371
+    },
+    "W|0|4": {
+      "n": 1518,
+      "p": 0.5697
+    },
+    "W|0|0": {
+      "n": 212546,
+      "p": 0.005
+    },
+    "S|1|3": {
+      "n": 673,
+      "p": 0.1556
+    },
+    "R|1|1": {
+      "n": 4844,
+      "p": 0.0514
+    },
+    "H|1|1": {
+      "n": 4827,
+      "p": 0.0596
+    },
+    "W|0|2": {
+      "n": 9307,
+      "p": 0.1229
+    },
+    "H|0|1": {
+      "n": 23,
+      "p": 0.08
+    },
+    "S|1|2": {
+      "n": 618,
+      "p": 0.1258
+    },
+    "R|0|2": {
+      "n": 4,
+      "p": 0.0514
+    },
+    "C|0|2": {
+      "n": 203,
+      "p": 0.2976
+    },
+    "R|0|4": {
+      "n": 0,
+      "p": 0.0873
+    },
+    "H|0|3": {
+      "n": 0,
+      "p": 0.0794
+    },
+    "R|0|3": {
+      "n": 0,
+      "p": 0.0543
+    },
+    "W|1|1": {
+      "n": 0,
+      "p": 0.0254
+    },
+    "S|0|4": {
+      "n": 0,
+      "p": 0.1685
+    },
+    "W|1|3": {
+      "n": 0,
+      "p": 0.377
+    },
+    "W|1|4": {
+      "n": 0,
+      "p": 0.5697
+    },
+    "W|1|0": {
+      "n": 0,
+      "p": 0.005
+    },
+    "S|0|3": {
+      "n": 0,
+      "p": 0.1556
+    },
+    "W|1|2": {
+      "n": 0,
+      "p": 0.1229
+    }
+  },
+  "device_ring": {
+    "LR_2_other_cards": 6.82,
+    "LR_3_other_cards": 10.67,
+    "p_fraud_given_2": 0.335,
+    "p_fraud_given_3": 0.441,
+    "n_fraud": 7632,
+    "n_reference": 103293
+  }
+}

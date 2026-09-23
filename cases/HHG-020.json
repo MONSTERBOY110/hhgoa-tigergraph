@@ -1,0 +1,114 @@
+{
+  "case_id": "HHG-020",
+  "case": {
+    "status": "closed_legitimate",
+    "verdict": "legitimate",
+    "fraud_probability": 0.03,
+    "pattern": "none",
+    "pattern_description": "",
+    "affected_txn_ids": [],
+    "first_suspicious_txn_id": "",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 0.0,
+    "evidence": [
+      {
+        "claim": "Customer confirmed the transaction when asked: Customer confirms they made the purchase",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": []
+      },
+      {
+        "claim": "Model risk score 0.52. For product R transactions with an identity record in this score band, 5% were confirmed fraud in July to October (3,908 transactions), so the score is read at that calibrated rate, not at face value",
+        "source": "document",
+        "ref": "document:weights.json#score_calibration",
+        "entity_ids": [
+          "3509359"
+        ]
+      },
+      {
+        "claim": "Online purchase on a card whose history is 95% in person (82 earlier transactions)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C12265-K2)",
+        "entity_ids": [
+          "3509359"
+        ]
+      },
+      {
+        "claim": "Product code R never used on this card before",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C12265-K2)",
+        "entity_ids": [
+          "3509359"
+        ]
+      },
+      {
+        "claim": "Policy applied, Fraud Policy R3: Customer confirms the transaction: Recommend CLOSE_NO_FRAUD.",
+        "source": "document",
+        "ref": "document:README#POLICY-R3",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-2537",
+      "CC-0893",
+      "CC-1183",
+      "CC-5537",
+      "CC-1447"
+    ],
+    "summary": "The alert was triggered when the real-time model scored online transaction 3509359 for $125.08 at a risk score of 0.52. The strongest fraud indicator is that the card's history is 95 % in-person despite this being an online purchase, while the strongest legit indicator is the cardholder's confirmation that they made the purchase and the calibrated model rate showing only 5 % fraud for similar scores. The case was judged legitimate with a fraud probability of 3 percent. The recommended actions are to allow the transaction, create a case record, and close it with no fraud finding.",
+    "written_to_graph": false,
+    "graph_case_id": ""
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 6,
+      "assumed_response": "Customer confirms they made the purchase"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1 and §5: fraud probability 0.28 is below 0.70; verify with the cardholder before any block"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "§3a: requesting evidence opens a case"
+      }
+    ],
+    "final": [
+      {
+        "action": "ALLOW_TRANSACTION",
+        "route": "auto",
+        "reason": "R3: the flagged transaction is consistent with the cardholder"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "§3a: a dispute or evidence request always opens a case; closed as legitimate"
+      },
+      {
+        "action": "CLOSE_NO_FRAUD",
+        "route": "auto",
+        "reason": "R3: close the alert as legitimate"
+      }
+    ],
+    "what_changed": "The customer's confirmation lowered the fraud probability from 0.28 to 0.03; under R3 the alert closes: ALLOW_TRANSACTION, CREATE_CASE, CLOSE_NO_FRAUD."
+  },
+  "sar": {
+    "file": false,
+    "reason": "§3a: the verdict is not fraud, so no suspicious activity report; the case record is sufficient",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "The customer's reply settled the question (section 6): probability moved from 0.28 to 0.03. Further steps would not change the actions.",
+  "tool_calls": 10,
+  "tokens": 1127,
+  "latency_s": 140.05
+}

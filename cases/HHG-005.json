@@ -1,0 +1,90 @@
+{
+  "case_id": "HHG-005",
+  "case": {
+    "status": "closed_legitimate",
+    "verdict": "legitimate",
+    "fraud_probability": 0.09,
+    "pattern": "none",
+    "pattern_description": "",
+    "affected_txn_ids": [],
+    "first_suspicious_txn_id": "",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 0.0,
+    "evidence": [
+      {
+        "claim": "Model risk score 0.54. For product R transactions with an identity record in this score band, 5% were confirmed fraud in July to October (3,908 transactions), so the score is read at that calibrated rate, not at face value",
+        "source": "document",
+        "ref": "document:weights.json#score_calibration",
+        "entity_ids": [
+          "3523199"
+        ]
+      },
+      {
+        "claim": "The same amount ($99.92, product R) was charged on card C02923-K1 before, on 2016-07-15",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C02923-K1)",
+        "entity_ids": [
+          "3050502",
+          "3523199"
+        ]
+      },
+      {
+        "claim": "Policy applied, Fraud Policy 6. Stopping: Stop investigating when one of these holds:\n\n- Fraud probability is at or above 0.85, or at or below 0.15, supported by at least two independent pieces of evidence\n- A verification response settles the question\n- Further steps are unlikely ...",
+        "source": "document",
+        "ref": "document:README#POLICY-6",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-1081",
+      "CC-1027",
+      "CC-1389",
+      "CC-3105",
+      "CC-1313"
+    ],
+    "summary": "Alert HHG-005 opened because the bank's model scored transaction 3523199 at 0.54 ($100.07, product R, online, 2016-12-07 21:38) on card C02923-K1. The evidence points to the cardholder: Model risk score 0.54. For product R transactions with an identity record in this score band, 5% were confirmed fraud in July to October (3,908 transactions), so the score is read at that calibrated rate, not at face value; The same amount ($99.92, product R) was charged on card C02923-K1 before, on 2016-07-15. Fraud probability 0.09; the alert is closed as legitimate.",
+    "written_to_graph": false,
+    "graph_case_id": ""
+  },
+  "evidence_requests": [],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "ALLOW_TRANSACTION",
+        "route": "auto",
+        "reason": "§6: the flagged transaction is consistent with the cardholder"
+      },
+      {
+        "action": "CLOSE_NO_FRAUD",
+        "route": "auto",
+        "reason": "§6: close the alert as legitimate"
+      }
+    ],
+    "final": [
+      {
+        "action": "ALLOW_TRANSACTION",
+        "route": "auto",
+        "reason": "§6: the flagged transaction is consistent with the cardholder"
+      },
+      {
+        "action": "CLOSE_NO_FRAUD",
+        "route": "auto",
+        "reason": "§6: close the alert as legitimate"
+      }
+    ],
+    "what_changed": "nothing"
+  },
+  "sar": {
+    "file": false,
+    "reason": "§3a: the verdict is not fraud, so no suspicious activity report; the case record is sufficient",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "Fraud probability 0.09 is at or below 0.15 with 1 independent evidence groups (sequence), so section 6 allows a decision without asking the customer; further queries would not change the actions.",
+  "tool_calls": 10,
+  "tokens": 0,
+  "latency_s": 146.48
+}

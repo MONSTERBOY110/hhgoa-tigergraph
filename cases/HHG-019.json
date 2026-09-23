@@ -1,0 +1,153 @@
+{
+  "case_id": "HHG-019",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.96,
+    "pattern": "card_not_present_new_device",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3503878"
+    ],
+    "first_suspicious_txn_id": "3503878",
+    "connected_card_ids": [
+      "C01104-K2",
+      "C01983-K1",
+      "C06224-K2",
+      "C11309-K1"
+    ],
+    "connected_device_profiles": [
+      "Windows | other | chrome 61.0 | 1280x720"
+    ],
+    "exposure_usd": 99.92,
+    "evidence": [
+      {
+        "claim": "Rare device profile Windows | other | chrome 61.0 | 1280x720 (5 cards ever) was used on 4 other cards within 30 days, 4 of them for amounts within 2% of this $99.92 purchase (in the closed months this shape was 10.7 times more common in confirmed fraud than in normal online traffic)",
+        "source": "graph",
+        "ref": "query:device_neighbors(device_key=Windows | other | chrome 61.0 | 1280x720, days=30)",
+        "entity_ids": [
+          "C01104-K2",
+          "C01983-K1",
+          "C06224-K2",
+          "C11309-K1"
+        ]
+      },
+      {
+        "claim": "Customer denied the transaction(s) when asked: Customer states they did not make this purchase and still has the card",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": []
+      },
+      {
+        "claim": "Model risk score 0.90. For product R transactions with an identity record in this score band, 9% were confirmed fraud in July to October (1,614 transactions), so the score is read at that calibrated rate, not at face value",
+        "source": "document",
+        "ref": "document:weights.json#score_calibration",
+        "entity_ids": [
+          "3503878"
+        ]
+      },
+      {
+        "claim": "Identity record marks the device (Windows | other | chrome 61.0 | 1280x720) as New for this account; 53% of the card's earlier online purchases were also from New devices (in the closed cases a New device is not more common in fraud than in normal traffic for this product)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C07987-K2)",
+        "entity_ids": [
+          "3503878"
+        ]
+      },
+      {
+        "claim": "Policy applied, Fraud Policy R6: Shared origin: When several cards show fraud from the same device profile, the same billing region, or the same recipient email in one window, name the shared element, recommend CREATE_CASE and FILE_REPORT, and MONITOR_CONNECTED_CARDS for every card that ...",
+        "source": "document",
+        "ref": "document:README#POLICY-R6",
+        "entity_ids": []
+      },
+      {
+        "claim": "Pattern definition, Known fraud patterns: Card-not-present fraud from a new device: Same as above, with the identity record marking the device as New for this account, sometimes behind a proxy.",
+        "source": "document",
+        "ref": "document:README#PATTERN-3",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-0579",
+      "CC-0453",
+      "CC-3398",
+      "CC-2548",
+      "CC-2774"
+    ],
+    "summary": "Alert HHG-019 opened because the bank's model scored transaction 3503878 at 0.90 ($99.92, product R, online, 2016-12-01 17:28) on card C07987-K2. Assessed as card-not-present fraud from a device new to the account with fraud probability 0.96: Rare device profile Windows | other | chrome 61.0 | 1280x720 (5 cards ever) was used on 4 other cards within 30 days, 4 of them for amounts within 2% of this $99.92 purchase (in the closed months this shape was 10.7 times more common in confirmed fraud than in normal online traffic); Customer denied the transaction(s) when asked: Customer states they did not make this purchase and still has the card. The episode covers 1 transaction(s) totalling $99.92, and 4 other card(s) are linked through device profile Windows | other | chrome 61.0 | 1280x720. Evidence request: Customer states they did not make this purchase and still has the card.",
+    "written_to_graph": false,
+    "graph_case_id": ""
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 6,
+      "assumed_response": "Customer states they did not make this purchase and still has the card"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1 and §5: the case rests on a single signal (probability 0.70); verify with the cardholder before any block"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "§3a: requesting evidence opens a case"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: cards sharing device profile Windows | other | chrome 61.0 | 1280x720 go under monitoring while we verify"
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: block and reissue; exposure $99.92 is under $2,500"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2 and §3a: open the internal fraud case with the evidence attached"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R6 and §3a: activity connects to a shared origin (device profile Windows | other | chrome 61.0 | 1280x720)"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: 4 other card(s) share device profile Windows | other | chrome 61.0 | 1280x720; place them under monitoring"
+      }
+    ],
+    "what_changed": "The customer's denial raised the fraud probability from 0.70 to 0.96, which supports containment under R2: BLOCK_CARD, CREATE_CASE, FILE_REPORT, MONITOR_CONNECTED_CARDS."
+  },
+  "sar": {
+    "file": true,
+    "reason": "R6 and §3a: activity connects to a shared origin (device profile Windows | other | chrome 61.0 | 1280x720)",
+    "narrative": "The cardholder identified as customer C07987 was linked to visa credit card C07987-K2. On 2016-12-01 at 17:28:53 an online purchase of $99.92 was authorized on product code R using device profile Windows | other | chrome 61.0 | 1280x720. The transaction originated from billing region 264 and was recorded under transaction ID 3503878. Investigation revealed that the same rare device profile had been employed on four other cards (C01104-K2, C01983-K1, C06224-K2, C11309-K1) within the prior 30 days, with three of those transactions matching the amount range of this purchase. The pattern was classified as card-not-present activity from a new device, a scenario that has been 10.7 times more common in confirmed fraud than in normal online traffic. When contacted, the cardholder stated they did not make the transaction, did not share the card details, and still possessed the card. Because the purchase was made by an unauthorized party on the cardholder's account, the activity was deemed suspicious and resulted in the card being blocked, the case created, a report filed, and connected cards placed under monitoring.",
+    "subjects": [
+      "C07987",
+      "C07987-K2",
+      "C01104-K2",
+      "C01983-K1",
+      "C06224-K2",
+      "C11309-K1",
+      "Windows | other | chrome 61.0 | 1280x720"
+    ],
+    "total_amount_usd": 99.92,
+    "activity_dates": [
+      "2016-12-01",
+      "2016-12-01"
+    ]
+  },
+  "stop_reason": "The customer's reply settled the question (section 6): probability moved from 0.70 to 0.96 and the episode (1 transaction(s), $99.92) is scoped. Further steps would not change the actions.",
+  "tool_calls": 10,
+  "tokens": 1306,
+  "latency_s": 223.86
+}

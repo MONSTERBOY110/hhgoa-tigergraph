@@ -1,0 +1,104 @@
+{
+  "case_id": "HHG-013",
+  "case": {
+    "status": "closed_legitimate",
+    "verdict": "legitimate",
+    "fraud_probability": 0.03,
+    "pattern": "none",
+    "pattern_description": "",
+    "affected_txn_ids": [],
+    "first_suspicious_txn_id": "",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 0.0,
+    "evidence": [
+      {
+        "claim": "Customer confirmed the transaction when asked: Customer confirms they made the purchase",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": []
+      },
+      {
+        "claim": "Identity record marks the device (Windows |  | chrome 66.0 | ) as New for this account; 43% of the card's earlier online purchases were also from New devices (in the closed cases a New device is not more common in fraud than in normal traffic for this product)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C07671-K2)",
+        "entity_ids": [
+          "3526826"
+        ]
+      },
+      {
+        "claim": "Online purchase on a card whose history is 99% in person (1431 earlier transactions)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C07671-K2)",
+        "entity_ids": [
+          "3526826"
+        ]
+      },
+      {
+        "claim": "Policy applied, Fraud Policy R3: Customer confirms the transaction: Recommend CLOSE_NO_FRAUD.",
+        "source": "document",
+        "ref": "document:README#POLICY-R3",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-4395",
+      "CC-3734",
+      "CC-0489"
+    ],
+    "summary": "Alert HHG-013 opened because the bank's model scored transaction 3526826 at 0.76 ($35.66, product C, online, 2016-12-09 02:39) on card C07671-K2. The evidence points to the cardholder: Customer confirmed the transaction when asked: Customer confirms they made the purchase; Identity record marks the device (Windows |  | chrome 66.0 | ) as New for this account; 43% of the card's earlier online purchases were also from New devices (in the closed cases a New device is not more common in fraud than in normal traffic for this product). Fraud probability 0.03; the alert is closed as legitimate. Evidence request: Customer confirms they made the purchase.",
+    "written_to_graph": false,
+    "graph_case_id": ""
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 6,
+      "assumed_response": "Customer confirms they made the purchase"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1 and §5: fraud probability 0.40 is below 0.70; verify with the cardholder before any block"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "§3a: requesting evidence opens a case"
+      }
+    ],
+    "final": [
+      {
+        "action": "ALLOW_TRANSACTION",
+        "route": "auto",
+        "reason": "R3: the flagged transaction is consistent with the cardholder"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "§3a: a dispute or evidence request always opens a case; closed as legitimate"
+      },
+      {
+        "action": "CLOSE_NO_FRAUD",
+        "route": "auto",
+        "reason": "R3: close the alert as legitimate"
+      }
+    ],
+    "what_changed": "The customer's confirmation lowered the fraud probability from 0.40 to 0.03; under R3 the alert closes: ALLOW_TRANSACTION, CREATE_CASE, CLOSE_NO_FRAUD."
+  },
+  "sar": {
+    "file": false,
+    "reason": "§3a: the verdict is not fraud, so no suspicious activity report; the case record is sufficient",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "The customer's reply settled the question (section 6): probability moved from 0.40 to 0.03. Further steps would not change the actions.",
+  "tool_calls": 10,
+  "tokens": 0,
+  "latency_s": 146.4
+}

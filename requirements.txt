@@ -1,0 +1,12 @@
+duckdb
+pandas
+pyarrow
+gdown
+pyTigerGraph
+python-dotenv
+openai
+pydantic>=2
+rich
+typer
+numpy
+pytest

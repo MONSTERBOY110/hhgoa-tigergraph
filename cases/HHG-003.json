@@ -1,0 +1,108 @@
+{
+  "case_id": "HHG-003",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.93,
+    "pattern": "out_of_region_use",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3530056",
+      "3530164"
+    ],
+    "first_suspicious_txn_id": "3530056",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 165.93,
+    "evidence": [
+      {
+        "claim": "Customer C08623 disputes transaction 3530164 ($49.00); in the bank's closed cases every customer-reported alert was confirmed fraud",
+        "source": "customer",
+        "ref": "case_pack:trigger_text",
+        "entity_ids": [
+          "3530164",
+          "C08623"
+        ]
+      },
+      {
+        "claim": "Another transaction on the same account (3530056, $116.93) scored 0.88 49 minutes earlier",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C08623-K2)",
+        "entity_ids": [
+          "3530056",
+          "3530164"
+        ]
+      },
+      {
+        "claim": "Model risk score 0.40 on the disputed transaction",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C08623-K2)",
+        "entity_ids": [
+          "3530164"
+        ]
+      },
+      {
+        "claim": "Policy applied, Fraud Policy R2: Customer denies the transaction: Recommend BLOCK_CARD and CREATE_CASE.",
+        "source": "document",
+        "ref": "document:README#POLICY-R2",
+        "entity_ids": []
+      },
+      {
+        "claim": "Pattern definition, Known fraud patterns: Out-of-region use: Card-present purchases in a billing region the cardholder has no history in, while their normal activity continues at home.",
+        "source": "document",
+        "ref": "document:README#PATTERN-4",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-5199",
+      "CC-2817",
+      "CC-2539",
+      "CC-0764",
+      "CC-4240"
+    ],
+    "summary": "The alert was triggered when customer C08623 reported that a $49.00 in-person purchase (transaction 3530164) was not made by them. The strongest findings are that the customer disputed transaction 3530164, and a prior transaction on the same account (3530056 for $116.93) occurred 49 minutes earlier with a high fraud risk score of 0.88. The case was judged to be fraud with a probability of 93 percent. The recommended actions are to block the card and to create a case for further investigation.",
+    "written_to_graph": false,
+    "graph_case_id": ""
+  },
+  "evidence_requests": [],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: block and reissue; exposure $165.93 is under $2,500"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2 and §3a: open the internal fraud case with the evidence attached"
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: block and reissue; exposure $165.93 is under $2,500"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2 and §3a: open the internal fraud case with the evidence attached"
+      }
+    ],
+    "what_changed": "nothing"
+  },
+  "sar": {
+    "file": false,
+    "reason": "§3a: fraud confirmed but exposure $165.93 is under $1,000 with no shared device, region cluster or link to another customer's fraud, so a case without a report",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "Fraud probability 0.93 is at or above 0.85 with 2 independent evidence groups (sequence, customer), so section 6 allows a decision without asking the customer; further queries would not change the actions.",
+  "tool_calls": 8,
+  "tokens": 1086,
+  "latency_s": 26.61
+}

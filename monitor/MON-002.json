@@ -1,0 +1,168 @@
+{
+  "case_id": "MON-002",
+  "case": {
+    "status": "escalated",
+    "verdict": "fraud",
+    "fraud_probability": 0.97,
+    "pattern": "undocumented",
+    "pattern_description": "The pattern consists of a rapid burst of four online purchases, each priced just under the $500 threshold (ranging from $477.74 to $489.91), made on the Mastercard debit card C03633-K1 within 21 minutes on 25 Nov 2016. It affects the cardholder C03633 and other cards that share the same \"sub-threshold\" template, three or more online transactions just under $500 within 40 minutes, which has been observed on 15 additional cards in the same three-week period. The activity was identified by a monitor sweep that flagged the device profile (MacOS | Mac OS X 10_8_5 | chrome 49.0 | 1280x800) used for all four transactions, prompting an analyst review and subsequent fraud verdict.",
+    "affected_txn_ids": [
+      "3487284",
+      "3487318",
+      "3487340",
+      "3487348"
+    ],
+    "first_suspicious_txn_id": "3487284",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 1935.29,
+    "evidence": [
+      {
+        "claim": "4 online purchases of $477.74 to $489.91 within 21 minutes, each just under $500; before this burst the card's largest online purchase was $100.03",
+        "source": "graph",
+        "ref": "query:card_window(card_id=C03633-K1, hours=3)",
+        "entity_ids": [
+          "3487284",
+          "3487318",
+          "3487340",
+          "3487348"
+        ]
+      },
+      {
+        "claim": "Customer denied the transaction(s) when asked: Customer states they did not make these purchases and still has the card",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": []
+      },
+      {
+        "claim": "Model risk score 0.15. For product C transactions with an identity record in this score band, 3% were confirmed fraud in July to October (27,303 transactions), so the score is read at that calibrated rate, not at face value",
+        "source": "graph",
+        "ref": "document:weights.json#score_calibration",
+        "entity_ids": [
+          "3487348"
+        ]
+      },
+      {
+        "claim": "The same template (three or more online purchases just under $500 within 40 minutes) appears on 15 other cards within three weeks",
+        "source": "graph",
+        "ref": "query:band_bursts(amt_lo=440, amt_hi=500, days=21)",
+        "entity_ids": [
+          "C00466-K1",
+          "C01890-K1",
+          "C02265-K1",
+          "C04697-K1",
+          "C05423-K1",
+          "C05560-K2",
+          "C05766-K1",
+          "C05851-K1",
+          "C06881-K1",
+          "C07297-K1"
+        ]
+      },
+      {
+        "claim": "The device profile was already used by this card 4 time(s) before",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C03633-K1)",
+        "entity_ids": [
+          "3487348"
+        ]
+      },
+      {
+        "claim": "Online purchase on a card whose history is 96% in person (108 earlier transactions)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C03633-K1)",
+        "entity_ids": [
+          "3487348"
+        ]
+      },
+      {
+        "claim": "Policy applied, Fraud Policy R9: Undocumented patterns: When activity fits none of the known patterns but the evidence shows coordinated or repeated abuse across customers, recommend CREATE_CASE, FILE_REPORT, and ESCALATE_TO_ANALYST, and describe the pattern in your own words.",
+        "source": "document",
+        "ref": "document:README#POLICY-R9",
+        "entity_ids": []
+      },
+      {
+        "claim": "Nearest documented pattern by text similarity is Known fraud patterns: Card-not-present fraud (cosine 0.83), which does not describe a coordinated template across customers; its definition: The number is used online without the card.",
+        "source": "document",
+        "ref": "document:README#PATTERN-2",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-4124",
+      "CC-3748",
+      "CC-3841"
+    ],
+    "summary": "The alert was triggered by a monitor sweep that detected four online purchases just under $500 each on card C03633-K1 within a 40-minute window. The strongest findings are the rapid burst of four online transactions ranging from $477.74 to $489.91 in 21 minutes, each well above the card's previous online maximum of $100.03, and the fact that the same sub-threshold template has appeared on fifteen other cards in the past three weeks; additionally, the customer denied making the purchases and still possesses the card. The case was judged to be fraud with a probability of 97 percent. The recommended actions are to block the card, create a new case, file a report, and escalate the matter to an analyst.",
+    "written_to_graph": false,
+    "graph_case_id": ""
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 6,
+      "assumed_response": "Customer states they did not make these purchases and still has the card"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1 and §5: probability 0.83; confirm with the cardholder before blocking"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "§3a: requesting evidence opens a case"
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: block and reissue; exposure $1,935.29 is under $2,500"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R2 and §3a: open the internal fraud case with the evidence attached"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R9 and §3a: coordinated activity fitting no documented pattern"
+      },
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R9: undocumented coordinated pattern, hand to an analyst"
+      }
+    ],
+    "what_changed": "The customer's denial raised the fraud probability from 0.83 to 0.97, which supports containment under R2: BLOCK_CARD, CREATE_CASE, FILE_REPORT, ESCALATE_TO_ANALYST."
+  },
+  "sar": {
+    "file": true,
+    "reason": "R9 and §3a: coordinated activity fitting no documented pattern",
+    "narrative": "The cardholder identified as customer C03633 held the mastercard debit card C03633-K1. Between 21:00 and 21:21 on 2016-11-25, an unauthorized party executed four online purchases using product code C, each billed to region 191 from the device profile \"MacOS | Mac OS X 10_8_5 | chrome 49.0 | 1280x800\". The transactions were identified as IDs 3487284 for $488.31, 3487318 for $489.91, 3487340 for $479.33, and 3487348 for $477.74. All four purchases occurred within a 21-minute burst, each priced just under the $500 threshold, a pattern described as a \"burst of online purchases priced just under a round limit\". The card's prior online purchase history showed a maximum amount of $100.03, making this sudden escalation atypical. The cardholder denied making the purchases, stated they had not shared card details, and confirmed they still possessed the card. Because the activity matches none of the documented fraud typologies and follows an undocumented sub-threshold template observed on fifteen other cards, it was deemed suspicious and resulted in the card being blocked, a case created, a report filed, and escalation to an analyst.",
+    "subjects": [
+      "C03633",
+      "C03633-K1"
+    ],
+    "total_amount_usd": 1935.29,
+    "activity_dates": [
+      "2016-11-25",
+      "2016-11-25"
+    ]
+  },
+  "stop_reason": "The customer's reply settled the question (section 6): probability moved from 0.83 to 0.97 and the episode (4 transaction(s), $1,935.29) is scoped. Further steps would not change the actions.",
+  "tool_calls": 14,
+  "tokens": 6150,
+  "latency_s": 44.35,
+  "monitor": {
+    "sweep": "sub_threshold_burst",
+    "trigger_text": "Monitor sweep: 4 online purchases just under $500 within 40 minutes on card C03633-K1.",
+    "flagged_txn_id": "3487348",
+    "card_id": "C03633-K1"
+  }
+}

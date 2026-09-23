@@ -1,0 +1,113 @@
+{
+  "case_id": "HHG-002",
+  "case": {
+    "status": "escalated",
+    "verdict": "uncertain",
+    "fraud_probability": 0.53,
+    "pattern": "card_not_present_fraud",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3478782"
+    ],
+    "first_suspicious_txn_id": "3478782",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 292.36,
+    "evidence": [
+      {
+        "claim": "Model risk score 0.79. For product C transactions without an identity record in this score band, 72% were confirmed fraud in July to October (84 transactions), so the score is read at that calibrated rate, not at face value",
+        "source": "document",
+        "ref": "document:weights.json#score_calibration",
+        "entity_ids": [
+          "3478782"
+        ]
+      },
+      {
+        "claim": "$292.36 is 2.4 times the largest earlier purchase on card C11891-K1",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C11891-K1)",
+        "entity_ids": [
+          "3478782"
+        ]
+      },
+      {
+        "claim": "Policy applied, Fraud Policy R4: No reply within 24 hours: Recommend MONITOR_CARD and DECLINE_TRANSACTION for pending authorizations.",
+        "source": "document",
+        "ref": "document:README#POLICY-R4",
+        "entity_ids": []
+      },
+      {
+        "claim": "Pattern definition, Known fraud patterns: Card-not-present fraud: The number is used online without the card.",
+        "source": "document",
+        "ref": "document:README#PATTERN-2",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-2747",
+      "CC-0376",
+      "CC-4514",
+      "CC-1003",
+      "CC-1161"
+    ],
+    "summary": "The alert was triggered when the real-time model scored online transaction 3478782 for $292.36 on card C11891-K1 with a risk score of 0.79. The only notable activity is this single online purchase of product C, which is inconsistent with the cardholder's typical behavior. The case is deemed uncertain with a fraud probability of 0.53. The recommended actions are to decline the transaction, create a case, continue monitoring the card, and escalate the matter to an analyst.",
+    "written_to_graph": false,
+    "graph_case_id": ""
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 6,
+      "assumed_response": "No reply from the customer within 24 hours"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1 and §5: fraud probability 0.53 is below 0.70; verify with the cardholder before any block"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "§3a: requesting evidence opens a case"
+      }
+    ],
+    "final": [
+      {
+        "action": "DECLINE_TRANSACTION",
+        "route": "L1",
+        "reason": "R4: decline pending authorizations while unverified"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "§3a: the evidence request opened a case"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "R4: no reply within 24 hours, raise monitoring for 72 hours"
+      },
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R8: evidence conflicts"
+      }
+    ],
+    "what_changed": "No reply within 24 hours, so R4 applies and the probability stays at 0.53: DECLINE_TRANSACTION, CREATE_CASE, MONITOR_CARD, ESCALATE_TO_ANALYST."
+  },
+  "sar": {
+    "file": false,
+    "reason": "§3a: the verdict is not fraud, so no suspicious activity report; the case record is sufficient",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "The customer did not reply within 24 hours and the remaining graph evidence cannot move the probability (0.53) across a decision threshold, so the case stays open under R4 monitoring and goes to an analyst under R8.",
+  "tool_calls": 9,
+  "tokens": 995,
+  "latency_s": 1.12
+}
