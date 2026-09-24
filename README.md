@@ -85,7 +85,9 @@ TigerGraph Savanna (4.2.5) is the system of record and the agent's memory. Every
 4. **Cleared closed cases are selected on the score** (all scored 0.82 to 0.94), so naive fraud-vs-cleared ratios make a New device look exculpatory. Weights are fitted per product against both the population and the cleared cases.
 5. **Other cards solve cases.** A rare device paying similar amounts on several cards within a week is 7 to 11 times more common in confirmed fraud than in normal traffic.
 
-Hand investigations of all 20 cases are in [`docs/dossiers/`](docs/dossiers/README.md).
+**Demo video:** https://youtu.be/LYtYQ4srAww
+
+**Write-up:** [Kavach: building a fraud investigator that knows when a risk score is lying](https://dev.to/subhojyoti_maity/kavach-building-a-fraud-investigator-that-knows-when-a-risk-score-is-lying-2id) on dev.to.
 
 ## Quickstart
 

@@ -9,4 +9,5 @@ __pycache__/
 .remember/
 .pytest_cache/
 .playwright-mcp/
-.impeccable
+.impeccable/
+/docs/

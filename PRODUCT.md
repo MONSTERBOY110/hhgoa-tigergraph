@@ -38,7 +38,7 @@ The user asked for a TigerGraph-branded look: TigerGraph's orange and charcoal, 
 
 ## Evidence on Hand
 
-- `cases/HHG-001.json` to `HHG-020.json` (answer files), `monitor/MON-*.json`, `docs/dossiers/README.md`.
+- `cases/HHG-001.json` to `HHG-020.json` (answer files), `monitor/MON-*.json`.
 - No screenshots, logos or testimonials are provided; do not fabricate TigerGraph logos or endorsements.
 
 ## Product Principles
