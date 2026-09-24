@@ -11,3 +11,4 @@ __pycache__/
 .playwright-mcp/
 .impeccable/
 /docs/
+/CLAUDE.md
