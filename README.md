@@ -1,5 +1,4 @@
 # Kavach: an agentic fraud investigator on TigerGraph
-
 **TigerGraph x Hacker House Goa 2026, Task 4: Agentic Fraud Investigation.**
 Kavach ("shield") takes an alert from the case pack, investigates it through graph tools and the bank's closed cases, decides what kind of fraud it is (if any), how far it goes and what to do under Fraud Policy v1.0, asks for evidence when the policy says it should, and writes the case back into the graph as memory for the next investigation. It produces the 20 answer files in [`cases/`](cases/).
 
