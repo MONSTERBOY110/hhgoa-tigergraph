@@ -2,6 +2,7 @@
 **TigerGraph x Hacker House Goa 2026, Task 4: Agentic Fraud Investigation.**
 Kavach ("shield") takes an alert from the case pack, investigates it through graph tools and the bank's closed cases, decides what kind of fraud it is (if any), how far it goes and what to do under Fraud Policy v1.0, asks for evidence when the policy says it should, and writes the case back into the graph as memory for the next investigation. It produces the 20 answer files in [`cases/`](cases/).
 
+s
 Decisions are deterministic: detectors, a calibrated evidence model and a policy engine that encodes R1 to R10, the approval routes and section 3a. The LLM (Groq `openai/gpt-oss-120b`) only writes prose (summary, SAR narrative, undocumented-pattern description) from a facts JSON, with every identifier checked against the facts and a template fallback.
 
 **Case viewer:** [`site/index.html`](site/index.html) shows every answer file with its evidence ledger, the actions before and after the evidence request with approval routes, and the SAR. Live at https://monsterboy110.github.io/hhgoa-tigergraph/site/ once GitHub Pages is enabled (Settings > Pages > deploy from `main`, root). Rebuild its data with `python -m kavach site`.
