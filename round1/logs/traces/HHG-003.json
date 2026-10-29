@@ -1,0 +1,183 @@
+{
+  "log": [
+    "gathered: 1134 card txns, device=None (on 0 cards), 6 closed-case hits",
+    "assess0: p=0.93 fraud groups={'sequence': 0.9, 'customer': 1.5, 'score': 0.2}"
+  ],
+  "tools": [
+    {
+      "step": 1,
+      "tool": "card_history",
+      "params": {
+        "card_id": "C08623-K2"
+      },
+      "ms": 1815.4,
+      "n_rows": 1134
+    },
+    {
+      "step": 2,
+      "tool": "customer_cards",
+      "params": {
+        "customer_id": "C08623"
+      },
+      "ms": 356.7,
+      "n_rows": 2
+    },
+    {
+      "step": 2,
+      "tool": "region_activity",
+      "params": {
+        "addr1": "330",
+        "t0": "2016-12-10 13:01:21",
+        "days": "3"
+      },
+      "ms": 418.4,
+      "n_rows": 238
+    },
+    {
+      "step": 3,
+      "tool": "closed_cases_for",
+      "params": {
+        "card_ids": "[C08623-K2]",
+        "customer_ids": "[]",
+        "txn_ids": "[3521781,3521801,3521954,3522026,3522790,...]",
+        "device_keys": "[]"
+      },
+      "ms": 417.5,
+      "n_rows": 6
+    },
+    {
+      "step": 3,
+      "tool": "holder_fraud_history",
+      "params": {
+        "holder_keys": "[19739|123.0|156,19739|126.0|155,19739|143.0|-52,19739|143.0|149,19739|181.0|-274,...]",
+        "before": "2016-12-10 15:01:21"
+      },
+      "ms": 419.9,
+      "n_rows": 0
+    },
+    {
+      "step": 10,
+      "tool": "vector_search_cases",
+      "params": {
+        "text": "confirmed fraud out_of_region_use: Customer C08623 disputes transaction 3530164 ($49.00); in the bank's closed cases every customer-reported alert was confirmed fraud Another transaction on the same account (3530056, $116.93) scored 0.88 49 minutes earlier",
+        "k": "40"
+      },
+      "ms": 408.1,
+      "n_rows": 40
+    },
+    {
+      "step": 10,
+      "tool": "similar_cases",
+      "params": {
+        "pattern": "out_of_region_use",
+        "verdict": "fraud",
+        "product": "W",
+        "channel": "in_person",
+        "amt": "165.93",
+        "n": "2",
+        "new_dev": "False",
+        "anon": "False",
+        "k": "3",
+        "exclude": "[]"
+      },
+      "ms": 5.6,
+      "n_rows": 3
+    },
+    {
+      "step": 10,
+      "tool": "case_memory",
+      "params": {
+        "card_ids": "[C08623-K2]"
+      },
+      "ms": 320.9,
+      "n_rows": 0
+    },
+    {
+      "step": 10,
+      "tool": "similar_investigations",
+      "params": {
+        "text": "confirmed fraud out_of_region_use: Customer C08623 disputes transaction 3530164 ($49.00); in the bank's closed cases every customer-reported alert was confirmed fraud Another transaction on the same account (3530056, $116.93) scored 0.88 49 minutes earlier",
+        "k": "3"
+      },
+      "ms": 361.2,
+      "n_rows": 3
+    },
+    {
+      "step": 12,
+      "tool": "write_case",
+      "params": {
+        "case_id": "HHG-003"
+      },
+      "ms": 2220.0,
+      "n_rows": 1
+    }
+  ],
+  "signals": [
+    {
+      "name": "risk_score",
+      "group": "score",
+      "llr": 0.2,
+      "claim": "Model risk score 0.40 on the disputed transaction",
+      "entity_ids": [
+        "3530164"
+      ],
+      "ref": "query:card_history(card_id=C08623-K2)",
+      "source": "graph"
+    },
+    {
+      "name": "customer_dispute",
+      "group": "customer",
+      "llr": 1.5,
+      "claim": "Customer C08623 disputes transaction 3530164 ($49.00); in the bank's closed cases every customer-reported alert was confirmed fraud",
+      "entity_ids": [
+        "3530164",
+        "C08623"
+      ],
+      "ref": "case_pack:trigger_text",
+      "source": "customer"
+    },
+    {
+      "name": "sibling_high_score",
+      "group": "sequence",
+      "llr": 0.9,
+      "claim": "Another transaction on the same account (3530056, $116.93) scored 0.88 49 minutes earlier",
+      "entity_ids": [
+        "3530056",
+        "3530164"
+      ],
+      "ref": "query:card_history(card_id=C08623-K2)",
+      "source": "graph"
+    }
+  ],
+  "sources": {
+    "summary": "llm"
+  },
+  "assess0": {
+    "p": 0.93,
+    "verdict": "fraud",
+    "fraud_groups": [
+      "sequence",
+      "customer"
+    ],
+    "legit_groups": [],
+    "by_group": {
+      "sequence": 0.9,
+      "customer": 1.5,
+      "score": 0.2
+    }
+  },
+  "assess1": {
+    "p": 0.93,
+    "verdict": "fraud",
+    "fraud_groups": [
+      "sequence",
+      "customer"
+    ],
+    "legit_groups": [],
+    "by_group": {
+      "sequence": 0.9,
+      "customer": 1.5,
+      "score": 0.2
+    }
+  }
+}

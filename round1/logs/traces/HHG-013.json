@@ -1,0 +1,220 @@
+{
+  "log": [
+    "gathered: 1561 card txns, device='Windows |  | chrome 66.0 | ' (on 266 cards), 4 closed-case hits",
+    "assess0: p=0.4 uncertain groups={'sequence': 0.3, 'device': -0.63, 'score': -0.06}",
+    "requested customer_validation; simulated reply: confirm (p without customer 0.4)",
+    "assess1: p=0.03 legitimate"
+  ],
+  "tools": [
+    {
+      "step": 1,
+      "tool": "card_history",
+      "params": {
+        "card_id": "C07671-K2"
+      },
+      "ms": 911.7,
+      "n_rows": 1561
+    },
+    {
+      "step": 2,
+      "tool": "customer_cards",
+      "params": {
+        "customer_id": "C07671"
+      },
+      "ms": 183.5,
+      "n_rows": 2
+    },
+    {
+      "step": 2,
+      "tool": "device_popularity",
+      "params": {
+        "device_key": "Windows |  | chrome 66.0 | "
+      },
+      "ms": 90.1,
+      "n_rows": 1
+    },
+    {
+      "step": 3,
+      "tool": "closed_cases_for",
+      "params": {
+        "card_ids": "[C07671-K2]",
+        "customer_ids": "[]",
+        "txn_ids": "[3518402,3518429,3518566,3519227,3519239,...]",
+        "device_keys": "[]"
+      },
+      "ms": 101.8,
+      "n_rows": 4
+    },
+    {
+      "step": 3,
+      "tool": "holder_fraud_history",
+      "params": {
+        "holder_keys": "[22756|110.0|-102,22756|110.0|-42,22756|110.0|141,22756|110.0|159,22756|110.0|160,...]",
+        "before": "2016-12-09 05:39:29"
+      },
+      "ms": 90.5,
+      "n_rows": 0
+    },
+    {
+      "step": 4,
+      "tool": "amount_peers",
+      "params": {
+        "product_cd": "C",
+        "amt": "35.66",
+        "t0": "2016-12-09 02:39:29",
+        "days": "7",
+        "tol": "0.01",
+        "email": "gmail.com",
+        "email_field": "P_emaildomain"
+      },
+      "ms": 180.6,
+      "n_rows": 36
+    },
+    {
+      "step": 4,
+      "tool": "amount_peers",
+      "params": {
+        "product_cd": "C",
+        "amt": "35.66",
+        "t0": "2016-12-09 02:39:29",
+        "days": "7",
+        "tol": "0.01",
+        "email": "gmail.com",
+        "email_field": "R_emaildomain"
+      },
+      "ms": 112.4,
+      "n_rows": 36
+    },
+    {
+      "step": 10,
+      "tool": "vector_search_cases",
+      "params": {
+        "text": "cleared false alarm: Customer confirmed the transaction when asked: Customer confirms they made the purchase Identity record marks the device (Windows |  | chrome 66.0 | ) as New for this account; 43% of the card's earlier online purchases were also from New devices (in the closed cases a New device is not more common in fraud than in normal traffic for this product)",
+        "k": "40"
+      },
+      "ms": 130.4,
+      "n_rows": 40
+    },
+    {
+      "step": 10,
+      "tool": "similar_cases",
+      "params": {
+        "pattern": "none",
+        "verdict": "legitimate",
+        "product": "C",
+        "channel": "online",
+        "amt": "35.66",
+        "n": "1",
+        "new_dev": "True",
+        "anon": "False",
+        "k": "3",
+        "exclude": "[]"
+      },
+      "ms": 7.1,
+      "n_rows": 3
+    },
+    {
+      "step": 10,
+      "tool": "case_memory",
+      "params": {
+        "card_ids": "[C07671-K2]"
+      },
+      "ms": 85.5,
+      "n_rows": 0
+    },
+    {
+      "step": 10,
+      "tool": "similar_investigations",
+      "params": {
+        "text": "cleared false alarm: Customer confirmed the transaction when asked: Customer confirms they made the purchase Identity record marks the device (Windows |  | chrome 66.0 | ) as New for this account; 43% of the card's earlier online purchases were also from New devices (in the closed cases a New device is not more common in fraud than in normal traffic for this product)",
+        "k": "3"
+      },
+      "ms": 171.4,
+      "n_rows": 3
+    },
+    {
+      "step": 12,
+      "tool": "write_case",
+      "params": {
+        "case_id": "HHG-013"
+      },
+      "ms": 1394.7,
+      "n_rows": 1
+    }
+  ],
+  "signals": [
+    {
+      "name": "risk_score_calibrated",
+      "group": "score",
+      "llr": -0.06,
+      "claim": "Model risk score 0.76. For product C transactions with an identity record in this score band, 47% were confirmed fraud in July to October (2,211 transactions), so the score is read at that calibrated rate, not at face value",
+      "entity_ids": [
+        "3526826"
+      ],
+      "ref": "document:weights.json#score_calibration",
+      "source": "document"
+    },
+    {
+      "name": "online_on_in_person_card",
+      "group": "sequence",
+      "llr": 0.3,
+      "claim": "Online purchase on a card whose history is 99% in person (1431 earlier transactions)",
+      "entity_ids": [
+        "3526826"
+      ],
+      "ref": "query:card_history(card_id=C07671-K2)",
+      "source": "graph"
+    },
+    {
+      "name": "device_new_for_account",
+      "group": "device",
+      "llr": -0.63,
+      "claim": "Identity record marks the device (Windows |  | chrome 66.0 | ) as New for this account; 43% of the card's earlier online purchases were also from New devices (in the closed cases a New device is not more common in fraud than in normal traffic for this product)",
+      "entity_ids": [
+        "3526826"
+      ],
+      "ref": "query:card_history(card_id=C07671-K2)",
+      "source": "graph"
+    },
+    {
+      "name": "customer_confirms",
+      "group": "customer",
+      "llr": -3.0,
+      "claim": "Customer confirmed the transaction when asked: Customer confirms they made the purchase",
+      "entity_ids": [],
+      "ref": "evidence_request:1",
+      "source": "customer"
+    }
+  ],
+  "sources": {
+    "summary": "llm"
+  },
+  "assess0": {
+    "p": 0.4,
+    "verdict": "uncertain",
+    "fraud_groups": [],
+    "legit_groups": [
+      "device"
+    ],
+    "by_group": {
+      "sequence": 0.3,
+      "device": -0.63,
+      "score": -0.06
+    }
+  },
+  "assess1": {
+    "p": 0.03,
+    "verdict": "legitimate",
+    "fraud_groups": [],
+    "legit_groups": [
+      "device",
+      "customer"
+    ],
+    "by_group": {
+      "sequence": 0.3,
+      "device": -0.63,
+      "customer": -3.0,
+      "score": -0.06
+    }
+  }
+}

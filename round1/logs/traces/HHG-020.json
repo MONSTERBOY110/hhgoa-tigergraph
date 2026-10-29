@@ -1,0 +1,232 @@
+{
+  "log": [
+    "gathered: 109 card txns, device='Trident/7.0 | Windows 10 | ie 11.0 for desktop | 1920x1080' (on 253 cards), 2 closed-case hits",
+    "assess0: p=0.28 legitimate groups={'sequence': 0.6, 'device': -0.07, 'score': -1.46}",
+    "requested customer_validation; simulated reply: confirm (p without customer 0.28)",
+    "assess1: p=0.03 legitimate"
+  ],
+  "tools": [
+    {
+      "step": 1,
+      "tool": "card_history",
+      "params": {
+        "card_id": "C12265-K2"
+      },
+      "ms": 310.8,
+      "n_rows": 109
+    },
+    {
+      "step": 2,
+      "tool": "customer_cards",
+      "params": {
+        "customer_id": "C12265"
+      },
+      "ms": 88.8,
+      "n_rows": 2
+    },
+    {
+      "step": 2,
+      "tool": "device_popularity",
+      "params": {
+        "device_key": "Trident/7.0 | Windows 10 | ie 11.0 for desktop | 1920x1080"
+      },
+      "ms": 101.1,
+      "n_rows": 1
+    },
+    {
+      "step": 3,
+      "tool": "closed_cases_for",
+      "params": {
+        "card_ids": "[C12265-K2]",
+        "customer_ids": "[]",
+        "txn_ids": "[3501882,3501890,3509359,3510096,3510577,...]",
+        "device_keys": "[]"
+      },
+      "ms": 103.8,
+      "n_rows": 2
+    },
+    {
+      "step": 3,
+      "tool": "holder_fraud_history",
+      "params": {
+        "holder_keys": "[10010|264.0|-82,10010|264.0|128,10010|264.0|143,10010|264.0|150,10010|264.0|154,...]",
+        "before": "2016-12-03 12:04:26"
+      },
+      "ms": 99.6,
+      "n_rows": 0
+    },
+    {
+      "step": 4,
+      "tool": "amount_peers",
+      "params": {
+        "product_cd": "R",
+        "amt": "125.08",
+        "t0": "2016-12-03 06:04:26",
+        "days": "7",
+        "tol": "0.01",
+        "email": "yahoo.com",
+        "email_field": "P_emaildomain"
+      },
+      "ms": 189.2,
+      "n_rows": 9
+    },
+    {
+      "step": 4,
+      "tool": "amount_peers",
+      "params": {
+        "product_cd": "R",
+        "amt": "125.08",
+        "t0": "2016-12-03 06:04:26",
+        "days": "7",
+        "tol": "0.01",
+        "email": "cox.net",
+        "email_field": "R_emaildomain"
+      },
+      "ms": 109.8,
+      "n_rows": 2
+    },
+    {
+      "step": 10,
+      "tool": "vector_search_cases",
+      "params": {
+        "text": "cleared false alarm: Customer confirmed the transaction when asked: Customer confirms they made the purchase Online purchase on a card whose history is 95% in person (82 earlier transactions)",
+        "k": "40"
+      },
+      "ms": 307.4,
+      "n_rows": 40
+    },
+    {
+      "step": 10,
+      "tool": "similar_cases",
+      "params": {
+        "pattern": "none",
+        "verdict": "legitimate",
+        "product": "R",
+        "channel": "online",
+        "amt": "125.08",
+        "n": "1",
+        "new_dev": "True",
+        "anon": "False",
+        "k": "3",
+        "exclude": "[]"
+      },
+      "ms": 4.4,
+      "n_rows": 3
+    },
+    {
+      "step": 10,
+      "tool": "case_memory",
+      "params": {
+        "card_ids": "[C12265-K2]"
+      },
+      "ms": 194.1,
+      "n_rows": 0
+    },
+    {
+      "step": 10,
+      "tool": "similar_investigations",
+      "params": {
+        "text": "cleared false alarm: Customer confirmed the transaction when asked: Customer confirms they made the purchase Online purchase on a card whose history is 95% in person (82 earlier transactions)",
+        "k": "3"
+      },
+      "ms": 195.0,
+      "n_rows": 3
+    },
+    {
+      "step": 12,
+      "tool": "write_case",
+      "params": {
+        "case_id": "HHG-020"
+      },
+      "ms": 1207.5,
+      "n_rows": 1
+    }
+  ],
+  "signals": [
+    {
+      "name": "risk_score_calibrated",
+      "group": "score",
+      "llr": -1.46,
+      "claim": "Model risk score 0.52. For product R transactions with an identity record in this score band, 5% were confirmed fraud in July to October (3,908 transactions), so the score is read at that calibrated rate, not at face value",
+      "entity_ids": [
+        "3509359"
+      ],
+      "ref": "document:weights.json#score_calibration",
+      "source": "document"
+    },
+    {
+      "name": "online_on_in_person_card",
+      "group": "sequence",
+      "llr": 0.6,
+      "claim": "Online purchase on a card whose history is 95% in person (82 earlier transactions)",
+      "entity_ids": [
+        "3509359"
+      ],
+      "ref": "query:card_history(card_id=C12265-K2)",
+      "source": "graph"
+    },
+    {
+      "name": "product_unseen",
+      "group": "sequence",
+      "llr": 0.28,
+      "claim": "Product code R never used on this card before",
+      "entity_ids": [
+        "3509359"
+      ],
+      "ref": "query:card_history(card_id=C12265-K2)",
+      "source": "graph"
+    },
+    {
+      "name": "device_new_for_account",
+      "group": "device",
+      "llr": -0.07,
+      "claim": "Identity record marks the device (Trident/7.0 | Windows 10 | ie 11.0 for desktop | 1920x1080) as New for this account; 100% of the card's earlier online purchases were also from New devices (in the closed cases a New device is not more common in fraud than in normal traffic for this product)",
+      "entity_ids": [
+        "3509359"
+      ],
+      "ref": "query:card_history(card_id=C12265-K2)",
+      "source": "graph"
+    },
+    {
+      "name": "customer_confirms",
+      "group": "customer",
+      "llr": -3.0,
+      "claim": "Customer confirmed the transaction when asked: Customer confirms they made the purchase",
+      "entity_ids": [],
+      "ref": "evidence_request:1",
+      "source": "customer"
+    }
+  ],
+  "sources": {
+    "summary": "llm"
+  },
+  "assess0": {
+    "p": 0.28,
+    "verdict": "legitimate",
+    "fraud_groups": [
+      "sequence"
+    ],
+    "legit_groups": [],
+    "by_group": {
+      "sequence": 0.6,
+      "device": -0.07,
+      "score": -1.46
+    }
+  },
+  "assess1": {
+    "p": 0.03,
+    "verdict": "legitimate",
+    "fraud_groups": [
+      "sequence"
+    ],
+    "legit_groups": [
+      "customer"
+    ],
+    "by_group": {
+      "sequence": 0.6,
+      "device": -0.07,
+      "customer": -3.0,
+      "score": -1.46
+    }
+  }
+}

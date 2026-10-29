@@ -87,9 +87,13 @@ CREATE OR REPLACE QUERY holder_cards(VERTEX<Card> c) FOR GRAPH Fraud SYNTAX V2 {
   PRINT C[C.@n];
 }
 
-CREATE OR REPLACE QUERY closed_cases_for(SET<VERTEX<Card>> cards, SET<VERTEX<Transaction>> txns, SET<VERTEX<DeviceProfile>> devices) FOR GRAPH Fraud SYNTAX V2 {
-  // closed cases touching the cards (as subject or connected), their transactions, or transactions on the devices
-  SetAccum<STRING> @via;
+CREATE OR REPLACE QUERY closed_cases_for(SET<STRING> card_ids, SET<STRING> txn_ids, SET<STRING> device_ids) FOR GRAPH Fraud SYNTAX V2 {
+  // closed cases touching the cards (as subject or connected), their transactions, or transactions on the devices.
+  // Ids come as strings (an empty set is sent as {""}, which matches no vertex) so the query runs the same over REST and MCP.
+  SetAccum<STRING> @via; SetAccum<STRING> @card; SetAccum<STRING> @conn;
+  cards = to_vertex_set(card_ids, "Card");
+  txns = to_vertex_set(txn_ids, "Transaction");
+  devices = to_vertex_set(device_ids, "DeviceProfile");
   C = cards;
   X1 = SELECT cc FROM C:c -(CARD_CASE>)- ClosedCase:cc ACCUM cc.@via += "card";
   X2 = SELECT cc FROM C:c -(CONNECTED_CASE>)- ClosedCase:cc ACCUM cc.@via += "connected_card";
@@ -99,7 +103,9 @@ CREATE OR REPLACE QUERY closed_cases_for(SET<VERTEX<Card>> cards, SET<VERTEX<Tra
   DT = SELECT t FROM D:d -(DEVICE_OF>)- Transaction:t;
   X4 = SELECT cc FROM DT:t -(INVOLVED_IN>)- ClosedCase:cc ACCUM cc.@via += "device";
   R = X1 UNION X2 UNION X3 UNION X4;
-  PRINT R[R.outcome, R.pattern, R.opened_at, R.n_txns, R.exposure_usd, R.report_filed, R.analyst_notes, R.@via];
+  Y = SELECT cc FROM R:cc -(ON_CARD>)- Card:k ACCUM cc.@card += k.id;
+  Z = SELECT cc FROM R:cc -(CONNECTED_TO>)- Card:k ACCUM cc.@conn += k.id;
+  PRINT R[R.outcome, R.pattern, R.opened_at, R.n_txns, R.exposure_usd, R.report_filed, R.analyst_notes, R.@via, R.@card, R.@conn];
 }
 
 CREATE OR REPLACE QUERY case_memory(VERTEX<Card> c) FOR GRAPH Fraud SYNTAX V2 {

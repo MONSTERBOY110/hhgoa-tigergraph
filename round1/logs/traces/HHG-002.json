@@ -1,0 +1,183 @@
+{
+  "log": [
+    "gathered: 44 card txns, device=None (on 0 cards), 1 closed-case hits",
+    "assess0: p=0.53 uncertain groups={'sequence': -0.36, 'score': 0.47}",
+    "requested customer_validation; simulated reply: no_reply (p without customer 0.53)",
+    "assess1: p=0.53 uncertain"
+  ],
+  "tools": [
+    {
+      "step": 1,
+      "tool": "card_history",
+      "params": {
+        "card_id": "C11891-K1"
+      },
+      "ms": 153.4,
+      "n_rows": 44
+    },
+    {
+      "step": 2,
+      "tool": "customer_cards",
+      "params": {
+        "customer_id": "C11891"
+      },
+      "ms": 77.0,
+      "n_rows": 1
+    },
+    {
+      "step": 3,
+      "tool": "closed_cases_for",
+      "params": {
+        "card_ids": "[C11891-K1]",
+        "customer_ids": "[]",
+        "txn_ids": "[3478782]",
+        "device_keys": "[]"
+      },
+      "ms": 87.3,
+      "n_rows": 1
+    },
+    {
+      "step": 3,
+      "tool": "holder_fraud_history",
+      "params": {
+        "holder_keys": "[]",
+        "before": "2016-11-22 23:27:07"
+      },
+      "ms": 0.2,
+      "n_rows": 0
+    },
+    {
+      "step": 4,
+      "tool": "amount_peers",
+      "params": {
+        "product_cd": "C",
+        "amt": "292.36",
+        "t0": "2016-11-22 17:27:07",
+        "days": "7",
+        "tol": "0.01",
+        "email": "hotmail.com",
+        "email_field": "P_emaildomain"
+      },
+      "ms": 108.2,
+      "n_rows": 1
+    },
+    {
+      "step": 4,
+      "tool": "amount_peers",
+      "params": {
+        "product_cd": "C",
+        "amt": "292.36",
+        "t0": "2016-11-22 17:27:07",
+        "days": "7",
+        "tol": "0.01",
+        "email": "hotmail.com",
+        "email_field": "R_emaildomain"
+      },
+      "ms": 108.0,
+      "n_rows": 1
+    },
+    {
+      "step": 10,
+      "tool": "vector_search_cases",
+      "params": {
+        "text": "confirmed fraud card_not_present_fraud: ",
+        "k": "40"
+      },
+      "ms": 106.2,
+      "n_rows": 40
+    },
+    {
+      "step": 10,
+      "tool": "similar_cases",
+      "params": {
+        "pattern": "card_not_present_fraud",
+        "verdict": "uncertain",
+        "product": "C",
+        "channel": "online",
+        "amt": "292.36",
+        "n": "1",
+        "new_dev": "False",
+        "anon": "False",
+        "k": "3",
+        "exclude": "[]"
+      },
+      "ms": 6.2,
+      "n_rows": 3
+    },
+    {
+      "step": 10,
+      "tool": "case_memory",
+      "params": {
+        "card_ids": "[C11891-K1]"
+      },
+      "ms": 71.2,
+      "n_rows": 0
+    },
+    {
+      "step": 10,
+      "tool": "similar_investigations",
+      "params": {
+        "text": "confirmed fraud card_not_present_fraud: ",
+        "k": "3"
+      },
+      "ms": 89.0,
+      "n_rows": 1
+    },
+    {
+      "step": 12,
+      "tool": "write_case",
+      "params": {
+        "case_id": "HHG-002"
+      },
+      "ms": 1330.6,
+      "n_rows": 1
+    }
+  ],
+  "signals": [
+    {
+      "name": "risk_score_calibrated",
+      "group": "score",
+      "llr": 0.47,
+      "claim": "Model risk score 0.79. For product C transactions without an identity record in this score band, 72% were confirmed fraud in July to October (84 transactions), so the score is read at that calibrated rate, not at face value",
+      "entity_ids": [
+        "3478782"
+      ],
+      "ref": "document:weights.json#score_calibration",
+      "source": "document"
+    },
+    {
+      "name": "amount_above_account_max",
+      "group": "sequence",
+      "llr": -0.36,
+      "claim": "$292.36 is 2.4 times the largest earlier purchase on card C11891-K1",
+      "entity_ids": [
+        "3478782"
+      ],
+      "ref": "query:card_history(card_id=C11891-K1)",
+      "source": "graph"
+    }
+  ],
+  "sources": {
+    "summary": "llm"
+  },
+  "assess0": {
+    "p": 0.53,
+    "verdict": "uncertain",
+    "fraud_groups": [],
+    "legit_groups": [],
+    "by_group": {
+      "sequence": -0.36,
+      "score": 0.47
+    }
+  },
+  "assess1": {
+    "p": 0.53,
+    "verdict": "uncertain",
+    "fraud_groups": [],
+    "legit_groups": [],
+    "by_group": {
+      "sequence": -0.36,
+      "score": 0.47
+    }
+  }
+}

@@ -1,0 +1,205 @@
+{
+  "log": [
+    "gathered: 10332 card txns, device='SM-G610F Build/NRD90M |  | chrome 66.0 for android | ' (on 4 cards), 11 closed-case hits",
+    "assess0: p=0.96 fraud groups={'device': -0.19, 'network': 1.92, 'customer': 1.5}"
+  ],
+  "tools": [
+    {
+      "step": 1,
+      "tool": "card_history",
+      "params": {
+        "card_id": "C11923-K2"
+      },
+      "ms": 1985.2,
+      "n_rows": 10332
+    },
+    {
+      "step": 2,
+      "tool": "customer_cards",
+      "params": {
+        "customer_id": "C11923"
+      },
+      "ms": 94.7,
+      "n_rows": 2
+    },
+    {
+      "step": 2,
+      "tool": "device_popularity",
+      "params": {
+        "device_key": "SM-G610F Build/NRD90M |  | chrome 66.0 for android | "
+      },
+      "ms": 92.6,
+      "n_rows": 1
+    },
+    {
+      "step": 2,
+      "tool": "device_neighbors",
+      "params": {
+        "device_key": "SM-G610F Build/NRD90M |  | chrome 66.0 for android | ",
+        "t0": "2016-12-29 03:27:44",
+        "days": "30"
+      },
+      "ms": 81.5,
+      "n_rows": 4
+    },
+    {
+      "step": 2,
+      "tool": "device_txns",
+      "params": {
+        "device_key": "SM-G610F Build/NRD90M |  | chrome 66.0 for android | ",
+        "t0": "2016-12-29 03:27:44",
+        "days": "30"
+      },
+      "ms": 83.7,
+      "n_rows": 4
+    },
+    {
+      "step": 3,
+      "tool": "closed_cases_for",
+      "params": {
+        "card_ids": "[C11923-K2]",
+        "customer_ids": "[]",
+        "txn_ids": "[3575821,3575822,3575852,3575853,3575856,...]",
+        "device_keys": "[SM-G610F Build/NRD90M |  | chrome 66.0 for android | ]"
+      },
+      "ms": 102.1,
+      "n_rows": 11
+    },
+    {
+      "step": 3,
+      "tool": "holder_fraud_history",
+      "params": {
+        "holder_keys": "[]",
+        "before": "2016-12-29 06:27:44"
+      },
+      "ms": 0.5,
+      "n_rows": 0
+    },
+    {
+      "step": 10,
+      "tool": "vector_search_cases",
+      "params": {
+        "text": "confirmed fraud card_not_present_new_device: Rare device profile SM-G610F Build/NRD90M |  | chrome 66.0 for android |  (4 cards ever) was used on 3 other cards within 30 days, 1 of them for amounts within 2% of this $131.30 purchase (in the closed months this shape was 6.8 times more common in confirmed fraud than in normal online traffic) Customer C11923 disputes transaction 3583368 ($131.30); in the bank's closed cases every customer-reported alert was confirmed fraud",
+        "k": "40"
+      },
+      "ms": 184.0,
+      "n_rows": 40
+    },
+    {
+      "step": 10,
+      "tool": "similar_cases",
+      "params": {
+        "pattern": "card_not_present_new_device",
+        "verdict": "fraud",
+        "product": "C",
+        "channel": "online",
+        "amt": "131.3",
+        "n": "1",
+        "new_dev": "True",
+        "anon": "False",
+        "k": "3",
+        "exclude": "[]"
+      },
+      "ms": 8.9,
+      "n_rows": 3
+    },
+    {
+      "step": 10,
+      "tool": "case_memory",
+      "params": {
+        "card_ids": "[C11923-K2,C03938-K1,C05595-K1,C05678-K1]"
+      },
+      "ms": 348.5,
+      "n_rows": 0
+    },
+    {
+      "step": 10,
+      "tool": "similar_investigations",
+      "params": {
+        "text": "confirmed fraud card_not_present_new_device: Rare device profile SM-G610F Build/NRD90M |  | chrome 66.0 for android |  (4 cards ever) was used on 3 other cards within 30 days, 1 of them for amounts within 2% of this $131.30 purchase (in the closed months this shape was 6.8 times more common in confirmed fraud than in normal online traffic) Customer C11923 disputes transaction 3583368 ($131.30); in the bank's closed cases every customer-reported alert was confirmed fraud",
+        "k": "3"
+      },
+      "ms": 173.2,
+      "n_rows": 3
+    },
+    {
+      "step": 12,
+      "tool": "write_case",
+      "params": {
+        "case_id": "HHG-011"
+      },
+      "ms": 1730.7,
+      "n_rows": 1
+    }
+  ],
+  "signals": [
+    {
+      "name": "customer_dispute",
+      "group": "customer",
+      "llr": 1.5,
+      "claim": "Customer C11923 disputes transaction 3583368 ($131.30); in the bank's closed cases every customer-reported alert was confirmed fraud",
+      "entity_ids": [
+        "3583368",
+        "C11923"
+      ],
+      "ref": "case_pack:trigger_text",
+      "source": "customer"
+    },
+    {
+      "name": "device_new_for_account",
+      "group": "device",
+      "llr": -0.19,
+      "claim": "Identity record marks the device (SM-G610F Build/NRD90M |  | chrome 66.0 for android | ) as New for this account; 41% of the card's earlier online purchases were also from New devices (in the closed cases a New device is not more common in fraud than in normal traffic for this product)",
+      "entity_ids": [
+        "3583368"
+      ],
+      "ref": "query:card_history(card_id=C11923-K2)",
+      "source": "graph"
+    },
+    {
+      "name": "device_ring",
+      "group": "network",
+      "llr": 1.92,
+      "claim": "Rare device profile SM-G610F Build/NRD90M |  | chrome 66.0 for android |  (4 cards ever) was used on 3 other cards within 30 days, 1 of them for amounts within 2% of this $131.30 purchase (in the closed months this shape was 6.8 times more common in confirmed fraud than in normal online traffic)",
+      "entity_ids": [
+        "C03938-K1",
+        "C05595-K1",
+        "C05678-K1"
+      ],
+      "ref": "query:device_neighbors(device_key=SM-G610F Build/NRD90M |  | chrome 66.0 for android | , days=30)",
+      "source": "graph"
+    }
+  ],
+  "sources": {
+    "summary": "llm",
+    "sar": "llm"
+  },
+  "assess0": {
+    "p": 0.96,
+    "verdict": "fraud",
+    "fraud_groups": [
+      "network",
+      "customer"
+    ],
+    "legit_groups": [],
+    "by_group": {
+      "device": -0.19,
+      "network": 1.92,
+      "customer": 1.5
+    }
+  },
+  "assess1": {
+    "p": 0.96,
+    "verdict": "fraud",
+    "fraud_groups": [
+      "network",
+      "customer"
+    ],
+    "legit_groups": [],
+    "by_group": {
+      "device": -0.19,
+      "network": 1.92,
+      "customer": 1.5
+    }
+  }
+}

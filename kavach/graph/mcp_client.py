@@ -85,9 +85,30 @@ class McpTools(TgTools):
     def __init__(self, conn=None):
         super().__init__(conn)
         self.mcp = session()
-        name = "tigergraph__run_installed_query"
+        name = ALLOWED_MCP_TOOLS[0]
         self.tool = name if name in self.mcp.tool_names else next(t for t in self.mcp.tool_names if t.endswith("run_installed_query"))
 
     def _q(self, name: str, **params):
+        if name not in allowed_queries():
+            # least privilege: the MCP lane may only run our own read-only installed queries, never GSQL, upserts or schema tools
+            raise PermissionError(f"MCP query {name!r} is not on the installed-query allowlist")
         data = self.mcp.call(self.tool, {"query_name": name, "params": params, "graph_name": env("TG_GRAPH", "Fraud")})
         return data["result"]
+
+
+ALLOWED_MCP_TOOLS = ("tigergraph__run_installed_query",)   # the only MCP server tool this lane ever calls
+_ALLOWED: set | None = None
+
+
+def allowed_queries() -> set:
+    """Names of the installed queries defined in our own GSQL files (all read-only SELECT/PRINT queries)."""
+    global _ALLOWED
+    if _ALLOWED is None:
+        gdir = Path(__file__).resolve().parent
+        names = set()
+        for f in ("queries.gsql", "queries_r2.gsql", "queries_grow.gsql"):
+            if (gdir / f).exists():
+                names |= set(re.findall(r"CREATE OR REPLACE QUERY (\w+)\(", (gdir / f).read_text(encoding="utf-8")))
+        names |= {"similar_closed", "similar_docs", "similar_investigations", "case_memory"}   # vector queries (vectors_tg.py)
+        _ALLOWED = names
+    return _ALLOWED

@@ -1,0 +1,223 @@
+{
+  "log": [
+    "gathered: 59 card txns, device='Windows | Windows 10 | chrome 65.0 | 1920x1080' (on 299 cards), 1 closed-case hits",
+    "assess0: p=0.04 legitimate groups={'sequence': -0.9, 'device': -0.8, 'score': -1.46}"
+  ],
+  "tools": [
+    {
+      "step": 1,
+      "tool": "card_history",
+      "params": {
+        "card_id": "C04570-K1"
+      },
+      "ms": 299.2,
+      "n_rows": 59
+    },
+    {
+      "step": 2,
+      "tool": "customer_cards",
+      "params": {
+        "customer_id": "C04570"
+      },
+      "ms": 150.8,
+      "n_rows": 1
+    },
+    {
+      "step": 2,
+      "tool": "device_popularity",
+      "params": {
+        "device_key": "Windows | Windows 10 | chrome 65.0 | 1920x1080"
+      },
+      "ms": 94.8,
+      "n_rows": 1
+    },
+    {
+      "step": 3,
+      "tool": "closed_cases_for",
+      "params": {
+        "card_ids": "[C04570-K1]",
+        "customer_ids": "[]",
+        "txn_ids": "[3450436,3450503,3450629]",
+        "device_keys": "[]"
+      },
+      "ms": 94.7,
+      "n_rows": 1
+    },
+    {
+      "step": 3,
+      "tool": "holder_fraud_history",
+      "params": {
+        "holder_keys": "[20749|204.0|132]",
+        "before": "2016-11-12 00:46:24"
+      },
+      "ms": 89.7,
+      "n_rows": 0
+    },
+    {
+      "step": 4,
+      "tool": "amount_peers",
+      "params": {
+        "product_cd": "R",
+        "amt": "100.09",
+        "t0": "2016-11-11 23:46:24",
+        "days": "7",
+        "tol": "0.01",
+        "email": "anonymous.com",
+        "email_field": "P_emaildomain"
+      },
+      "ms": 224.9,
+      "n_rows": 127
+    },
+    {
+      "step": 4,
+      "tool": "amount_peers",
+      "params": {
+        "product_cd": "R",
+        "amt": "100.09",
+        "t0": "2016-11-11 23:46:24",
+        "days": "7",
+        "tol": "0.01",
+        "email": "anonymous.com",
+        "email_field": "R_emaildomain"
+      },
+      "ms": 123.5,
+      "n_rows": 143
+    },
+    {
+      "step": 10,
+      "tool": "vector_search_cases",
+      "params": {
+        "text": "cleared false alarm: Repeated same-amount R purchases in quick succession are this cardholder's habit: 2 earlier bursts like this one on card C04570-K1 The same amount ($99.96, product R) was charged on card C04570-K1 before, on 2016-11-11 The device profile was already used by this card 3 time(s) before",
+        "k": "40"
+      },
+      "ms": 132.5,
+      "n_rows": 40
+    },
+    {
+      "step": 10,
+      "tool": "similar_cases",
+      "params": {
+        "pattern": "none",
+        "verdict": "legitimate",
+        "product": "R",
+        "channel": "online",
+        "amt": "100.09",
+        "n": "1",
+        "new_dev": "False",
+        "anon": "False",
+        "k": "3",
+        "exclude": "[]"
+      },
+      "ms": 4.6,
+      "n_rows": 3
+    },
+    {
+      "step": 10,
+      "tool": "case_memory",
+      "params": {
+        "card_ids": "[C04570-K1]"
+      },
+      "ms": 89.9,
+      "n_rows": 0
+    },
+    {
+      "step": 10,
+      "tool": "similar_investigations",
+      "params": {
+        "text": "cleared false alarm: Repeated same-amount R purchases in quick succession are this cardholder's habit: 2 earlier bursts like this one on card C04570-K1 The same amount ($99.96, product R) was charged on card C04570-K1 before, on 2016-11-11 The device profile was already used by this card 3 time(s) before",
+        "k": "3"
+      },
+      "ms": 111.0,
+      "n_rows": 3
+    },
+    {
+      "step": 12,
+      "tool": "write_case",
+      "params": {
+        "case_id": "HHG-017"
+      },
+      "ms": 1128.4,
+      "n_rows": 1
+    }
+  ],
+  "signals": [
+    {
+      "name": "risk_score_calibrated",
+      "group": "score",
+      "llr": -1.46,
+      "claim": "Model risk score 0.57. For product R transactions with an identity record in this score band, 5% were confirmed fraud in July to October (3,908 transactions), so the score is read at that calibrated rate, not at face value",
+      "entity_ids": [
+        "3450629"
+      ],
+      "ref": "document:weights.json#score_calibration",
+      "source": "document"
+    },
+    {
+      "name": "repeat_amount_habit",
+      "group": "sequence",
+      "llr": -0.9,
+      "claim": "Repeated same-amount R purchases in quick succession are this cardholder's habit: 2 earlier bursts like this one on card C04570-K1",
+      "entity_ids": [
+        "3450436",
+        "3450503",
+        "3450629"
+      ],
+      "ref": "query:card_history(card_id=C04570-K1)",
+      "source": "graph"
+    },
+    {
+      "name": "amount_seen_before",
+      "group": "sequence",
+      "llr": -0.8,
+      "claim": "The same amount ($99.96, product R) was charged on card C04570-K1 before, on 2016-11-11",
+      "entity_ids": [
+        "3450503",
+        "3450629"
+      ],
+      "ref": "query:card_history(card_id=C04570-K1)",
+      "source": "graph"
+    },
+    {
+      "name": "device_known",
+      "group": "device",
+      "llr": -0.8,
+      "claim": "The device profile was already used by this card 3 time(s) before",
+      "entity_ids": [
+        "3450629"
+      ],
+      "ref": "query:card_history(card_id=C04570-K1)",
+      "source": "graph"
+    }
+  ],
+  "sources": {
+    "summary": "llm"
+  },
+  "assess0": {
+    "p": 0.04,
+    "verdict": "legitimate",
+    "fraud_groups": [],
+    "legit_groups": [
+      "sequence",
+      "device"
+    ],
+    "by_group": {
+      "sequence": -0.9,
+      "device": -0.8,
+      "score": -1.46
+    }
+  },
+  "assess1": {
+    "p": 0.04,
+    "verdict": "legitimate",
+    "fraud_groups": [],
+    "legit_groups": [
+      "sequence",
+      "device"
+    ],
+    "by_group": {
+      "sequence": -0.9,
+      "device": -0.8,
+      "score": -1.46
+    }
+  }
+}

@@ -1,34 +1,43 @@
-"""Fill the README results table from cases/*.json (so the table can never drift from the answers)."""
+"""Fill the README results tables from the answer files (so a table can never drift from the answers).
+
+Round 2 (HHF, cases/) between <!-- RESULTS_TABLE --> markers; Round 1 (HHG, round1/cases/) between <!-- RESULTS_TABLE_R1 --> markers.
+"""
 import json
 
 from kavach.config import CASES_DIR, ROOT
 
-START, END = "<!-- RESULTS_TABLE -->", "<!-- /RESULTS_TABLE -->"
+MARKERS = {2: ("<!-- RESULTS_TABLE -->", "<!-- /RESULTS_TABLE -->"), 1: ("<!-- RESULTS_TABLE_R1 -->", "<!-- /RESULTS_TABLE_R1 -->")}
+DIRS = {2: (CASES_DIR, "HHF-*.json", "cases"), 1: (ROOT / "round1" / "cases", "HHG-*.json", "round1/cases")}
 
 
-def table() -> str:
-    rows = ["| Case | Verdict | Pattern | p | Episode | Exposure | Evidence asked | Final actions (route) | SAR | Graph |",
-            "|---|---|---|---|---|---|---|---|---|---|"]
-    counts = {}
-    for f in sorted(CASES_DIR.glob("HHG-*.json")):
+def table(round: int = 2) -> str:
+    d, pattern, rel = DIRS[round]
+    rows = ["| Case | Verdict | Pattern | p | Episode | Exposure | Evidence asked | Final actions (route) | SAR | Graph | Calls | Tokens | Seconds |",
+            "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    counts, files = {}, sorted(d.glob(pattern))
+    for f in files:
         a = json.loads(f.read_text(encoding="utf-8"))
         c = a["case"]
         counts[c["verdict"]] = counts.get(c["verdict"], 0) + 1
         acts = ", ".join(f"{x['action']} ({x['route']})" for x in a["next_best_actions"]["final"])
         ask = a["evidence_requests"][0]["assumed_response"].split(",")[0] if a["evidence_requests"] else "none"
-        rows.append(f"| [{a['case_id']}](cases/{f.name}) | {c['verdict']} | {c['pattern']} | {c['fraud_probability']:.2f} | "
+        rows.append(f"| [{a['case_id']}]({rel}/{f.name}) | {c['verdict']} | {c['pattern']} | {c['fraud_probability']:.2f} | "
                     f"{len(c['affected_txn_ids'])} | ${c['exposure_usd']:,.2f} | {ask} | {acts} | {'yes' if a['sar']['file'] else 'no'} | "
-                    f"{c['graph_case_id'] or 'no'} |")
-    head = (f"{counts.get('fraud', 0)} fraud, {counts.get('legitimate', 0)} legitimate, {counts.get('uncertain', 0)} uncertain. "
-            "All 20 files pass `python -m kavach check`.\n\n")
+                    f"{c['graph_case_id'] or 'no'} | {a['tool_calls']} | {a['tokens']} | {a['latency_s']} |")
+    head = (f"{counts.get('fraud', 0)} fraud, {counts.get('legitimate', 0)} legitimate, {counts.get('uncertain', 0)} uncertain "
+            f"({len(files)} files).\n\n")
     return head + "\n".join(rows)
 
 
 def update_readme() -> None:
     p = ROOT / "README.md"
     s = p.read_text(encoding="utf-8")
-    if END not in s:
-        s = s.replace(START, START + "\n" + END)
-    i, j = s.index(START) + len(START), s.index(END)
-    p.write_text(s[:i] + "\n" + table() + "\n" + s[j:], encoding="utf-8")
-    print("README results table updated")
+    for rnd, (start, end) in MARKERS.items():
+        if start not in s:
+            continue
+        if end not in s:
+            s = s.replace(start, start + "\n" + end)
+        i, j = s.index(start) + len(start), s.index(end)
+        s = s[:i] + "\n" + table(rnd) + "\n" + s[j:]
+    p.write_text(s, encoding="utf-8")
+    print("README results tables updated")

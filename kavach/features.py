@@ -7,9 +7,7 @@ exactly the same signal definitions.
 """
 import duckdb
 
-from kavach.config import DATA, DUCK_PATH
-
-FEATURES = DATA / "features.parquet"
+from kavach.config import DUCK_PATH, FEATURES  # noqa: F401  (FEATURES is re-exported for weights.py)
 
 SQL = """
 with base as (

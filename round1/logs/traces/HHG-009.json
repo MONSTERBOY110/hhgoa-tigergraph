@@ -1,0 +1,190 @@
+{
+  "log": [
+    "gathered: 56 card txns, device=None (on 0 cards), 0 closed-case hits",
+    "assess0: p=0.8 fraud groups={'sequence': -0.8, 'identity_flags': 0.7, 'customer': 1.5}",
+    "requested customer_validation; simulated reply: deny (p without customer 0.48)",
+    "assess1: p=0.89 fraud"
+  ],
+  "tools": [
+    {
+      "step": 1,
+      "tool": "card_history",
+      "params": {
+        "card_id": "C08299-K1"
+      },
+      "ms": 222.4,
+      "n_rows": 56
+    },
+    {
+      "step": 2,
+      "tool": "customer_cards",
+      "params": {
+        "customer_id": "C08299"
+      },
+      "ms": 86.0,
+      "n_rows": 1
+    },
+    {
+      "step": 3,
+      "tool": "closed_cases_for",
+      "params": {
+        "card_ids": "[C08299-K1]",
+        "customer_ids": "[]",
+        "txn_ids": "[3576079,3581141]",
+        "device_keys": "[]"
+      },
+      "ms": 83.8,
+      "n_rows": 0
+    },
+    {
+      "step": 3,
+      "tool": "holder_fraud_history",
+      "params": {
+        "holder_keys": "[13026|203.0|179,13026|330.0|93]",
+        "before": "2016-12-28 17:10:53"
+      },
+      "ms": 104.5,
+      "n_rows": 0
+    },
+    {
+      "step": 4,
+      "tool": "amount_peers",
+      "params": {
+        "product_cd": "S",
+        "amt": "30.02",
+        "t0": "2016-12-28 12:10:53",
+        "days": "7",
+        "tol": "0.01",
+        "email": "gmail.com",
+        "email_field": "R_emaildomain"
+      },
+      "ms": 185.4,
+      "n_rows": 58
+    },
+    {
+      "step": 10,
+      "tool": "vector_search_cases",
+      "params": {
+        "text": "confirmed fraud card_not_present_fraud: Customer denied the transaction(s) when asked: Customer confirms the dispute: they did not make the purchase, did not share the card details, and still has the card The same amount ($29.97, product S) was charged on card C08299-K1 before, on 2016-12-15 Vesta count C1 = 24 on this transaction against a median of 1 on card C08299-K1 (unnamed count features; on product C, C2 of 30 or more was about five times as often fraud in the closed months)",
+        "k": "40"
+      },
+      "ms": 197.0,
+      "n_rows": 40
+    },
+    {
+      "step": 10,
+      "tool": "similar_cases",
+      "params": {
+        "pattern": "card_not_present_fraud",
+        "verdict": "fraud",
+        "product": "S",
+        "channel": "online",
+        "amt": "30.02",
+        "n": "1",
+        "new_dev": "False",
+        "anon": "False",
+        "k": "3",
+        "exclude": "[]"
+      },
+      "ms": 8.4,
+      "n_rows": 3
+    },
+    {
+      "step": 10,
+      "tool": "case_memory",
+      "params": {
+        "card_ids": "[C08299-K1]"
+      },
+      "ms": 192.6,
+      "n_rows": 0
+    },
+    {
+      "step": 10,
+      "tool": "similar_investigations",
+      "params": {
+        "text": "confirmed fraud card_not_present_fraud: Customer denied the transaction(s) when asked: Customer confirms the dispute: they did not make the purchase, did not share the card details, and still has the card The same amount ($29.97, product S) was charged on card C08299-K1 before, on 2016-12-15 Vesta count C1 = 24 on this transaction against a median of 1 on card C08299-K1 (unnamed count features; on product C, C2 of 30 or more was about five times as often fraud in the closed months)",
+        "k": "3"
+      },
+      "ms": 203.5,
+      "n_rows": 3
+    },
+    {
+      "step": 12,
+      "tool": "write_case",
+      "params": {
+        "case_id": "HHG-009"
+      },
+      "ms": 1333.1,
+      "n_rows": 1
+    }
+  ],
+  "signals": [
+    {
+      "name": "amount_seen_before",
+      "group": "sequence",
+      "llr": -0.8,
+      "claim": "The same amount ($29.97, product S) was charged on card C08299-K1 before, on 2016-12-15",
+      "entity_ids": [
+        "3545489",
+        "3581141"
+      ],
+      "ref": "query:card_history(card_id=C08299-K1)",
+      "source": "graph"
+    },
+    {
+      "name": "count_features_high",
+      "group": "identity_flags",
+      "llr": 0.7,
+      "claim": "Vesta count C1 = 24 on this transaction against a median of 1 on card C08299-K1 (unnamed count features; on product C, C2 of 30 or more was about five times as often fraud in the closed months)",
+      "entity_ids": [
+        "3581141"
+      ],
+      "ref": "query:card_history(card_id=C08299-K1)",
+      "source": "graph"
+    },
+    {
+      "name": "customer_denies",
+      "group": "customer",
+      "llr": 2.2,
+      "claim": "Customer denied the transaction(s) when asked: Customer confirms the dispute: they did not make the purchase, did not share the card details, and still has the card",
+      "entity_ids": [],
+      "ref": "evidence_request:1",
+      "source": "customer"
+    }
+  ],
+  "sources": {
+    "summary": "llm"
+  },
+  "assess0": {
+    "p": 0.8,
+    "verdict": "fraud",
+    "fraud_groups": [
+      "identity_flags",
+      "customer"
+    ],
+    "legit_groups": [
+      "sequence"
+    ],
+    "by_group": {
+      "sequence": -0.8,
+      "identity_flags": 0.7,
+      "customer": 1.5
+    }
+  },
+  "assess1": {
+    "p": 0.89,
+    "verdict": "fraud",
+    "fraud_groups": [
+      "identity_flags",
+      "customer"
+    ],
+    "legit_groups": [
+      "sequence"
+    ],
+    "by_group": {
+      "sequence": -0.8,
+      "identity_flags": 0.7,
+      "customer": 2.2
+    }
+  }
+}

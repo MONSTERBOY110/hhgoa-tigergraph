@@ -1,0 +1,126 @@
+{
+  "case_id": "HHF-006",
+  "case": {
+    "status": "escalated",
+    "verdict": "uncertain",
+    "fraud_probability": 0.42,
+    "pattern": "card_not_present_fraud",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3660263"
+    ],
+    "first_suspicious_txn_id": "3660263",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 295.92,
+    "evidence": [
+      {
+        "claim": "Card C01727-K2 already has 5 confirmed-fraud closed case(s) (CC-0723, CC-1501, CC-1833, CC-1975). The account key is not usable in January, so the precedent is read at card level, where it is weaker: on cards of this size an earlier confirmed case made a new alert about 3.9 times as likely to be fraud",
+        "source": "graph",
+        "ref": "query:closed_cases_for(card_id=C01727-K2)",
+        "entity_ids": [
+          "CC-0723",
+          "CC-1501",
+          "CC-1833",
+          "CC-1975",
+          "CC-4908"
+        ]
+      },
+      {
+        "claim": "Purchaser email domain gmail.com is this account's own: 57 earlier transactions on card C01727-K2 used it",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C01727-K2)",
+        "entity_ids": [
+          "3660263"
+        ]
+      },
+      {
+        "claim": "Profile fit: $295.92 is within the account's earlier range (largest $1,419.28 over 118 purchases)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C01727-K2)",
+        "entity_ids": [
+          "3660263"
+        ]
+      },
+      {
+        "claim": "Policy applied, Fraud Policy R4: No reply within 24 hours: Recommend MONITOR_CARD and DECLINE_TRANSACTION for pending authorizations.",
+        "source": "document",
+        "ref": "document:README#POLICY-R4",
+        "entity_ids": []
+      },
+      {
+        "claim": "Pattern definition, Known fraud patterns: Card-not-present fraud: The number is used online without the card.",
+        "source": "document",
+        "ref": "document:README#PATTERN-2",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-0723",
+      "CC-1501",
+      "CC-1833",
+      "CC-1975",
+      "CC-4946",
+      "CC-0321"
+    ],
+    "summary": "Alert HHF-006 opened because an analyst asked for a review of transaction 3660263 and related activity on other cards ($295.92, product C, online, 2017-01-28 07:59) on card C01727-K2. The evidence is balanced (fraud probability 0.42): for fraud, Card C01727-K2 already has 5 confirmed-fraud closed case(s) (CC-0723, CC-1501, CC-1833, CC-1975). The account key is not usable in January, so the precedent is read at card level, where it is weaker: on cards of this size an earlier confirmed case made a new alert about 3.9 times as likely to be fraud; against, Purchaser email domain gmail.com is this account's own: 57 earlier transactions on card C01727-K2 used it; Profile fit: $295.92 is within the account's earlier range (largest $1,419.28 over 118 purchases). The case stays under monitoring pending the cardholder. Evidence request: No reply from the customer within 24 hours.",
+    "written_to_graph": false,
+    "graph_case_id": ""
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 6,
+      "assumed_response": "No reply from the customer within 24 hours"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1 and §5: fraud probability 0.42 is below 0.70; verify with the cardholder before any block"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "§3a: requesting evidence opens a case"
+      }
+    ],
+    "final": [
+      {
+        "action": "DECLINE_TRANSACTION",
+        "route": "L1",
+        "reason": "R4: decline pending authorizations while unverified"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "§3a: the evidence request opened a case"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "R4: no reply within 24 hours, raise monitoring for 72 hours"
+      },
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R8: evidence conflicts"
+      }
+    ],
+    "what_changed": "No reply within 24 hours, so R4 applies and the probability stays at 0.42: DECLINE_TRANSACTION, CREATE_CASE, MONITOR_CARD, ESCALATE_TO_ANALYST."
+  },
+  "sar": {
+    "file": false,
+    "reason": "§3a: the verdict is not fraud, so no suspicious activity report; the case record is sufficient",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "The customer did not reply within 24 hours and the remaining graph evidence cannot move the probability (0.42) across a decision threshold, so the case stays open under R4 monitoring.",
+  "tool_calls": 9,
+  "tokens": 0,
+  "latency_s": 0.23
+}

@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kavach · 20 fraud investigations on TigerGraph</title>
-<meta name="description" content="Kavach, an agentic fraud investigator on TigerGraph: the 20 Hacker House Goa 2026 cases with evidence, rule-cited actions, approval routes and SAR narratives.">
+<title>Kavach · fraud investigations on TigerGraph</title>
+<meta name="description" content="Kavach, an agentic fraud investigator on TigerGraph: every Hacker House Goa 2026 case with its evidence, rule-cited actions, approval routes, a step-by-step audit replay, attested claims, the case file and ring replays.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2 4 7v8c0 7.5 5.1 13.4 12 15 6.9-1.6 12-7.5 12-15V7z' fill='%23f58220'/%3E%3Ccircle cx='16' cy='13' r='3' fill='%2316181d'/%3E%3Ccircle cx='10.5' cy='19' r='2' fill='%2316181d'/%3E%3Ccircle cx='21.5' cy='19' r='2' fill='%2316181d'/%3E%3C/svg%3E">
 <style>
 @font-face{font-family:"Manrope";src:url("fonts/manrope-400.woff2") format("woff2");font-weight:400;font-display:swap}
@@ -21,6 +21,7 @@
   --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
   --sans:"Manrope","Segoe UI",system-ui,sans-serif;
   --r:6px;
+  color-scheme:dark;
 }
 *{box-sizing:border-box}
 html,body{margin:0;height:100%}
@@ -30,28 +31,37 @@ body{background:var(--ground);color:var(--ink);font:14px/1.5 var(--sans);font-va
 ::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:10px;border:3px solid var(--ground)}
 :focus-visible{outline:2px solid var(--tg);outline-offset:2px;border-radius:4px}
 a{color:var(--tg);text-underline-offset:3px}
+button{font:inherit;color:inherit}
 .mono{font-family:var(--mono);font-size:.92em}
 .pipe{font-family:var(--mono);font-weight:400;color:var(--ink-3);padding:0 .1em}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.muted{color:var(--ink-2)}.faint{color:var(--ink-3)}
 
 /* ---------- top bar ---------- */
 header.bar{height:56px;display:flex;align-items:center;gap:18px;padding:0 20px;border-bottom:1px solid var(--line);background:var(--panel)}
-.brand{display:flex;align-items:center;gap:10px;font-weight:650;font-size:16px;letter-spacing:.01em}
-.brand svg{width:26px;height:26px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:650;font-size:16px;letter-spacing:.01em;white-space:nowrap}
+.brand svg{width:26px;height:26px;flex:none}
 .brand small{font-weight:400;color:var(--ink-3);font-size:13px;margin-left:4px}
 nav.tabs{display:flex;gap:4px;margin-left:12px}
-nav.tabs button{background:none;border:0;color:var(--ink-2);font:inherit;padding:8px 12px;border-radius:var(--r);cursor:pointer}
+nav.tabs button{background:none;border:0;color:var(--ink-2);padding:8px 12px;border-radius:var(--r);cursor:pointer;white-space:nowrap}
 nav.tabs button:hover{color:var(--ink);background:var(--panel-2)}
 nav.tabs button[aria-selected=true]{color:var(--ink);box-shadow:inset 0 -2px 0 var(--tg)}
 .bar .spacer{flex:1}
-.bar .meta{color:var(--ink-3);font-size:12.5px}
+.bar .meta{color:var(--ink-3);font-size:12.5px;white-space:nowrap}
 .bar .meta b{color:var(--ink-2);font-weight:600}
 
 /* ---------- layout ---------- */
 .shell{display:grid;grid-template-columns:320px 1fr;height:calc(100% - 56px)}
 aside.rail{border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0;background:var(--ground)}
-.filters{display:flex;gap:6px;padding:14px 14px 10px;flex-wrap:wrap}
-.filters button{font:inherit;font-size:12.5px;color:var(--ink-2);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px 10px;cursor:pointer}
+.rounds{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:6px;padding:14px 14px 2px}
+.rounds button{text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:7px 10px 8px;color:var(--ink-2);cursor:pointer;display:flex;flex-direction:column;gap:0;min-width:0}
+.rounds button b{font-weight:650;color:var(--ink);font-size:13px}
+.rounds button span{font-size:11.5px;color:var(--ink-3);font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rounds button:hover{border-color:var(--line-2);color:var(--ink)}
+.rounds button[aria-pressed=true]{background:var(--tg-soft);border-color:var(--tg-line)}
+.rounds button[aria-pressed=true] span{color:var(--ink-2)}
+.filters{display:flex;gap:6px;padding:12px 14px 10px;flex-wrap:wrap}
+.filters button{font-size:12.5px;color:var(--ink-2);background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px 10px;cursor:pointer}
 .filters button:hover{border-color:var(--line-2);color:var(--ink)}
 .filters button[aria-pressed=true]{border-color:var(--tg-line);color:var(--ink);background:var(--tg-soft)}
 .filters .n{color:var(--ink-3);margin-left:4px}
@@ -64,7 +74,7 @@ ol.cases li button:focus-visible{outline:2px solid var(--tg);outline-offset:-2px
 .pat{grid-column:2/4;color:var(--ink-3);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .exp{text-align:right;color:var(--ink-2);font-size:12.5px}
 .vd{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink-2)}
-.vd i{width:8px;height:8px;border-radius:50%;background:currentColor;display:inline-block}
+.vd i{width:8px;height:8px;border-radius:50%;background:currentColor;display:inline-block;flex:none}
 .vd.fraud i{background:var(--fraud)}.vd.legitimate i{background:var(--legit)}.vd.uncertain i{background:var(--uncertain)}
 .rail .foot{padding:12px 16px;border-top:1px solid var(--line);color:var(--ink-3);font-size:12px}
 
@@ -73,11 +83,15 @@ main{overflow:auto;min-width:0}
 .head{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap}
 .head h1{margin:0;font-family:var(--mono);font-size:28px;font-weight:600;letter-spacing:-.01em}
 .head .status{font-size:13px;color:var(--ink-2);padding:3px 10px;border:1px solid var(--line-2);border-radius:999px}
+.head .rnd{font-size:12.5px;color:var(--ink-3)}
 .trigger{margin:10px 0 0;color:var(--ink-2);max-width:92ch}
 .trigger .who{color:var(--ink-3);font-size:12.5px;display:block;margin-top:4px}
+mark.hostile{background:none;color:var(--ink);text-decoration:underline wavy var(--uncertain) 1px;text-underline-offset:4px;text-decoration-skip-ink:none}
+.flagline{display:flex;gap:8px;align-items:flex-start;margin-top:8px;font-size:12.5px;color:var(--ink-2);max-width:92ch}
+.flagline svg{width:14px;height:14px;flex:none;margin-top:3px}
 
 /* ---------- instrument strip ---------- */
-.strip{display:grid;grid-template-columns:1.4fr 1.6fr 1.5fr 1fr 1fr 1.2fr;margin:22px 0 26px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);overflow:hidden}
+.strip{display:grid;grid-template-columns:1.4fr 1.6fr 1.5fr 1fr 1fr 1.2fr;margin:22px 0 22px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);overflow:hidden}
 .gauge{padding:14px 16px 12px;border-right:1px solid var(--line);min-width:0}
 .gauge:last-child{border-right:0}
 .gauge .v.p{margin-bottom:8px}
@@ -95,15 +109,49 @@ main{overflow:auto;min-width:0}
 .scale .lbl.up{top:-9px}
 .scale .lbl{position:absolute;top:19px;font-size:10px;line-height:1;color:var(--ink-3);transform:translateX(-50%)}
 
+/* ---------- case tabs ---------- */
+.ctabs{display:flex;gap:2px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none;margin-bottom:24px}
+.ctabs::-webkit-scrollbar{display:none}
+.ctabs button{background:none;border:0;color:var(--ink-2);padding:10px 12px 11px;cursor:pointer;white-space:nowrap;border-radius:var(--r) var(--r) 0 0}
+.ctabs button:hover{color:var(--ink);background:var(--panel)}
+.ctabs button[aria-selected=true]{color:var(--ink);box-shadow:inset 0 -2px 0 var(--tg)}
+.ctabs button:focus-visible{outline-offset:-2px}
+.ctabs .c{font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-left:7px}
+.ctabs .c.warn{color:var(--uncertain)}
+.tabpanel:focus{outline:none}
+
 /* ---------- sections ---------- */
 section.blk{margin-top:34px}
+section.blk:first-child{margin-top:0}
 section.blk>h2{font-size:15px;font-weight:650;margin:0 0 12px;letter-spacing:.01em}
 section.blk>h2 .aside{font-weight:400;color:var(--ink-3);font-size:13px;margin-left:8px}
 .two{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:22px;align-items:start}
+.two.even{grid-template-columns:minmax(0,1fr) minmax(0,1fr);margin-top:34px}
+.two>section.blk{margin-top:0}
+.actions.pair{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.actions.pair .acol+.acol{border-left:1px solid var(--line)}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r)}
 .prose{padding:16px 18px;color:var(--ink);max-width:75ch}
 .prose p{margin:0 0 10px}.prose p:last-child{margin:0}
 .prose .muted{color:var(--ink-2)}
+.lede{color:var(--ink-2);max-width:80ch;margin:0 0 14px}
+.facts{display:flex;flex-wrap:wrap;gap:6px 22px;color:var(--ink-3);font-size:12.5px;margin:0 0 14px}
+.facts b{color:var(--ink-2);font-weight:600}
+.facts .mono{color:var(--ink-2)}
+.empty{padding:22px 22px 20px;max-width:80ch}
+.empty h3{margin:0 0 6px;font-size:15px;font-weight:650}
+.empty p{margin:0 0 6px;color:var(--ink-2)}
+.empty .hint{color:var(--ink-3);font-size:12.5px;margin:0}
+.loading{padding:22px;color:var(--ink-3)}
+
+/* command box */
+.cmd{display:inline-flex;align-items:center;gap:0;border:1px solid var(--line);border-radius:var(--r);background:var(--ground);max-width:100%;vertical-align:middle}
+.cmd .cmd-l{font-size:12px;color:var(--ink-3);padding:0 2px 0 10px;white-space:nowrap}
+.cmd code{font-family:var(--mono);font-size:12px;color:var(--ink);padding:6px 10px;white-space:nowrap;overflow:auto;scrollbar-width:none}
+.cmd button{border:0;border-left:1px solid var(--line);background:var(--panel);color:var(--ink-2);font-size:12px;padding:6px 11px;cursor:pointer;border-radius:0 var(--r) var(--r) 0;align-self:stretch}
+.cmd button:hover{color:var(--ink);background:var(--panel-2)}
+.cmd button.ok{color:var(--legit)}
+.cmdrow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 16px}
 
 /* graph */
 .graph{position:relative;padding:6px}
@@ -119,19 +167,30 @@ section.blk>h2 .aside{font-weight:400;color:var(--ink-3);font-size:13px;margin-l
 @keyframes draw{to{stroke-dashoffset:0}}
 .node text{font-family:var(--mono);font-size:10.5px;fill:var(--ink-2)}
 .node .big{font-size:12px;fill:var(--ink);font-weight:600}
-@media (prefers-reduced-motion:reduce){.draw .edge{animation:none;stroke-dasharray:none}.scale .needle{transition:none}}
 
 /* ledger tables */
 table.ledger{width:100%;border-collapse:collapse;font-size:13px}
-table.ledger th{text-align:left;font-weight:600;color:var(--ink-3);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;padding:10px 14px;border-bottom:1px solid var(--line)}
+table.ledger th{text-align:left;font-weight:600;color:var(--ink-3);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
 table.ledger td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
 table.ledger tr:last-child td{border-bottom:0}
 table.ledger td.claim{max-width:62ch}
+table.ledger .num{text-align:right;white-space:nowrap}
 .src{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-2);white-space:nowrap}
 .src svg{width:14px;height:14px;flex:none}
 .ref{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);word-break:break-word;margin-top:4px}
 .ids{display:flex;flex-wrap:wrap;gap:4px}
-.id{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);background:var(--panel-2);border:1px solid var(--line);border-radius:4px;padding:1px 6px;white-space:nowrap}
+.id{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);background:var(--panel-2);border:1px solid var(--line);border-radius:4px;padding:1px 6px;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+a.id,button.id{cursor:pointer;text-decoration:none}
+a.id:hover,button.id:hover{border-color:var(--tg-line);color:var(--ink)}
+.idl{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin-right:2px;align-self:center}
+.att{display:inline-flex;align-items:center;gap:6px;margin-top:6px;font-size:11.5px;color:var(--ink-3)}
+.att button{all:unset;cursor:pointer;font-family:var(--mono);color:var(--ink-2);border-bottom:1px dotted var(--ink-3)}
+.att button:hover{color:var(--tg);border-color:var(--tg)}
+.att button:focus-visible{outline:2px solid var(--tg);outline-offset:2px}
+
+/* status badges (re-run of an attested claim) */
+.st{font-family:var(--mono);font-size:10.5px;font-weight:600;padding:0 6px;border-radius:4px;border:1px solid currentColor;white-space:nowrap;line-height:17px;display:inline-block}
+.st.pass{color:var(--legit)}.st.fail{color:var(--fraud)}.st.unverifiable,.st.none{color:var(--ink-3)}
 
 /* actions */
 .actions{display:grid;grid-template-columns:minmax(0,1fr) 190px minmax(0,1fr);gap:0;align-items:stretch}
@@ -142,7 +201,7 @@ table.ledger td.claim{max-width:62ch}
 .act:first-of-type{border-top:0}
 .act b{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--ink)}
 .act .why{grid-column:1/3;color:var(--ink-2);font-size:12.5px}
-.route{font-family:var(--mono);font-size:11px;font-weight:600;padding:1px 7px;border-radius:4px;border:1px solid currentColor;align-self:start}
+.route{font-family:var(--mono);font-size:11px;font-weight:600;padding:1px 7px;border-radius:4px;border:1px solid currentColor;align-self:start;white-space:nowrap}
 .route.auto{color:var(--auto)}.route.L1{color:var(--l1)}.route.L2{color:var(--l2)}
 .bridge{border-left:1px solid var(--line);border-right:1px solid var(--line);padding:14px;display:flex;flex-direction:column;justify-content:center;gap:10px;background:var(--panel-2);font-size:12.5px;color:var(--ink-2)}
 .bridge .arrow{display:block;width:100%;height:14px}
@@ -154,67 +213,288 @@ table.ledger td.claim{max-width:62ch}
 /* SAR */
 .sar{padding:18px 20px}
 .sar p{margin:0;max-width:78ch;line-height:1.65}
-.sar .facts{display:flex;flex-wrap:wrap;gap:20px;margin-top:14px;color:var(--ink-3);font-size:12.5px}
-.sar .facts b{color:var(--ink-2);font-weight:600}
+.sar .facts{margin:14px 0 0;gap:20px}
 .nosar{padding:14px 18px;color:var(--ink-2)}
 
 .footline{margin-top:34px;padding-top:14px;border-top:1px solid var(--line);display:flex;gap:26px;flex-wrap:wrap;color:var(--ink-3);font-size:12.5px}
 .footline b{color:var(--ink-2);font-weight:600}
 
-/* monitor view */
+/* ---------- replay ---------- */
+table.steps td{padding:9px 12px}
+table.steps th{padding:10px 12px}
+table.steps td.x{width:34px;padding-right:0}
+table.steps td.n{width:34px;color:var(--ink-3);font-family:var(--mono);font-size:12px}
+.xbtn{all:unset;cursor:pointer;width:24px;height:24px;display:grid;place-items:center;border-radius:4px;color:var(--ink-3)}
+.xbtn:hover{background:var(--panel-2);color:var(--ink)}
+.xbtn:focus-visible{outline:2px solid var(--tg);outline-offset:0}
+.xbtn svg{width:12px;height:12px;transition:transform .18s cubic-bezier(.16,1,.3,1)}
+.xbtn[aria-expanded=true] svg{transform:rotate(90deg)}
+.phase{font-family:var(--mono);font-size:11px;color:var(--ink-3);white-space:nowrap}
+.phase b{color:var(--ink-2);font-weight:600;margin-right:6px}
+.call{font-family:var(--mono);font-size:12px;color:var(--ink-2);word-break:break-word;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.call b{font-weight:600;color:var(--ink)}
+.call.full{display:block;-webkit-line-clamp:unset}
+.sha{font-family:var(--mono);font-size:11px;color:var(--ink-3)}
+.errtxt{color:var(--fraud);font-size:12.5px;margin-top:4px}
+tr.more>td{background:var(--panel-2);padding:14px 16px 16px}
+tr.more[hidden]{display:none}
+.moregrid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px 26px}
+.moregrid h4{margin:0 0 8px;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+dl.kv{margin:0;display:grid;grid-template-columns:max-content minmax(0,1fr);gap:4px 14px;font-family:var(--mono);font-size:12px}
+dl.kv dt{color:var(--ink-3)}dl.kv dd{margin:0;color:var(--ink);word-break:break-word}
+.linked{margin:0;padding:0;list-style:none;display:grid;gap:8px;font-size:12.5px;color:var(--ink-2)}
+.linked li{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:baseline}
+tr.chk>td{padding:0;background:var(--panel-2);box-shadow:inset 0 1px 0 var(--tg-line)}
+.snap{display:grid;grid-template-columns:210px minmax(0,1fr);gap:16px 26px;padding:16px 18px 18px}
+.snap-h .lbl{font-size:13px;font-weight:650;color:var(--ink)}
+.snap-h .ckid{font-family:var(--mono);font-size:11.5px;font-weight:400;color:var(--ink-3);margin-left:8px}
+.snap-h .pv{font-size:20px;font-weight:650;margin-top:4px;display:flex;align-items:baseline;gap:8px}
+.snap-h .pv small{font-size:12.5px;color:var(--ink-3);font-weight:400}
+.snap-h .vd{margin-top:4px}
+.gbars{display:grid;grid-template-columns:max-content minmax(80px,1fr) max-content;gap:7px 12px;align-items:center;font-size:12.5px}
+.gname{color:var(--ink-2)}
+.gname.mv{color:var(--ink)}
+.gtrack{position:relative;height:12px}
+.gtrack::before{content:"";position:absolute;left:50%;top:-3px;bottom:-3px;width:1px;background:var(--line-2)}
+.gbar{position:absolute;top:3px;height:6px;border-radius:2px}
+.gbar.pos{background:var(--fraud)}.gbar.neg{background:var(--legit)}
+.gbar.was{top:1px;height:10px;background:none;border:1px dashed var(--ink-3)}
+.gval{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);text-align:right;white-space:nowrap}
+.gval s{color:var(--ink-3);text-decoration:none;margin-right:6px}
+.gaxis{display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink-3);grid-column:2}
+.sigs{margin:14px 0 0;padding:0;list-style:none;display:grid;gap:8px}
+.sigs li{display:grid;grid-template-columns:52px minmax(0,1fr);gap:10px;font-size:12.5px;color:var(--ink-2)}
+.sigs .llr{font-family:var(--mono);font-size:11.5px;text-align:right;padding-top:1px}
+.sigs .llr.pos{color:var(--fraud)}.sigs .llr.neg{color:var(--legit)}.sigs .llr.zero{color:var(--ink-3)}
+.sigs .sn{font-family:var(--mono);font-size:11px;color:var(--ink-3);display:block;margin-bottom:1px}
+.reply{margin:12px 0 0;font-size:12.5px;color:var(--ink-2)}
+.reply b{color:var(--ink);font-weight:600}
+.snap .sub{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);font-weight:600;margin:14px 0 6px}
+.endgrid{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line)}
+.endgrid>div{padding:14px 16px}
+.endgrid>div+div{border-left:1px solid var(--line)}
+.endgrid h3{margin:0 0 6px;font-size:13px;font-weight:650}
+.endgrid p{margin:0;color:var(--ink-2);font-size:13px;max-width:70ch}
+details.log{margin-top:14px}
+details.log summary{cursor:pointer;color:var(--ink-2);font-size:13px;padding:6px 0;width:max-content}
+details.log summary:hover{color:var(--ink)}
+details.log ol{margin:6px 0 0;padding:12px 16px 12px 40px;font-family:var(--mono);font-size:12px;color:var(--ink-2);background:var(--panel);border:1px solid var(--line);border-radius:var(--r)}
+details.log li{padding:2px 0;word-break:break-word}
+
+/* ---------- attestation ---------- */
+table.claims td.cid2{width:76px;white-space:nowrap}
+.clid{font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--ink);display:block;margin-bottom:4px}
+tr.kindrow td{background:var(--ground);color:var(--ink-3);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;padding:8px 14px}
+tr.flash td{animation:flash 1.6s cubic-bezier(.16,1,.3,1)}
+@keyframes flash{from{background:var(--tg-soft)}to{background:transparent}}
+.how{font-family:var(--mono);font-size:11.5px;color:var(--ink-2);white-space:pre-wrap;word-break:break-word;margin:0;line-height:1.55}
+.how b{color:var(--ink);font-weight:600}
+.when{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);white-space:nowrap;line-height:1.6}
+.rr{font-size:11.5px;color:var(--ink-3);margin-top:6px}
+.idgroup{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:5px}
+.idgroup:last-child{margin-bottom:0}
+
+/* ---------- case file ---------- */
+.cfstrip{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));border:1px solid var(--line);border-radius:var(--r);background:var(--panel);margin-bottom:22px}
+.cfstrip>div{padding:12px 14px 10px;border-right:1px solid var(--line);min-width:0}
+.cfstrip>div:last-child{border-right:0}
+.cfstrip .v{font-size:15px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cfstrip .v.mono{font-size:12px;font-weight:400;padding-top:2px;white-space:normal;line-height:1.35}
+.cfstrip .pl{margin-top:4px;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3)}
+.ok{color:var(--legit)}.bad{color:var(--fraud)}
+.wait{display:grid;gap:0}
+.wait .w{padding:12px 16px;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr auto;gap:4px 12px}
+.wait .w:first-child{border-top:0}
+.wait .w b{font-family:var(--mono);font-size:12.5px;font-weight:600}
+.wait .w .why{grid-column:1/3;font-size:12.5px;color:var(--ink-2)}
+.wait .w .since{grid-column:1/3;font-size:11.5px;color:var(--ink-3);font-family:var(--mono)}
+.wait .none{padding:14px 16px;color:var(--ink-2)}
+ol.tl{list-style:none;margin:0;padding:6px 0}
+ol.tl li{display:grid;grid-template-columns:30px 18px minmax(0,1fr);gap:0 10px;padding:0 16px}
+ol.tl .sq{font-family:var(--mono);font-size:11px;color:var(--ink-3);text-align:right;padding-top:11px}
+ol.tl .rail2{position:relative}
+ol.tl .rail2::before{content:"";position:absolute;left:8px;top:0;bottom:0;width:1px;background:var(--line)}
+ol.tl li:first-child .rail2::before{top:16px}ol.tl li:last-child .rail2::before{bottom:calc(100% - 16px)}
+ol.tl .dot{position:absolute;left:4px;top:12px;width:9px;height:9px;border-radius:50%;background:var(--panel);box-shadow:inset 0 0 0 1.5px var(--line-2)}
+ol.tl .dot.dec{background:var(--tg);box-shadow:none}
+ol.tl .dot.wait{box-shadow:inset 0 0 0 1.5px var(--uncertain)}
+ol.tl .dot.bad{background:var(--fraud);box-shadow:none}
+ol.tl .body{padding:8px 0 10px;border-bottom:1px solid var(--line)}
+ol.tl li:last-child .body{border-bottom:0}
+ol.tl .k{font-weight:650;font-size:13px}
+ol.tl .meta{font-family:var(--mono);font-size:11px;color:var(--ink-3);margin-left:8px}
+ol.tl .d{color:var(--ink-2);font-size:12.5px;margin-top:2px;word-break:break-word}
+ol.tl .ids{margin-top:6px}
+
+/* ---------- ring replay ---------- */
+.ring-top{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:stretch}
+.hub{padding:6px;display:flex;flex-direction:column}
+.hub svg{display:block;width:100%;height:auto}
+.hub .legend{display:flex;gap:14px;flex-wrap:wrap;padding:4px 12px 10px;color:var(--ink-3);font-size:11.5px}
+.hub .legend span{display:inline-flex;align-items:center;gap:6px}
+.hub .legend svg{width:10px;height:10px}
+.hub .hn{transition:opacity .25s cubic-bezier(.16,1,.3,1)}
+.hub .he{transition:opacity .25s cubic-bezier(.16,1,.3,1),stroke-width .25s}
+.hub text{font-family:var(--mono);font-size:10.5px;fill:var(--ink-2)}
+.hub text.center{fill:var(--ink);font-size:11px;font-weight:600}
+.rpanel{display:flex;flex-direction:column}
+.readouts{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line)}
+.readouts>div{padding:13px 16px 11px;min-width:0}
+.readouts>div:nth-child(odd){border-right:1px solid var(--line)}
+.readouts>div:nth-child(-n+2){border-bottom:1px solid var(--line)}
+.readouts .v{font-size:20px;font-weight:650;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.readouts .v.t{font-size:15px;font-family:var(--mono);font-weight:600;padding-top:3px}
+.readouts .pl{margin-top:5px;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.controls{display:grid;grid-template-columns:auto auto auto minmax(0,1fr);gap:8px;align-items:center;padding:14px 16px 6px}
+.cbtn{display:inline-flex;align-items:center;gap:7px;background:var(--panel-2);border:1px solid var(--line-2);border-radius:var(--r);padding:6px 12px;color:var(--ink);cursor:pointer;font-size:13px;white-space:nowrap}
+.cbtn:hover{border-color:var(--tg-line)}
+.cbtn.icon{padding:6px 8px}
+.cbtn svg{width:13px;height:13px;flex:none}
+.cbtn.primary{background:var(--tg-soft);border-color:var(--tg-line)}
+input.scrub{-webkit-appearance:none;appearance:none;width:100%;height:24px;background:none;margin:0;cursor:pointer}
+input.scrub::-webkit-slider-runnable-track{height:2px;background:var(--line-2);border-radius:2px}
+input.scrub::-moz-range-track{height:2px;background:var(--line-2);border-radius:2px}
+input.scrub::-moz-range-progress{height:2px;background:var(--tg)}
+input.scrub::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--ink);margin-top:-6px;border:0}
+input.scrub::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--ink);border:0}
+input.scrub:focus-visible{outline:none}
+input.scrub:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 2px var(--ground),0 0 0 4px var(--tg)}
+input.scrub:focus-visible::-moz-range-thumb{box-shadow:0 0 0 2px var(--ground),0 0 0 4px var(--tg)}
+.now{padding:4px 16px 14px;font-size:12.5px;color:var(--ink-2);min-height:3.2em}
+.now .mono{color:var(--ink)}
+.lanes{padding:12px 0 6px;position:relative}
+.lrow{display:grid;grid-template-columns:150px minmax(0,1fr);align-items:center}
+.lrow .ll{padding:0 12px 0 16px;font-family:var(--mono);font-size:11.5px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:7px;transition:color .2s}
+.lrow .ll i{width:7px;height:7px;border-radius:50%;flex:none;box-shadow:inset 0 0 0 1.5px var(--line-2)}
+.lrow.joined .ll{color:var(--ink)}
+.lrow.joined .ll i{background:var(--ink-2);box-shadow:none}
+.lrow.own .ll i{width:9px;height:9px;background:none;box-shadow:inset 0 0 0 2px var(--vc)}
+.lrow.lead .ll{color:var(--tg)}
+.track{position:relative;height:22px;margin-right:18px;border-bottom:1px solid var(--line)}
+.lrow:last-child .track{border-bottom:0}
+.mk{position:absolute;top:50%;transform:translate(-50%,-50%)}
+.mk.o{width:2px;height:8px;border-radius:1px;background:var(--ink-3);opacity:.45}
+.mk.p{width:8px;height:8px;border-radius:50%;background:var(--tg)}
+.mk.c{width:8px;height:8px;border-radius:50%;box-shadow:inset 0 0 0 1.5px var(--fraud)}
+.mk.p.c{box-shadow:0 0 0 1.5px var(--fraud)}
+.mk.f{outline:1.5px solid var(--ink);outline-offset:1.5px;border-radius:50%}
+.mk.fut{visibility:hidden}
+.chart{display:grid;grid-template-columns:150px minmax(0,1fr);align-items:end}
+.chart .cl{padding:0 12px 4px 16px;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);line-height:1.35}
+.chart .cl b{display:block;font-size:12.5px;letter-spacing:0;text-transform:none;color:var(--ink-2);font-weight:600}
+.chart svg{display:block;width:calc(100% - 18px);height:84px;overflow:visible}
+.axis{display:grid;grid-template-columns:150px minmax(0,1fr);margin:2px 0 8px}
+.axis .ax{position:relative;height:18px;margin-right:18px;border-top:1px solid var(--line-2)}
+.axis .ax span{position:absolute;top:3px;font-size:10.5px;color:var(--ink-3);transform:translateX(-50%);white-space:nowrap}
+.axis .ax span:first-child{transform:none}
+.playhead{position:absolute;top:0;bottom:0;width:1px;background:var(--ink);pointer-events:none;opacity:.7}
+.playwrap{position:absolute;left:150px;right:18px;top:0;bottom:0;pointer-events:none}
+table.joins tr.pending td{color:var(--ink-3)}
+table.joins tr.pending .id{opacity:.55}
+table.joins tr[aria-current=true] td{background:var(--tg-soft)}
+table.joins tbody tr{cursor:pointer}
+table.joins tbody tr:hover td{background:var(--panel-2)}
+.rolechip{font-size:12px;color:var(--ink-2);white-space:nowrap}
+.elv{font-family:var(--mono);font-size:12px;color:var(--ink);word-break:break-word}
+.tag{font-size:11.5px;padding:1px 8px;border-radius:999px;border:1px solid var(--line-2);color:var(--ink-2);white-space:nowrap}
+.tag.lead{border-color:var(--tg-line);color:var(--tg)}
+pre.sql{margin:0;padding:12px 14px;font-family:var(--mono);font-size:11.5px;color:var(--ink-2);white-space:pre-wrap;word-break:break-word;background:var(--ground);border:1px solid var(--line);border-radius:var(--r)}
+
+/* ---------- monitor and detectors ---------- */
 .mon{max-width:1180px;margin:0 auto;padding:26px 32px 64px}
 .mon h1{font-size:22px;margin:0 0 8px}
 .mon p.lede{color:var(--ink-2);max-width:80ch;margin:0 0 22px}
+.det{margin-bottom:14px}
+.det-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;padding:14px 16px 12px;border-bottom:1px solid var(--line)}
+.det-h .nm{font-family:var(--mono);font-size:13.5px;font-weight:600}
+.det-h .ti{color:var(--ink-2)}
+.det-h .sp{flex:1}
+.det-b{padding:12px 16px 14px;display:grid;gap:10px}
+.det-b p{margin:0;color:var(--ink-2);max-width:90ch}
+.det-b .rule{color:var(--ink)}
+.bt{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.bt>div{padding:11px 16px 9px;border-right:1px solid var(--line);min-width:0}
+.bt>div:last-child{border-right:0}
+.bt .v{font-size:15px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bt .pl{margin-top:4px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);line-height:1.35}
+.kvrow{display:grid;grid-template-columns:180px minmax(0,1fr);gap:4px 16px;font-size:12.5px;align-items:baseline}
+.kvrow>span:nth-child(odd){color:var(--ink-3)}
 
-@media (max-width:1100px){.strip{grid-template-columns:repeat(3,1fr)}.gauge:nth-child(3){border-right:0}.gauge:nth-child(-n+3){border-bottom:1px solid var(--line)}.two{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){
+  .draw .edge{animation:none;stroke-dasharray:none}.scale .needle{transition:none}
+  .xbtn svg,.hub .hn,.hub .he,.lrow .ll{transition:none}tr.flash td{animation:none}
+}
+@media (max-width:1100px){.strip{grid-template-columns:repeat(3,1fr)}.gauge:nth-child(3){border-right:0}.gauge:nth-child(-n+3){border-bottom:1px solid var(--line)}.two,.two.even,.ring-top{grid-template-columns:1fr}
+  .cfstrip{grid-template-columns:repeat(3,minmax(0,1fr))}.cfstrip>div:nth-child(3){border-right:0}.cfstrip>div:nth-child(-n+3){border-bottom:1px solid var(--line)}
+  .bt{grid-template-columns:repeat(3,minmax(0,1fr))}.bt>div:nth-child(3){border-right:0}.bt>div:nth-child(-n+3){border-bottom:1px solid var(--line)}}
 @media (max-width:820px){
   .shell{grid-template-columns:1fr;height:auto}
   aside.rail{border-right:0;border-bottom:1px solid var(--line);max-height:46vh}
   main{overflow:visible}
   .case,.mon{padding:20px 16px 48px}
-  .actions{grid-template-columns:1fr}.bridge{border:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .actions,.actions.pair{grid-template-columns:1fr}.actions.pair .acol+.acol{border-left:0;border-top:1px solid var(--line)}.bridge{border:0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
   .bridge .arrow{display:none}.bridge .down{display:block}
   .bar .meta,.brand small{display:none}
-  header.bar{gap:8px;padding:0 12px}nav.tabs{margin-left:0}nav.tabs button{white-space:nowrap;padding:8px}
+  header.bar{gap:8px;padding:0 12px}nav.tabs{margin-left:0;overflow-x:auto;scrollbar-width:none}nav.tabs button{padding:8px}
+  .brand .wm{display:none}
   table.ledger thead{display:none}table.ledger td{display:block;border-bottom:0;padding:6px 14px}table.ledger tr{display:block;border-bottom:1px solid var(--line);padding:6px 0}
+  table.ledger tr:last-child{border-bottom:0}
+  table.steps tr.tool{display:grid;grid-template-columns:30px 24px minmax(0,1fr) auto;align-items:center;padding:8px 10px 10px}
+  table.steps tr.tool td{padding:3px 4px;width:auto}
+  table.steps tr.tool td:nth-child(4),table.steps tr.tool td:nth-child(6),table.steps tr.tool td:nth-child(7){grid-column:1/-1}
+  table.steps tr.tool td:nth-child(5){grid-row:1;grid-column:4}
+  table.steps td.cl{display:flex!important;gap:8px;align-items:baseline}table.steps td.cl::before{content:"Claims";font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3)}
+  tr.more>td{padding:12px 14px 14px}tr.chk>td{padding:0}tr.chk,tr.more{padding:0}
+  .snap,.moregrid,.endgrid{grid-template-columns:1fr}.endgrid>div+div{border-left:0;border-top:1px solid var(--line)}
+  .lrow,.chart,.axis{grid-template-columns:104px minmax(0,1fr)}.playwrap{left:104px;right:10px}
+  .lrow .ll{padding:0 8px 0 12px;font-size:10.5px}.track,.axis .ax{margin-right:10px}.chart svg{width:calc(100% - 10px)}
+  .chart .cl{padding:0 8px 4px 12px}
+  .controls{grid-template-columns:auto auto auto;}.controls input.scrub{grid-column:1/-1}
+  .kvrow{grid-template-columns:1fr}
+  table.ledger td[data-l]{text-align:left}table.ledger td[data-l]::before{content:attr(data-l) " ";font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);margin-right:6px}
+  table.joins tr[aria-current=true]{background:var(--tg-soft)}table.joins tr[aria-current=true] td{background:none}
+  .cmd{flex-wrap:wrap;width:100%}.cmd code{white-space:normal;word-break:break-all;flex:1 1 180px}.cmd .cmd-l{padding:6px 2px 0 10px;flex-basis:100%}
+  .cmd button{border-radius:0 0 var(--r) 0}
+  .readouts .v.t{white-space:normal;font-size:13px}.readouts .pl{white-space:normal}
+  table.joins tr{display:grid;grid-template-columns:26px minmax(0,1fr) auto;gap:2px 8px;padding:8px 14px}
+  table.joins td{padding:0}table.joins td:nth-child(4),table.joins td:nth-child(6),table.joins td:nth-child(7){display:none}
+  table.joins td:nth-child(5){grid-column:2/4;color:var(--ink-3);font-size:12px}table.joins td:nth-child(3){grid-column:2}
+  table.joins td:nth-child(2){grid-column:2}table.joins td:nth-child(8){grid-row:1;grid-column:3}
 }
-@media (max-width:520px){.strip{grid-template-columns:repeat(2,1fr)}.gauge{border-right:1px solid var(--line)!important;border-bottom:1px solid var(--line)}.gauge:nth-child(2n){border-right:0!important}}
+@media (max-width:520px){.strip{grid-template-columns:repeat(2,1fr)}.gauge{border-right:1px solid var(--line)!important;border-bottom:1px solid var(--line)}.gauge:nth-child(2n){border-right:0!important}
+  .cfstrip,.bt{grid-template-columns:repeat(2,minmax(0,1fr))}.cfstrip>div,.bt>div{border-right:1px solid var(--line)!important;border-bottom:1px solid var(--line)}.cfstrip>div:nth-child(2n),.bt>div:nth-child(2n){border-right:0!important}
+  .readouts .v{font-size:15px}}
 </style>
 </head>
 <body>
-<!--
-THESIS: a fraud case is a ledger, evidence to rule to action to route; the viewer shows that chain in the order an auditor checks it, refusing the category's metric-hero dashboard and card grid.
-OWN-WORLD: TigerGraph orange on charcoal; one six-instrument readout strip per case (verdict, probability on a thresholded scale, pattern, exposure, SAR, graph write-back); a case ego-graph drawn in orange edges; mono only for IDs and actions.
-STORY: a judge picks any of 20 cases, reads the verdict at a glance, then follows the evidence rows into rule-cited actions and their approval routes, initial versus final across the evidence request, and the SAR when one was filed.
-FIRST VIEWPORT: left rail of 20 cases with verdict filters; right, the case id, trigger text, the readout strip, then the graph beside the summary.
-FORM: evidence ledger, candidate 4 of 7, raised with the night instrument six-pack's cross-check discipline (each readout owns one truth). Seed key 89fa2e12.
-FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
--->
 <header class="bar">
   <div class="brand" aria-label="Kavach">
     <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 2 4 7v8c0 7.5 5.1 13.4 12 15 6.9-1.6 12-7.5 12-15V7z" fill="#f58220"/><path d="M16 13 10.5 19M16 13l5.5 6M10.5 19h11" stroke="#15171c" stroke-width="1.6"/><circle cx="16" cy="13" r="3" fill="#15171c"/><circle cx="10.5" cy="19" r="2.2" fill="#15171c"/><circle cx="21.5" cy="19" r="2.2" fill="#15171c"/></svg>
-    Kavach <small>agentic fraud investigation on TigerGraph</small>
+    <span class="wm">Kavach</span> <small>agentic fraud investigation on TigerGraph</small>
   </div>
   <nav class="tabs" role="tablist" aria-label="Views">
-    <button role="tab" id="tab-cases" aria-selected="true" aria-controls="view">20 exam cases</button>
+    <button role="tab" id="tab-cases" aria-selected="true" aria-controls="view">Cases</button>
     <button role="tab" id="tab-monitor" aria-selected="false" aria-controls="view">Monitor findings</button>
+    <button role="tab" id="tab-detectors" aria-selected="false" aria-controls="view">Detectors</button>
   </nav>
   <span class="spacer"></span>
   <span class="meta" id="barmeta"></span>
 </header>
 <div class="shell">
   <aside class="rail" aria-label="Cases">
+    <div class="rounds" role="group" aria-label="Case pack" id="rounds"></div>
     <div class="filters" role="group" aria-label="Filter by verdict" id="filters"></div>
     <ol class="cases" id="caselist"></ol>
-    <div class="foot">Keys: <b class="mono">j</b> / <b class="mono">k</b> move between cases. Links like <span class="mono">#HHG-014</span> open a case directly.</div>
+    <div class="foot" id="railfoot"></div>
   </aside>
   <main id="view" tabindex="-1"></main>
 </div>
 <script src="cases.js"></script>
 <script>
 (() => {
-  const D = window.KAVACH || {cases: [], monitor: []};
-  const C = D.cases, M = D.monitor;
+  const D = window.KAVACH || {meta: {}, rounds: [], cases: [], monitor: [], detectors: {}};
+  const ALL = D.cases || [], M = D.monitor || [], DET = D.detectors || {};
+  const DETAIL = window.KAVACH_DETAIL = window.KAVACH_DETAIL || {};
   const $ = (s, el = document) => el.querySelector(s);
   const h = (tag, attrs = {}, ...kids) => {
     const el = document.createElement(tag);
@@ -222,54 +502,89 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       if (v === null || v === undefined || v === false) continue;
       if (k === "class") el.className = v; else if (k === "text") el.textContent = v; else el.setAttribute(k, v);
     }
-    for (const k of kids.flat()) if (k !== null && k !== undefined && k !== false) el.append(k.nodeType ? k : document.createTextNode(k));
+    for (const k of kids.flat(Infinity)) if (k !== null && k !== undefined && k !== false) el.append(k.nodeType ? k : document.createTextNode(String(k)));
     return el;
   };
   const svgEl = (tag, attrs = {}) => { const el = document.createElementNS("http://www.w3.org/2000/svg", tag); for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v); return el; };
-  const money = v => "$" + Number(v).toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  const money = v => "$" + Number(v || 0).toLocaleString("en-US", {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  const int = v => Number(v || 0).toLocaleString("en-US");
+  const utc = s => s ? String(s).replace("T", " ").replace(/\.\d+Z$/, " UTC").replace(/Z$/, " UTC") : "";
+  const signed = v => (v > 0 ? "+" : v < 0 ? "-" : "") + Math.abs(v).toFixed(2);
+  const plural = (n, word) => `${int(n)} ${word}${Number(n) === 1 ? "" : "s"}`;
   const PAT = {card_testing: "Card testing", card_not_present_fraud: "Card not present", card_not_present_new_device: "Card not present, new device",
     out_of_region_use: "Out of region use", account_takeover: "Account takeover", undocumented: "Undocumented pattern", none: "No fraud"};
   const STATUS = {closed_fraud: "Closed as fraud", closed_legitimate: "Closed as legitimate", escalated: "Escalated to analyst", open: "Open, under monitoring"};
   const TRIG = {risk_score: "Model risk score", customer_report: "Customer report", analyst_request: "Analyst request"};
+  const ROLE = {L1: "team lead", L2: "fraud manager", auto: "agent acts alone"};
+  const VCOL = {fraud: "var(--fraud)", legitimate: "var(--legit)", uncertain: "var(--uncertain)"};
+  const VHEX = {fraud: "#ff6b5b", legitimate: "#56d39c", uncertain: "#f2c14e"};
   const ICON = {
     graph: '<svg viewBox="0 0 16 16" fill="none" stroke="#f58220" stroke-width="1.4"><circle cx="4" cy="4" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="7" cy="12" r="2"/><path d="M5.7 4.4 10 4.8M4.9 5.8l1.4 4.3M11 6.8l-2.8 3.7"/></svg>',
     document: '<svg viewBox="0 0 16 16" fill="none" stroke="#b7bcc6" stroke-width="1.4"><path d="M4 1.8h5.5L12.5 5v9.2H4z"/><path d="M9.5 1.8V5h3M6 8h4.5M6 10.5h4.5"/></svg>',
     customer: '<svg viewBox="0 0 16 16" fill="none" stroke="#56d39c" stroke-width="1.4"><circle cx="8" cy="5.5" r="2.6"/><path d="M3 14c.6-2.8 2.6-4.3 5-4.3s4.4 1.5 5 4.3"/></svg>',
-    external: '<svg viewBox="0 0 16 16" fill="none" stroke="#f2c14e" stroke-width="1.4"><path d="M9 2h5v5M14 2 7.5 8.5M12 9.5V14H2V4h4.5"/></svg>'
+    external: '<svg viewBox="0 0 16 16" fill="none" stroke="#f2c14e" stroke-width="1.4"><path d="M9 2h5v5M14 2 7.5 8.5M12 9.5V14H2V4h4.5"/></svg>',
+    flag: '<svg viewBox="0 0 16 16" fill="none" stroke="#f2c14e" stroke-width="1.4"><path d="M8 1.8 14.6 13.6H1.4z"/><path d="M8 6.2v3.6M8 11.4v.4"/></svg>',
+    chev: '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4.2 2.4 7.8 6l-3.6 3.6"/></svg>',
+    play: '<svg viewBox="0 0 14 14" fill="currentColor"><path d="M3.5 2.2v9.6L11.6 7z"/></svg>',
+    pause: '<svg viewBox="0 0 14 14" fill="currentColor"><path d="M3.4 2.4h2.6v9.2H3.4zM8 2.4h2.6v9.2H8z"/></svg>',
+    prev: '<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 2.5v9M11 2.5 5.5 7l5.5 4.5z" fill="currentColor"/></svg>',
+    next: '<svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M11 2.5v9M3 2.5 8.5 7 3 11.5z" fill="currentColor"/></svg>'
   };
-  const counts = {all: C.length};
-  C.forEach(a => counts[a.case.verdict] = (counts[a.case.verdict] || 0) + 1);
-  let filter = "all", current = null, view = "cases";
+  const icon = k => { const s = h("span", {"aria-hidden": "true", style: "display:inline-flex"}); s.innerHTML = ICON[k]; return s.firstChild; };
+  const TABS = [["decision", "Decision"], ["replay", "Replay"], ["evidence", "Evidence and attestation"], ["casefile", "Case file"], ["ring", "Ring replay"]];
+  const ROUNDS = (D.rounds || []).length ? D.rounds : [...new Set(ALL.map(a => a._round))].map(r => ({round: r, prefixes: [], n: ALL.filter(a => a._round === r).length}));
+  let round = ROUNDS.length ? ROUNDS[0].round : null, filter = "all", current = null, view = "cases", tab = "decision";
+  let stopRing = null;
 
-  $("#barmeta").innerHTML = "";
-  $("#barmeta").append(h("b", {text: `${counts.fraud || 0} fraud`}), " · ", h("b", {text: `${counts.legitimate || 0} legitimate`}), " · ",
-    h("b", {text: `${counts.uncertain || 0} uncertain`}), ` · ${C.filter(a => a.case.written_to_graph).length} of ${C.length} written to TigerGraph`);
+  const inRound = () => ALL.filter(a => a._round === round);
+  const visible = () => inRound().filter(a => filter === "all" || a.case.verdict === filter);
+  const byId = id => ALL.find(a => a.case_id === id);
 
-  function renderFilters() {
-    const f = $("#filters"); f.innerHTML = "";
-    [["all", "All"], ["fraud", "Fraud"], ["legitimate", "Legitimate"], ["uncertain", "Uncertain"]].forEach(([k, label]) => {
-      if (!counts[k]) return;
-      const b = h("button", {type: "button", "aria-pressed": String(filter === k)}, label, h("span", {class: "n", text: counts[k]}));
-      b.onclick = () => { filter = k; renderFilters(); renderList(); };
-      f.append(b);
+  // ------------------------------------------------------------------ detail files (lazy, file:// safe)
+  const pendingDetail = {};
+  function loadDetail(id) {
+    if (DETAIL[id]) return Promise.resolve(DETAIL[id]);
+    if (!byId(id)) return Promise.resolve(null);
+    if (!pendingDetail[id]) pendingDetail[id] = new Promise(res => {
+      const s = document.createElement("script");
+      s.src = "data/" + encodeURIComponent(id) + ".js";
+      s.onload = () => res(DETAIL[id] || null);
+      s.onerror = () => { delete pendingDetail[id]; res(null); };
+      document.head.append(s);
     });
-  }
-  function visible() { return C.filter(a => filter === "all" || a.case.verdict === filter); }
-  function renderList() {
-    const ol = $("#caselist"); ol.innerHTML = "";
-    visible().forEach(a => {
-      const c = a.case;
-      const b = h("button", {type: "button", "aria-current": String(current === a.case_id)},
-        h("span", {class: "cid", text: a.case_id}),
-        h("span", {class: "vd " + c.verdict}, h("i"), c.verdict),
-        h("span", {class: "exp", text: c.exposure_usd ? money(c.exposure_usd) : "no loss"}),
-        h("span", {class: "pat", text: PAT[c.pattern] + " · " + TRIG[a._pack.trigger_type]}));
-      b.onclick = () => select(a.case_id, true);
-      ol.append(h("li", {}, b));
-      if (current === a.case_id) requestAnimationFrame(() => { const top = b.offsetTop - ol.offsetTop, bot = top + b.offsetHeight; if (top < ol.scrollTop || bot > ol.scrollTop + ol.clientHeight) ol.scrollTop = top - 8; });
-    });
+    return pendingDetail[id];
   }
 
+  // ------------------------------------------------------------------ shared pieces
+  function cmd(text, label) {
+    const b = h("button", {type: "button", "aria-live": "polite"}, "Copy");
+    b.onclick = async () => {
+      let ok = false;
+      try { await navigator.clipboard.writeText(text); ok = true; } catch (e) {
+        const ta = h("textarea", {"aria-hidden": "true"}); ta.value = text; ta.style.cssText = "position:fixed;opacity:0;left:-9999px";
+        document.body.append(ta); ta.select(); try { ok = document.execCommand("copy"); } catch (e2) { ok = false; } ta.remove();
+      }
+      b.textContent = ok ? "Copied" : "Copy failed"; b.classList.toggle("ok", ok);
+      setTimeout(() => { b.textContent = "Copy"; b.classList.remove("ok"); }, 1600);
+    };
+    return h("div", {class: "cmd"}, label ? h("span", {class: "cmd-l", text: label}) : null, h("code", {text}), b);
+  }
+  function empty(title, reason, hint) {
+    return h("div", {class: "panel empty"}, h("h3", {text: title}), reason ? h("p", {text: reason}) : null, hint ? h("p", {class: "hint", text: hint}) : null);
+  }
+  function idChips(ids, cap = 8) {
+    ids = ids || [];
+    return h("div", {class: "ids"}, ids.slice(0, cap).map(x => h("span", {class: "id", title: String(x), text: String(x)})),
+      ids.length > cap ? h("span", {class: "id", title: ids.slice(cap).join(", "), text: `+${ids.length - cap}`}) : null);
+  }
+  function verdictDot(v) { return h("span", {class: "vd " + v}, h("i"), v || "unknown"); }
+  function routeBadge(r) { return h("span", {class: "route " + r, title: ROLE[r] || r, text: r}); }
+  function actionList(list) {
+    return (list || []).map(x => h("div", {class: "act"}, h("b", {text: x.action}), routeBadge(x.route), h("span", {class: "why", text: x.reason})));
+  }
+  function section(title, aside, ...body) {
+    return h("section", {class: "blk"}, h("h2", {}, title, aside ? h("span", {class: "aside", text: aside}) : null), ...body);
+  }
   function gauge(cls, value, placard, extra) {
     return h("div", {class: "gauge " + (cls || "")}, value, extra || null, h("div", {class: "pl", text: placard}));
   }
@@ -286,10 +601,187 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     requestAnimationFrame(() => requestAnimationFrame(() => n.style.left = (p * 100) + "%"));
     return s;
   }
+  function dot(col) { const s = svgEl("svg", {viewBox: "0 0 10 10", width: 10, height: 10}); s.append(svgEl("circle", {cx: 5, cy: 5, r: 4, fill: col})); return s; }
+  function ring(col) { const s = svgEl("svg", {viewBox: "0 0 10 10", width: 10, height: 10}); s.append(svgEl("circle", {cx: 5, cy: 5, r: 3.6, fill: "none", stroke: col, "stroke-width": 1.5})); return s; }
+  function sq(col) { const s = svgEl("svg", {viewBox: "0 0 10 10", width: 10, height: 10}); s.append(svgEl("rect", {x: 1, y: 1, width: 8, height: 8, rx: 1.5, fill: "none", stroke: col, "stroke-width": 1.5})); return s; }
+  function hex(col) { const s = svgEl("svg", {viewBox: "0 0 10 10", width: 10, height: 10}); s.append(svgEl("polygon", {points: "5,0.6 9,2.8 9,7.2 5,9.4 1,7.2 1,2.8", fill: "none", stroke: col, "stroke-width": 1.4})); return s; }
 
+  // Manrope draws "|" like a capital I; device fingerprints in prose keep their separators legible in mono
+  function markPipes(root) {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {acceptNode: n =>
+      n.nodeValue.includes("|") && !n.parentElement.closest("svg,.mono,.ref,.id,.cid,.pipe,code,pre,.how,.call,.elv,dl.kv,.when,details.log") ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT});
+    const hits = []; while (walker.nextNode()) hits.push(walker.currentNode);
+    hits.forEach(n => {
+      const frag = document.createDocumentFragment();
+      n.nodeValue.split("|").forEach((part, i) => { if (i) frag.append(h("span", {class: "pipe", text: "|"})); frag.append(part); });
+      n.replaceWith(frag);
+    });
+  }
+
+  // ------------------------------------------------------------------ bar, rounds, filters, list
+  function renderBarMeta() {
+    const m = $("#barmeta"); m.innerHTML = "";
+    if (view !== "cases") { m.append(`built ${utc(D.meta && D.meta.built_at)}`); return; }
+    const cs = inRound(), n = k => cs.filter(a => a.case.verdict === k).length;
+    m.append(h("b", {text: `${n("fraud")} fraud`}), " · ", h("b", {text: `${n("legitimate")} legitimate`}), " · ",
+      h("b", {text: `${n("uncertain")} uncertain`}), ` · ${cs.filter(a => a.case.written_to_graph).length} of ${cs.length} written to TigerGraph`);
+  }
+  function renderRounds() {
+    const el = $("#rounds"); el.innerHTML = "";
+    if (ROUNDS.length < 2) { el.hidden = !ROUNDS.length; }
+    ROUNDS.forEach(r => {
+      const pre = (r.prefixes || []).join(", ");
+      const b = h("button", {type: "button", "aria-pressed": String(r.round === round)}, h("b", {text: `Round ${r.round}`}), h("span", {text: `${r.n} ${pre} cases`.replace("  ", " ")}));
+      b.onclick = () => { if (round === r.round && view === "cases") return; round = r.round; filter = "all"; const first = inRound()[0]; if (first) select(first.case_id, tab, false); };
+      el.append(b);
+    });
+  }
+  function renderFilters() {
+    const f = $("#filters"); f.innerHTML = "";
+    const cs = inRound(), cnt = {all: cs.length};
+    cs.forEach(a => cnt[a.case.verdict] = (cnt[a.case.verdict] || 0) + 1);
+    [["all", "All"], ["fraud", "Fraud"], ["legitimate", "Legitimate"], ["uncertain", "Uncertain"]].forEach(([k, label]) => {
+      if (!cnt[k]) return;
+      const b = h("button", {type: "button", "aria-pressed": String(filter === k)}, label, h("span", {class: "n", text: cnt[k]}));
+      b.onclick = () => { filter = k; renderFilters(); renderList(); };
+      f.append(b);
+    });
+  }
+  function renderList() {
+    const ol = $("#caselist"); ol.innerHTML = "";
+    visible().forEach(a => {
+      const c = a.case, trig = (a._pack && TRIG[a._pack.trigger_type]) || "";
+      const b = h("button", {type: "button", "aria-current": String(current === a.case_id && view === "cases")},
+        h("span", {class: "cid", text: a.case_id}), verdictDot(c.verdict),
+        h("span", {class: "exp", text: c.exposure_usd ? money(c.exposure_usd) : "no loss"}),
+        h("span", {class: "pat", text: [PAT[c.pattern] || c.pattern, trig].filter(Boolean).join(" · ")}));
+      b.onclick = () => select(a.case_id, tab, true);
+      ol.append(h("li", {}, b));
+      if (current === a.case_id) requestAnimationFrame(() => { const top = b.offsetTop - ol.offsetTop, bot = top + b.offsetHeight; if (top < ol.scrollTop || bot > ol.scrollTop + ol.clientHeight) ol.scrollTop = top - 8; });
+    });
+    const first = inRound()[0];
+    $("#railfoot").innerHTML = "";
+    $("#railfoot").append("Keys: ", h("b", {class: "mono", text: "j"}), " / ", h("b", {class: "mono", text: "k"}), " move between cases.",
+      ...(first ? [" Links like ", h("span", {class: "mono", text: `#${first.case_id}/replay`}), " open a case and tab directly."] : []));
+  }
+
+  // ------------------------------------------------------------------ case header and tabs
+  function triggerLine(a) {
+    const p = a._pack || {}, it = a._intake || {};
+    const wrap = h("div");
+    const text = p.trigger_text;
+    if (!text) { wrap.append(h("p", {class: "trigger", text: "The alert row for this case is not in the index, so the alert text is not shown."})); return wrap; }
+    const ranges = [];
+    (it.hostile || []).forEach(fr => {
+      const s = String(fr).trim(); if (!s) return;
+      let i = text.indexOf(s), len = s.length;
+      if (i < 0 && s.length > 40) { i = text.indexOf(s.slice(0, 40)); len = 40; }
+      if (i >= 0) ranges.push([i, i + len]);
+    });
+    ranges.sort((x, y) => x[0] - y[0]);
+    const t = h("p", {class: "trigger"});
+    let at = 0;
+    ranges.forEach(([s, e]) => { if (s < at) return; t.append(text.slice(at, s), h("mark", {class: "hostile", text: text.slice(s, e)})); at = e; });
+    t.append(text.slice(at));
+    t.append(h("span", {class: "who", text: [TRIG[p.trigger_type] || p.trigger_type, p.opened_at && `opened ${p.opened_at}`, p.card_id && `card ${p.card_id}`, p.customer_id && `customer ${p.customer_id}`].filter(Boolean).join(" · ")}));
+    wrap.append(t);
+    if ((it.hostile || []).length) {
+      wrap.append(h("div", {class: "flagline"}, icon("flag"), h("span", {},
+        `Flagged at intake: ${it.instruction ? "an instruction addressed to the agent" : "wording outside the organizer alert template"}`,
+        (it.markers || []).length ? ` (${it.markers.join(", ")})` : "",
+        ". The underlined text is shown verbatim as data.")));
+    }
+    return wrap;
+  }
+
+  function tabCount(a, k) {
+    const v = a._avail || {};
+    if (k === "replay") return v.replay ? {t: `${v.steps} steps`} : {t: "none", warn: true};
+    if (k === "evidence") {
+      if (!v.attestation) return {t: "none", warn: true};
+      const f = v.verify && v.verify.fail;
+      return {t: `${v.claims} claims` + (f ? `, ${f} failed` : ""), warn: !!f};
+    }
+    if (k === "casefile") return v.casefile ? {t: `${v.events} events` + (v.pending ? `, ${v.pending} waiting` : "")} : {t: "none", warn: true};
+    if (k === "ring") return v.ring ? {t: `${v.ring_cards} cards`} : {t: "unavailable", warn: true};
+    return null;
+  }
+  function availableTabs(a) { return TABS.filter(([k]) => k !== "ring" || (a._avail && a._avail.ring !== null && a._avail.ring !== undefined)); }
+
+  function renderCase(a) {
+    if (stopRing) { stopRing(); stopRing = null; }
+    const c = a.case, s = a.sar || {};
+    const v = $("#view"); v.innerHTML = "";
+    const wrap = h("article", {class: "case", "aria-labelledby": "case-title"});
+    wrap.append(h("div", {class: "head"}, h("h1", {id: "case-title", text: a.case_id}), h("span", {class: "status", text: STATUS[c.status] || c.status}), h("span", {class: "rnd", text: `Round ${a._round}`})));
+    wrap.append(triggerLine(a));
+    const vi = h("i"); vi.style.background = VCOL[c.verdict] || "var(--ink-3)";
+    wrap.append(h("div", {class: "strip", role: "group", "aria-label": "Case readouts"},
+      gauge("verdict", h("div", {class: "v"}, vi, c.verdict), "verdict"),
+      gauge("", h("div", {class: "v p", text: Number(c.fraud_probability).toFixed(2)}), "fraud probability", probScale(c.fraud_probability)),
+      gauge("", h("div", {class: "v wrap", text: PAT[c.pattern] || c.pattern, title: c.pattern}), "pattern"),
+      gauge("", h("div", {class: "v", text: c.exposure_usd ? money(c.exposure_usd) : "$0"}), `exposure, ${(c.affected_txn_ids || []).length} txn`),
+      gauge("", h("div", {class: "v", text: s.file ? "Filed" : "Not filed"}), "SAR"),
+      gauge("", h("div", {class: "v small", text: c.written_to_graph ? c.graph_case_id : "not written"}), "TigerGraph case")));
+
+    const tabs = availableTabs(a);
+    if (!tabs.some(([k]) => k === tab)) tab = "decision";
+    const bar = h("div", {class: "ctabs", role: "tablist", "aria-label": `${a.case_id} views`});
+    const panel = h("div", {class: "tabpanel", role: "tabpanel", id: "casepanel", tabindex: "-1", "aria-labelledby": `ctab-${tab}`});
+    tabs.forEach(([k, label]) => {
+      const n = tabCount(a, k);
+      const b = h("button", {type: "button", role: "tab", id: `ctab-${k}`, "aria-selected": String(k === tab), "aria-controls": "casepanel", tabindex: k === tab ? "0" : "-1"},
+        label, n ? h("span", {class: "c" + (n.warn ? " warn" : ""), text: n.t}) : null);
+      b.onclick = () => select(a.case_id, k, false, true);
+      bar.append(b);
+    });
+    bar.addEventListener("keydown", e => {
+      const bs = [...bar.querySelectorAll("[role=tab]")], i = bs.indexOf(document.activeElement);
+      if (i < 0) return;
+      let j = null;
+      if (e.key === "ArrowRight") j = (i + 1) % bs.length; else if (e.key === "ArrowLeft") j = (i - 1 + bs.length) % bs.length;
+      else if (e.key === "Home") j = 0; else if (e.key === "End") j = bs.length - 1;
+      if (j === null) return;
+      e.preventDefault(); bs[j].click(); requestAnimationFrame(() => { const nb = $(`#ctab-${tabs[j][0]}`); if (nb) nb.focus(); });
+    });
+    wrap.append(bar, panel);
+    v.append(wrap);
+    const sel = bar.querySelector("[aria-selected=true]");
+    if (sel && bar.scrollWidth > bar.clientWidth) bar.scrollLeft = Math.max(0, sel.offsetLeft - bar.offsetLeft - 24);
+    renderTab(a, panel);
+  }
+
+  function renderTab(a, panel) {
+    panel.innerHTML = "";
+    if (tab === "decision") { renderDecision(a, panel); markPipes(panel); return; }
+    const want = tab, id = a.case_id;
+    const ld = h("div", {class: "loading", role: "status", text: "Loading the case detail file..."});
+    panel.append(ld);
+    loadDetail(id).then(d => {
+      if (current !== id || tab !== want) return;
+      panel.innerHTML = "";
+      if (!d) { panel.append(empty("Case detail file not found", `site/data/${id}.js could not be loaded.`, "Run python -m kavach site to rebuild the viewer data.")); return; }
+      ({replay: renderReplay, evidence: renderEvidence, casefile: renderCasefile, ring: renderRing})[want](a, d, panel);
+      markPipes(panel);
+    });
+  }
+
+  function gotoClaim(a, cid) {
+    select(a.case_id, "evidence", false, true);
+    const tryScroll = (k = 0) => {
+      const row = document.getElementById(`claim-${cid}`);
+      if (!row) { if (k < 20) setTimeout(() => tryScroll(k + 1), 50); return; }
+      row.scrollIntoView({block: "center", behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+      row.classList.remove("flash"); void row.offsetWidth; row.classList.add("flash");
+    };
+    tryScroll();
+  }
+
+  // ------------------------------------------------------------------ Decision (Round 1 content, unchanged in substance)
   function egoGraph(a) {
-    const c = a.case, W = 620, H = 430, cx = W / 2, cy = H / 2 + 6;
-    const svg = svgEl("svg", {viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": `Graph of ${a.case_id}: card ${a._pack.card_id}, ${c.affected_txn_ids.length} episode transactions, ${c.connected_card_ids.length} connected cards, ${c.similar_prior_cases.length} similar closed cases`});
+    const c = a.case, p = a._pack || {}, W = 620, H = 430, cx = W / 2, cy = H / 2 + 6;
+    const aff = c.affected_txn_ids || [], connected = c.connected_card_ids || [], similar = c.similar_prior_cases || [];
+    const svg = svgEl("svg", {viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": `Graph of ${a.case_id}: card ${p.card_id || ""}, ${aff.length} episode transactions, ${connected.length} connected cards, ${similar.length} similar closed cases`});
     const edges = svgEl("g"), nodes = svgEl("g");
     svg.append(edges, nodes);
     const edge = (x1, y1, x2, y2, cls) => { const l = svgEl("line", {x1, y1, x2, y2, class: "edge " + cls}); const len = Math.hypot(x2 - x1, y2 - y1); l.style.setProperty("--len", len.toFixed(1)); edges.append(l); };
@@ -306,35 +798,34 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       if (sub) { const t2 = svgEl("text", {x: tx, y: big ? 50 : ty + (anchor === "middle" ? (y < cy ? -12 : 12) : 13), "text-anchor": anchor}); t2.textContent = sub; g.append(t2); }
       nodes.append(g);
     };
-    const ring = (items, r, a0, a1) => items.map((it, i) => { const t = items.length === 1 ? (a0 + a1) / 2 : a0 + (a1 - a0) * i / (items.length - 1); return [it, cx + r * Math.cos(t), cy + r * Math.sin(t)]; });
-    const txIds = c.affected_txn_ids.length ? c.affected_txn_ids.slice(0, 7) : [a._pack.flagged_txn_id];
-    const conn = c.connected_card_ids.slice(0, 7), sim = c.similar_prior_cases.slice(0, 4), devs = c.connected_device_profiles.slice(0, 1);
-    ring(txIds, 128, -Math.PI * .85, -Math.PI * .15).forEach(([t, x, y]) => {
-      edge(cx, cy, x, y, c.affected_txn_ids.length ? "hot" : "");
-      const tx = a._txns[t] || {};
-      node(x, y, "circle", c.affected_txn_ids.length ? "#f58220" : "#3a404d", c.affected_txn_ids.length ? "#f58220" : "#8d94a1", t, tx.amt !== undefined ? money(tx.amt) : "");
+    const arc = (items, r, a0, a1) => items.map((it, i) => { const t = items.length === 1 ? (a0 + a1) / 2 : a0 + (a1 - a0) * i / (items.length - 1); return [it, cx + r * Math.cos(t), cy + r * Math.sin(t)]; });
+    const txIds = aff.length ? aff.slice(0, 7) : (p.flagged_txn_id ? [p.flagged_txn_id] : []);
+    const conn = connected.slice(0, 7), sim = similar.slice(0, 4), devs = (c.connected_device_profiles || []).slice(0, 1);
+    arc(txIds, 128, -Math.PI * .85, -Math.PI * .15).forEach(([t, x, y]) => {
+      edge(cx, cy, x, y, aff.length ? "hot" : "");
+      const tx = (a._txns || {})[t] || {};
+      node(x, y, "circle", aff.length ? "#f58220" : "#3a404d", aff.length ? "#f58220" : "#8d94a1", t, tx.amt !== undefined ? money(tx.amt) : "");
     });
-    ring(sim, 205, Math.PI * .62, Math.PI * .98).forEach(([s, x, y]) => {
+    arc(sim, 205, Math.PI * .62, Math.PI * .98).forEach(([s, x, y]) => {
       edge(cx, cy, x, y, "dash");
-      const cc = a._closed[s] || {};
+      const cc = (a._closed || {})[s] || {};
       node(x, y, "square", cc.outcome === "cleared" ? "#1f3b31" : "#3b2320", cc.outcome === "cleared" ? "#56d39c" : "#ff6b5b", s, cc.outcome === "cleared" ? "cleared" : "confirmed");
     });
     if (devs.length) {
       const dx = cx + 70, dy = cy + 70; edge(cx, cy, dx, dy, "hot");
       node(dx, dy, "hex", "#15171c", "#f58220", "shared device", devs[0].split(" | ")[0].split(" ")[0]);
-      ring(conn, 190, -Math.PI * .1, Math.PI * .38).forEach(([k, x, y]) => { edge(dx, dy, x, y, "hot"); node(x, y, "circle", "#22262f", "#b7bcc6", k, ""); });
+      arc(conn, 190, -Math.PI * .1, Math.PI * .38).forEach(([k, x, y]) => { edge(dx, dy, x, y, "hot"); node(x, y, "circle", "#22262f", "#b7bcc6", k, ""); });
     } else {
-      ring(conn, 190, -Math.PI * .1, Math.PI * .38).forEach(([k, x, y]) => { edge(cx, cy, x, y, "hot"); node(x, y, "circle", "#22262f", "#b7bcc6", k, ""); });
+      arc(conn, 190, -Math.PI * .1, Math.PI * .38).forEach(([k, x, y]) => { edge(cx, cy, x, y, "hot"); node(x, y, "circle", "#22262f", "#b7bcc6", k, ""); });
     }
-    node(cx, cy, "circle", "#15171c", c.verdict === "fraud" ? "#ff6b5b" : c.verdict === "legitimate" ? "#56d39c" : "#f2c14e", a._pack.card_id, a._pack.customer_id, true);
-    // keep labels apart: shift a label down when it would overlap one placed before it
+    node(cx, cy, "circle", "#15171c", VHEX[c.verdict] || "#8d94a1", p.card_id || "case card", p.customer_id || "", true);
     const boxes = [];
     nodes.querySelectorAll("g.node").forEach(g => {
       const m = /translate\(([-\d.]+),([-\d.]+)\)/.exec(g.getAttribute("transform"));
       const gx = +m[1], gy = +m[2];
       g.querySelectorAll("text").forEach(t => {
-        const w = t.textContent.length * 6.4, a = t.getAttribute("text-anchor");
-        const x0 = gx + (+t.getAttribute("x") || 0) - (a === "end" ? w : a === "middle" ? w / 2 : 0);
+        const w = t.textContent.length * 6.4, an = t.getAttribute("text-anchor");
+        const x0 = gx + (+t.getAttribute("x") || 0) - (an === "end" ? w : an === "middle" ? w / 2 : 0);
         let y = gy + (+t.getAttribute("y") || 0);
         for (let k = 0; k < 6 && boxes.some(b => Math.abs(b.y - y) < 12 && x0 < b.x1 && x0 + w > b.x0); k++) y += 12;
         t.setAttribute("y", y - gy);
@@ -347,129 +838,640 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       h("span", {}, sq("#ff6b5b"), "similar closed case"), h("span", {}, "edges drawn from TigerGraph traversals")));
     return wrap;
   }
-  function dot(col) { const s = svgEl("svg", {viewBox: "0 0 10 10", width: 10, height: 10}); s.append(svgEl("circle", {cx: 5, cy: 5, r: 4, fill: col})); return s; }
-  function sq(col) { const s = svgEl("svg", {viewBox: "0 0 10 10", width: 10, height: 10}); s.append(svgEl("rect", {x: 1, y: 1, width: 8, height: 8, rx: 1.5, fill: "none", stroke: col, "stroke-width": 1.5})); return s; }
 
-  function actionList(list) {
-    return list.map(x => h("div", {class: "act"}, h("b", {text: x.action}), h("span", {class: "route " + x.route, title: {auto: "agent may act alone", L1: "team lead approves", L2: "fraud manager approves"}[x.route], text: x.route}), h("span", {class: "why", text: x.reason})));
-  }
-
-  function renderCase(a) {
-    const c = a.case, n = a.next_best_actions, s = a.sar, p = a._pack;
-    const v = $("#view"); v.innerHTML = "";
-    const wrap = h("article", {class: "case", "aria-labelledby": "case-title"});
-    wrap.append(h("div", {class: "head"}, h("h1", {id: "case-title", text: a.case_id}), h("span", {class: "status", text: STATUS[c.status]})));
-    wrap.append(h("p", {class: "trigger"}, p.trigger_text, h("span", {class: "who", text: `${TRIG[p.trigger_type]} · opened ${p.opened_at} · card ${p.card_id} · customer ${p.customer_id}`})));
-
-    const vcol = {fraud: "var(--fraud)", legitimate: "var(--legit)", uncertain: "var(--uncertain)"}[c.verdict];
-    const vi = h("i"); vi.style.background = vcol;
-    wrap.append(h("div", {class: "strip", role: "group", "aria-label": "Case readouts"},
-      gauge("verdict", h("div", {class: "v"}, vi, c.verdict), "verdict"),
-      gauge("", h("div", {class: "v p", text: c.fraud_probability.toFixed(2)}), "fraud probability", probScale(c.fraud_probability)),
-      gauge("", h("div", {class: "v wrap", text: PAT[c.pattern], title: c.pattern}), "pattern"),
-      gauge("", h("div", {class: "v", text: c.exposure_usd ? money(c.exposure_usd) : "$0"}), `exposure, ${c.affected_txn_ids.length} txn`),
-      gauge("", h("div", {class: "v", text: s.file ? "Filed" : "Not filed"}), "SAR"),
-      gauge("", h("div", {class: "v small", text: c.written_to_graph ? c.graph_case_id : "not written"}), "TigerGraph case")));
-
-    const sumP = h("div", {class: "panel prose"}, h("p", {text: c.summary}), h("p", {class: "muted", text: a.stop_reason}));
+  function renderDecision(a, wrap) {
+    const c = a.case, n = a.next_best_actions || {}, s = a.sar || {};
+    const sumP = h("div", {class: "panel prose"}, h("p", {text: c.summary}), a.stop_reason ? h("p", {class: "muted", text: a.stop_reason}) : null);
     if (c.pattern_description) sumP.append(h("p", {class: "muted"}, h("b", {text: "Pattern, in our words: "}), c.pattern_description));
     wrap.append(h("div", {class: "two"}, egoGraph(a), sumP));
 
     const ev = h("table", {class: "ledger"}, h("thead", {}, h("tr", {}, h("th", {text: "Evidence"}), h("th", {text: "Source"}), h("th", {text: "Entities"}))));
-    const tb = h("tbody");
-    c.evidence.forEach(e => {
-      const src = h("span", {class: "src"}); src.innerHTML = ICON[e.source] || ""; src.append(e.source);
-      tb.append(h("tr", {}, h("td", {class: "claim"}, e.claim, h("div", {class: "ref", text: e.ref})), h("td", {}, src),
-        h("td", {}, h("div", {class: "ids"}, e.entity_ids.slice(0, 8).map(x => h("span", {class: "id", text: x})), e.entity_ids.length > 8 ? h("span", {class: "id", text: `+${e.entity_ids.length - 8}`}) : null))));
+    const tb = h("tbody"), links = a._evidence_claims || [];
+    (c.evidence || []).forEach((e, i) => {
+      const src = h("span", {class: "src"}); if (ICON[e.source]) src.append(icon(e.source)); src.append(e.source);
+      const lk = links[i];
+      let att = null;
+      if (lk) {
+        const b = h("button", {type: "button", text: lk.id, title: `Open claim ${lk.id} in Evidence and attestation`});
+        b.onclick = () => gotoClaim(a, lk.id);
+        att = h("div", {class: "att"}, "attested as ", b, lk.status ? h("span", {class: "st " + lk.status, text: lk.status}) : null);
+      }
+      tb.append(h("tr", {}, h("td", {class: "claim"}, e.claim, h("div", {class: "ref", text: e.ref}), att), h("td", {}, src),
+        h("td", {}, idChips(e.entity_ids))));
     });
     ev.append(tb);
-    wrap.append(h("section", {class: "blk"}, h("h2", {}, "Evidence ledger", h("span", {class: "aside", text: `${c.evidence.length} entries, each tied to a query, a document section or the customer`})), h("div", {class: "panel"}, ev)));
+    wrap.append(section("Evidence ledger", `${(c.evidence || []).length} entries, each tied to a query, a document section or the customer`, h("div", {class: "panel"}, ev)));
 
-    const req = a.evidence_requests[0];
-    const arrow = svgEl("svg", {class: "arrow", viewBox: "0 0 160 14", preserveAspectRatio: "none"});
+    const req = (a.evidence_requests || [])[0];
+    const arrow = svgEl("svg", {class: "arrow", viewBox: "0 0 160 14", preserveAspectRatio: "none", "aria-hidden": "true"});
     arrow.append(svgEl("path", {d: "M2 7h150M146 2l8 5-8 5", fill: "none", stroke: "#f58220", "stroke-width": 1.5}));
-    const down = svgEl("svg", {class: "down", viewBox: "0 0 14 18"});
+    const down = svgEl("svg", {class: "down", viewBox: "0 0 14 18", "aria-hidden": "true"});
     down.append(svgEl("path", {d: "M7 1v14M2 10l5 6 5-6", fill: "none", stroke: "#f58220", "stroke-width": 1.5}));
     const bridge = h("div", {class: "bridge"}, arrow, down,
-      req ? [h("span", {class: "step", text: `${req.type.replace("_", " ")} requested after step ${req.asked_after_step}`}), h("q", {text: req.assumed_response})]
+      req ? [h("span", {class: "step", text: `${String(req.type).replace(/_/g, " ")} requested after step ${req.asked_after_step}`}), h("q", {text: req.assumed_response})]
           : h("span", {text: "No evidence requested: the case was settled on the graph evidence, so the final actions equal the initial ones."}));
     const acts = h("div", {class: "panel"},
       h("div", {class: "actions"},
         h("div", {class: "acol"}, h("h3", {}, "Initial ", h("span", {text: "before the reply"})), actionList(n.initial)),
         bridge,
         h("div", {class: "acol"}, h("h3", {}, "Final ", h("span", {text: "after the reply"})), actionList(n.final))),
-      h("div", {class: "changed", text: n.what_changed === "nothing" ? "What changed: nothing." : "What changed: " + n.what_changed}));
-    wrap.append(h("section", {class: "blk"}, h("h2", {}, "Next best actions", h("span", {class: "aside", text: "auto: agent acts · L1: team lead · L2: fraud manager"})), acts));
+      h("div", {class: "changed", text: !n.what_changed || n.what_changed === "nothing" ? "What changed: nothing." : "What changed: " + n.what_changed}));
+    wrap.append(section("Next best actions", "auto: agent acts · L1: team lead · L2: fraud manager", acts));
 
     const sarBody = s.file
       ? h("div", {class: "panel sar"}, h("p", {text: s.narrative}), h("div", {class: "facts"},
-          h("span", {}, "Total ", h("b", {text: money(s.total_amount_usd)})), h("span", {}, "Activity ", h("b", {text: s.activity_dates.join(" to ")})),
-          h("span", {}, "Subjects ", h("b", {text: String(s.subjects.length)})), h("span", {text: s.reason})))
+          h("span", {}, "Total ", h("b", {text: money(s.total_amount_usd)})), h("span", {}, "Activity ", h("b", {text: (s.activity_dates || []).join(" to ")})),
+          h("span", {}, "Subjects ", h("b", {text: String((s.subjects || []).length)})), h("span", {text: s.reason})))
       : h("div", {class: "panel nosar", text: s.reason});
-    wrap.append(h("section", {class: "blk"}, h("h2", {}, s.file ? "Suspicious activity report" : "No suspicious activity report"), sarBody));
+    wrap.append(section(s.file ? "Suspicious activity report" : "No suspicious activity report", null, sarBody));
 
     wrap.append(h("div", {class: "footline"},
-      h("span", {}, "Graph and retrieval calls ", h("b", {text: String(a.tool_calls)})), h("span", {}, "LLM tokens ", h("b", {text: a.tokens.toLocaleString("en-US")})),
-      h("span", {}, "Wall time ", h("b", {text: a.latency_s + " s"})), h("span", {}, "Similar closed cases ", h("b", {text: c.similar_prior_cases.join(", ") || "none"})),
-      h("a", {href: `https://github.com/MONSTERBOY110/hhgoa-tigergraph/blob/main/cases/${a.case_id}.json`, text: "Raw answer file"})));
-    v.append(wrap);
-    markPipes(wrap);
+      h("span", {}, "Graph and retrieval calls ", h("b", {text: String(a.tool_calls)})), h("span", {}, "LLM tokens ", h("b", {text: int(a.tokens)})),
+      h("span", {}, "Wall time ", h("b", {text: a.latency_s + " s"})), h("span", {}, "Similar closed cases ", h("b", {text: (c.similar_prior_cases || []).join(", ") || "none"})),
+      a._src ? h("a", {href: `https://github.com/MONSTERBOY110/hhgoa-tigergraph/blob/main/${a._src}`, text: "Raw answer file"}) : null));
   }
 
-  // Manrope draws "|" like a capital I; device fingerprints in prose keep their separators legible in mono
-  function markPipes(root) {
-    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {acceptNode: n =>
-      n.nodeValue.includes("|") && !n.parentElement.closest("svg,.mono,.ref,.id,.cid,.pipe") ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT});
-    const hits = []; while (walker.nextNode()) hits.push(walker.currentNode);
-    hits.forEach(n => {
-      const frag = document.createDocumentFragment();
-      n.nodeValue.split("|").forEach((part, i) => { if (i) frag.append(h("span", {class: "pipe", text: "|"})); frag.append(part); });
-      n.replaceWith(frag);
+  // ------------------------------------------------------------------ Replay (regulator's view)
+  function groupBars(snap, scale) {
+    const by = snap.by_group || {}, moved = {};
+    (snap.moved || []).forEach(m => moved[m.group] = m);
+    const names = [...new Set([...Object.keys(by), ...Object.keys(moved)])].sort((x, y) => Math.abs(by[y] || 0) - Math.abs(by[x] || 0));
+    if (!names.length) return h("p", {class: "faint", style: "margin:0", text: "No evidence group carried weight at this checkpoint."});
+    const g = h("div", {class: "gbars", role: "list", "aria-label": "Evidence groups and their weight toward fraud (right) or legitimate (left)"});
+    const bar = (v, cls) => { const b = h("div", {class: "gbar " + cls}); const w = Math.min(50, Math.abs(v) / scale * 50); b.style.width = w + "%"; b.style.left = (v >= 0 ? 50 : 50 - w) + "%"; return b; };
+    names.forEach(k => {
+      const v = by[k] || 0, m = moved[k];
+      const track = h("div", {class: "gtrack", "aria-hidden": "true"});
+      if (m) track.append(bar(m.before || 0, "was"));
+      track.append(bar(v, v >= 0 ? "pos" : "neg"));
+      g.append(h("span", {class: "gname" + (m ? " mv" : ""), role: "listitem", text: k + (m ? " (moved)" : "")}), track,
+        h("span", {class: "gval"}, m ? h("s", {text: signed(m.before || 0) + " to"}) : null, signed(v)));
     });
+    g.append(h("span"), h("div", {class: "gaxis", "aria-hidden": "true"}, h("span", {text: "toward legitimate"}), h("span", {text: "toward fraud"})), h("span"));
+    return g;
   }
 
+  function renderReplay(a, d, el) {
+    const r = d.replay || {};
+    if (!r.available) {
+      el.append(empty("No step-by-step replay for this case", r.reason || "The trace was not exported.", "Traces are written by python -m kavach run next to each answer (logs/traces/<case>.json)."));
+      return;
+    }
+    const at = d.attestation && d.attestation.available ? d.attestation : null;
+    const claimText = {}; (at ? at.claims : []).forEach(c => claimText[c.id] = c);
+    const llm = (r.llm_status || []).map(x => x.status).filter(Boolean);
+    const src = Object.entries(r.sources || {}).map(([k, v]) => `${k}: ${v}`).join(", ");
+    el.append(h("p", {class: "lede", text: "What the agent saw at each step: the tool it called with its parameters, how many rows came back, a sample of the ids in the result, and the attested claims that rest on that call. Checkpoints show the assessment at that moment and which evidence groups moved the probability."}));
+    el.append(h("div", {class: "facts"},
+      h("span", {}, "Tool calls ", h("b", {text: String(r.n_tool_calls)})),
+      r.backend ? h("span", {}, "Lane ", h("b", {text: r.backend})) : null,
+      r.dataset_version ? h("span", {}, "Dataset ", h("b", {class: "mono", text: r.dataset_version})) : null,
+      r.harness_status ? h("span", {}, "Harness ", h("b", {text: r.harness_status})) : null,
+      src ? h("span", {}, "Prose ", h("b", {text: src})) : null,
+      llm.length ? h("span", {}, "LLM ", h("b", {text: [...new Set(llm)].join(", ")})) : null,
+      h("span", {}, "Trace ", h("b", {class: "mono", text: r.trace_path}))));
+    el.append(h("div", {class: "cmdrow"}, cmd(`python -m kavach replay ${a.case_id}`, "Replay in a terminal"), cmd(`python -m kavach attest ${a.case_id}`, "Re-run the claims")));
+
+    const rows = r.rows || [];
+    let scale = .5;
+    rows.forEach(x => { if (x.type === "assessment") { Object.values(x.by_group || {}).forEach(v => scale = Math.max(scale, Math.abs(v))); (x.moved || []).forEach(m => scale = Math.max(scale, Math.abs(m.before || 0), Math.abs(m.after || 0))); } });
+
+    const t = h("table", {class: "ledger steps"}, h("thead", {}, h("tr", {},
+      h("th", {}, h("span", {class: "sr", text: "Expand"})), h("th", {text: "#"}), h("th", {text: "Step"}), h("th", {text: "Tool and parameters"}),
+      h("th", {class: "num", text: "Rows"}), h("th", {text: "Result digest"}), h("th", {text: "Claims"}))));
+    const tb = h("tbody");
+    const claimChip = cid => { const b = h("button", {type: "button", class: "id", text: cid, title: claimText[cid] ? claimText[cid].what : `claim ${cid}`}); b.onclick = () => gotoClaim(a, cid); return b; };
+    rows.forEach((x, i) => {
+      if (x.type === "tool") {
+        const params = Object.entries(x.params || {});
+        const call = h("div", {class: "call"}, h("b", {text: x.tool}), "(", params.map(([k, v], j) => [j ? ", " : "", `${k}=`, h("span", {class: "pv", text: typeof v === "object" ? JSON.stringify(v) : String(v)})]), ")");
+        const more = h("tr", {class: "more", id: `step-${i}`, hidden: ""});
+        const btn = h("button", {type: "button", class: "xbtn", "aria-expanded": "false", "aria-controls": `step-${i}`, "aria-label": `Details of call ${x.n}, ${x.tool}`});
+        btn.append(icon("chev"));
+        btn.onclick = () => { const open = btn.getAttribute("aria-expanded") !== "true"; btn.setAttribute("aria-expanded", String(open)); more.hidden = !open; call.classList.toggle("full", open); };
+        const dig = x.digest_ids || [];
+        tb.append(h("tr", {class: "tool"},
+          h("td", {class: "x"}, btn), h("td", {class: "n", text: String(x.n)}),
+          h("td", {}, h("span", {class: "phase"}, h("b", {text: String(x.step)}), x.phase)),
+          h("td", {}, call, x.error ? h("div", {class: "errtxt", text: `failed: ${x.error}`}) : null),
+          h("td", {class: "num", text: x.n_rows === null || x.n_rows === undefined ? "" : int(x.n_rows)}),
+          h("td", {}, dig.length ? idChips(dig, 3) : null, x.digest_sha1 ? h("div", {class: "sha", text: `sha1 ${x.digest_sha1.slice(0, 10)}`}) : (dig.length ? null : h("span", {class: "faint", text: "not recorded"}))),
+          h("td", {class: "cl"}, (x.claims || []).length ? h("div", {class: "ids"}, x.claims.map(claimChip)) : h("span", {class: "faint", text: "none"}))));
+        const kv = h("dl", {class: "kv"}); params.forEach(([k, v]) => kv.append(h("dt", {text: k}), h("dd", {text: typeof v === "object" ? JSON.stringify(v) : String(v)})));
+        if (!params.length) kv.append(h("dt", {text: "none"}), h("dd", {text: ""}));
+        const res = h("dl", {class: "kv"},
+          h("dt", {text: "rows"}), h("dd", {text: x.n_rows === null || x.n_rows === undefined ? "not recorded" : int(x.n_rows)}),
+          h("dt", {text: "sha1"}), h("dd", {text: x.digest_sha1 || "not recorded"}),
+          h("dt", {text: "ms"}), h("dd", {text: x.ms === null || x.ms === undefined ? "not recorded" : String(x.ms)}));
+        const linked = (x.claims || []).length ? h("ul", {class: "linked"}, x.claims.map(cid => h("li", {}, claimChip(cid), h("span", {text: claimText[cid] ? claimText[cid].what : "claim text in the sidecar"})))) : h("p", {class: "faint", style: "margin:0", text: "No attested claim rests on this call."});
+        more.append(h("td", {colspan: "7"}, h("div", {class: "moregrid"},
+          h("div", {}, h("h4", {text: "Parameters"}), kv), h("div", {}, h("h4", {text: "What came back"}), res),
+          h("div", {}, h("h4", {text: `Result ids (${dig.length} of the result, as recorded)`}), dig.length ? idChips(dig, 40) : h("p", {class: "faint", style: "margin:0", text: "The trace holds no digest for this call."})),
+          h("div", {}, h("h4", {text: "Claims resting on this call"}), linked))));
+        tb.append(more);
+        return;
+      }
+      // assessment checkpoint
+      const isReply = /reply/i.test(x.label || "");
+      const lm = /^(ASSESS\d+)\s+(.*)$/.exec(x.label || ""), ttl = lm ? lm[2] : (x.label || "assessment");
+      const head = h("div", {class: "snap-h"}, h("div", {class: "lbl"}, ttl.charAt(0).toUpperCase() + ttl.slice(1), lm ? h("span", {class: "ckid", text: lm[1].toLowerCase()}) : null),
+        h("div", {class: "pv"}, `p ${Number(x.p).toFixed(2)}`, x.p_before !== null && x.p_before !== undefined ? h("small", {text: `from ${Number(x.p_before).toFixed(2)}`}) : null),
+        verdictDot(x.verdict),
+        h("div", {class: "faint", style: "font-size:12px;margin-top:8px"}, `For fraud: ${(x.fraud_groups || []).join(", ") || "none"}`, h("br"), `For legitimate: ${(x.legit_groups || []).join(", ") || "none"}`));
+      const body = h("div", {}, groupBars(x, scale));
+      if ((x.requests || []).length) body.append(h("div", {class: "reply"}, h("b", {text: "The reply. "}), x.requests.join("; ")));
+      const sigs = (x.signals || []).slice().sort((p, q) => Math.abs(q.llr || 0) - Math.abs(p.llr || 0));
+      if (sigs.length) {
+        body.append(h("div", {class: "sub", text: isReply ? "Signals from the reply" : "Signals that appeared"}),
+          h("ul", {class: "sigs"}, sigs.map(s => h("li", {},
+            h("span", {class: "llr " + (s.llr > 0 ? "pos" : s.llr < 0 ? "neg" : "zero"), text: signed(s.llr || 0)}),
+            h("span", {}, h("span", {class: "sn", text: `${s.group} · ${s.name}`}), s.claim, (s.ids || []).length ? h("div", {style: "margin-top:5px"}, idChips(s.ids, 6)) : null)))));
+      } else if (isReply) body.append(h("p", {class: "reply", text: "No new signal from the reply."}));
+      tb.append(h("tr", {class: "chk"}, h("td", {colspan: "7"}, h("div", {class: "snap"}, head, body))));
+    });
+    t.append(tb);
+    el.append(section("Steps", `${r.n_tool_calls} calls, oldest first`, h("div", {class: "panel"}, t)));
+
+    const dec = r.decision || {};
+    el.append(section("Where it ended", dec.status ? `status ${dec.status}` : null, h("div", {class: "panel"},
+      h("div", {class: "endgrid"},
+        h("div", {}, h("h3", {text: "Why it stopped"}), h("p", {text: dec.stop_reason || "No stop reason recorded."})),
+        h("div", {}, h("h3", {text: "What changed after the reply"}), h("p", {text: !dec.what_changed || dec.what_changed === "nothing" ? "Nothing: the final actions equal the initial ones." : dec.what_changed}))),
+      h("div", {class: "actions pair"},
+        h("div", {class: "acol"}, h("h3", {}, "Initial ", h("span", {text: "before the reply"})), actionList(dec.initial)),
+        h("div", {class: "acol"}, h("h3", {}, "Final ", h("span", {text: "after the reply"})), actionList(dec.final))))));
+    if ((r.log || []).length) el.append(h("details", {class: "log"}, h("summary", {text: `Agent log, ${r.log.length} lines`}), h("ol", {}, r.log.map(l => h("li", {text: l})))));
+  }
+
+  // ------------------------------------------------------------------ Evidence and attestation
+  const KIND = {evidence: ["Evidence in the answer", "E"], detector_hit: ["Detector hits behind the assessment, not in the evidence list", "D"], sar_sentence: ["SAR sentences and the ids each one cites", "S"]};
+  const IDL = {txn_ids: "txn", card_ids: "card", customer_ids: "customer", case_ids: "closed case", device_keys: "device", other: "other"};
+  function howBlock(how, ref) {
+    if (!how || !how.tool) return h("span", {class: "faint", text: ref ? "recorded only as the ref string above, with no structured parameters to re-run" : "no re-runnable query recorded"});
+    const p = Object.entries(how.params || {});
+    const pre = h("pre", {class: "how"}, h("b", {text: how.tool}), p.length ? "\n" : "", p.map(([k, v], i) => `${i ? "\n" : ""}  ${k} = ${typeof v === "object" ? JSON.stringify(v) : v}`));
+    return pre;
+  }
+  function renderEvidence(a, d, el) {
+    const at = d.attestation || {}, vf = d.verify || {};
+    if (!at.available) {
+      el.append(empty("No attestation sidecar for this case", at.reason || "The sidecar was not exported.", "Sidecars are written next to each answer by python -m kavach run (attestations/<case>.json): every claim with what, its evidence ids, the query that produced it and when."));
+      return;
+    }
+    const claims = at.claims || [];
+    el.append(h("p", {class: "lede", text: `${claims.length} claims. Each carries what was claimed, the exact ids behind it, the query that produced it with its parameters, and when it ran against which data. Re-running the query must return every id, or the claim fails.`}));
+    el.append(h("div", {class: "facts"},
+      h("span", {}, "Recorded ", h("b", {class: "mono", text: utc(at.run_at)})), h("span", {}, "Lane ", h("b", {text: at.backend || "not recorded"})),
+      h("span", {}, "Dataset ", h("b", {class: "mono", text: at.dataset_version || "not recorded"})), h("span", {}, "Sidecar ", h("b", {class: "mono", text: at.path}))));
+    const status = {}; (vf.rows || []).forEach(r => status[r.id] = r);
+    const vline = vf.available
+      ? h("p", {class: "lede", style: "margin-bottom:12px"}, `Re-run when this page was built (${utc(vf.at)}, ${vf.backend} lane, dataset ${vf.dataset_version || "unknown"}): `,
+          h("span", {class: "st pass", text: `${vf.counts.pass} pass`}), " ", h("span", {class: "st " + (vf.counts.fail ? "fail" : "none"), text: `${vf.counts.fail} fail`}), " ",
+          h("span", {class: "st unverifiable", text: `${vf.counts.unverifiable} unverifiable`}), ". A claim with no ids or no recorded query is unverifiable, never passed.")
+      : h("p", {class: "lede", style: "margin-bottom:12px", text: `Not re-run when this page was built: ${vf.reason || "no result"}.`});
+    el.append(vline, h("div", {class: "cmdrow"}, cmd(`python -m kavach attest ${a.case_id}`, "Re-run every claim")));
+
+    const t = h("table", {class: "ledger claims"}, h("thead", {}, h("tr", {}, h("th", {text: "Claim"}), h("th", {text: "What"}), h("th", {text: "Evidence ids"}), h("th", {text: "How"}), h("th", {text: "When"}))));
+    const tb = h("tbody");
+    ["evidence", "detector_hit", "sar_sentence"].concat([...new Set(claims.map(c => c.kind))].filter(k => !KIND[k])).forEach(kind => {
+      const cs = claims.filter(c => c.kind === kind);
+      if (!cs.length) return;
+      tb.append(h("tr", {class: "kindrow"}, h("td", {colspan: "5", text: `${(KIND[kind] || [kind])[0]} (${cs.length})`})));
+      cs.forEach(c => {
+        const vr = status[c.id];
+        const ev = h("div");
+        Object.entries(c.evidence || {}).forEach(([k, ids]) => ev.append(h("div", {class: "idgroup"}, h("span", {class: "idl", text: IDL[k] || k}), [...idChips(ids, 10).childNodes])));
+        if (!Object.keys(c.evidence || {}).length) ev.append(h("span", {class: "faint", text: "no ids"}));
+        const sup = (c.supported_by || []).length ? h("div", {class: "rr"}, "Supported by ", c.supported_by.map((s, i) => { const b = h("button", {type: "button", class: "id", text: s}); b.onclick = () => gotoClaim(a, s); return [i ? " " : "", b]; })) : null;
+        tb.append(h("tr", {id: `claim-${c.id}`},
+          h("td", {class: "cid2"}, h("span", {class: "clid", text: c.id}), vr ? h("span", {class: "st " + vr.status, title: vr.reason, text: vr.status}) : h("span", {class: "st none", text: "not re-run"})),
+          h("td", {class: "claim"}, c.what, (c.source || c.ref) ? h("div", {class: "ref", text: [c.source, c.ref].filter(Boolean).join(" · ")}) : null,
+            c.llr !== null && c.llr !== undefined && c.signal ? h("div", {class: "rr", text: `signal ${c.signal}, weight ${signed(c.llr)}`}) : null,
+            vr ? h("div", {class: "rr", text: `Re-run: ${vr.reason}`}) : null, sup),
+          h("td", {}, ev), h("td", {}, howBlock(c.how, c.ref)),
+          h("td", {}, h("div", {class: "when"}, utc((c.when || {}).ts) || "not recorded", h("br"), `dataset ${(c.when || {}).dataset_version || "not recorded"}`))));
+      });
+    });
+    t.append(tb);
+    el.append(section("Attested claims", null, h("div", {class: "panel"}, t)));
+
+    const dq = at.data_quality || [];
+    if (dq.length) {
+      const q = h("table", {class: "ledger"}, h("thead", {}, h("tr", {}, h("th", {text: "Data quality flag"}), h("th", {text: "Records"}), h("th", {text: "What it means for this case"}))));
+      const qb = h("tbody");
+      dq.forEach(f => qb.append(h("tr", {}, h("td", {}, h("span", {class: "mono", text: f.flag}), f.caps_probability ? h("div", {class: "rr", text: "can cap the probability"}) : null),
+        h("td", {}, idChips(f.record_ids, 6)), h("td", {class: "claim"}, f.detail, f.consequence ? h("div", {class: "rr", text: f.consequence}) : null))));
+      q.append(qb);
+      el.append(section("Data quality behind this case", `${dq.length} flag${dq.length > 1 ? "s" : ""} recorded in the sidecar`, h("div", {class: "panel"}, q)));
+    }
+  }
+
+  // ------------------------------------------------------------------ Case file
+  const EVK = {opened: "Opened", intake: "Intake", hostile_text_detected: "Hostile text detected", gathered: "Evidence gathered", detected: "Detectors ran",
+    assessed: "Assessed", actions_initial: "Initial actions", evidence_requested: "Evidence requested", evidence_received: "Evidence received",
+    actions_final: "Final actions", awaiting_approval: "Awaiting approval", approved: "Approved", rejected: "Rejected", escalated: "Escalated",
+    closed: "Closed", failed: "Failed", rerun: "Re-run", written_to_graph: "Written to TigerGraph"};
+  const DEC = new Set(["actions_initial", "actions_final", "approved", "rejected", "escalated", "closed"]);
+  const kindLabel = k => EVK[k] || String(k).replace(/_/g, " ");
+  function renderCasefile(a, d, el) {
+    const cf = d.casefile || {};
+    if (!cf.available) {
+      el.append(empty("No case file for this case", cf.reason || "The case file was not exported.", "Case files are append-only event logs written by python -m kavach run (data/casefiles/<case>.jsonl), each line hash-chained to the one before."));
+      return;
+    }
+    const s = cf.state || {}, evs = cf.events || [];
+    el.append(h("p", {class: "lede", text: "The case as a record with a life: opened, assessed, actions proposed, evidence asked for and received, approvals needed, escalated or closed. Every line is appended, never edited, and chained to the line before it."}));
+    el.append(h("div", {class: "cfstrip", role: "group", "aria-label": "Case file readouts"},
+      h("div", {}, h("div", {class: "v", text: s.status || "unknown"}), h("div", {class: "pl", text: "status"})),
+      h("div", {}, h("div", {class: "v", text: String(s.n_events)}), h("div", {class: "pl", text: s.n_events === 1 ? "event" : "events"})),
+      h("div", {}, h("div", {class: "v", text: String(s.sittings)}), h("div", {class: "pl", text: s.sittings === 1 ? "sitting" : "sittings"})),
+      h("div", {}, h("div", {class: "v " + (s.chain_ok ? "ok" : "bad"), text: s.chain_ok ? "intact" : "broken"}), h("div", {class: "pl", text: "audit chain"})),
+      h("div", {}, h("div", {class: "v mono", text: utc(s.opened_at)}), h("div", {class: "pl", text: "opened"})),
+      h("div", {}, h("div", {class: "v mono", text: utc(s.last_activity)}), h("div", {class: "pl", text: "last activity"}))));
+    el.append(h("div", {class: "cmdrow"}, cmd(`python -m kavach case ${a.case_id}`, "Handover in a terminal")));
+
+    const pend = s.pending_approvals || [];
+    const wait = h("div", {class: "panel wait"});
+    if (!pend.length) wait.append(h("div", {class: "none", text: "Nothing is waiting: no L1 or L2 action needs an approval."}));
+    pend.forEach(p => {
+      const role = p.needs_role || p.route;
+      wait.append(h("div", {class: "w"}, h("b", {text: p.action}), routeBadge(p.route),
+        h("span", {class: "why", text: `Needs ${role}${ROLE[role] ? ` (${ROLE[role]})` : ""} approval. ${String(p.detail || "").replace(/^[A-Z_]+ needs L\d approval:\s*/, "")}`}),
+        h("span", {class: "since", text: `waiting since ${utc(p.since)}`})));
+    });
+    const decs = s.decisions || [];
+    const who = h("div", {class: "panel wait"});
+    if (!decs.length) who.append(h("div", {class: "none", text: "No decisions recorded."}));
+    decs.forEach(x => who.append(h("div", {class: "w"}, h("span", {style: "font-weight:650", text: kindLabel(x.kind)}), h("span", {class: "tag", text: x.actor}),
+      h("span", {class: "why", text: x.detail}), h("span", {class: "since", text: utc(x.ts) + (x.approval_id ? ` · approval ${x.approval_id}` : "")}))));
+    el.append(h("div", {class: "two even"},
+      section("What it is waiting on", pend.length ? `${pend.length} approval${pend.length > 1 ? "s" : ""}` : null, wait),
+      section("Who decided what", `${decs.length} decision${decs.length === 1 ? "" : "s"}`, who)));
+
+    const wc = s.what_changed || [];
+    if (wc.length) el.append(section("What changed", null, h("div", {class: "panel wait"}, wc.map(w => h("div", {class: "w"}, h("span", {style: "font-weight:650", text: kindLabel(w.kind)}), h("span"), h("span", {class: "why", text: w.detail}), h("span", {class: "since", text: utc(w.ts)}))))));
+
+    const tl = h("ol", {class: "tl"});
+    evs.forEach(e => {
+      const cls = DEC.has(e.kind) ? "dec" : e.kind === "awaiting_approval" || e.kind === "hostile_text_detected" ? "wait" : e.kind === "failed" ? "bad" : "";
+      let detail = e.detail;
+      if (!detail && e.extra && Object.keys(e.extra).length) detail = "";
+      tl.append(h("li", {}, h("span", {class: "sq", text: String(e.seq)}), h("span", {class: "rail2"}, h("i", {class: "dot " + cls})),
+        h("div", {class: "body"}, h("span", {class: "k", text: kindLabel(e.kind)}), h("span", {class: "meta", text: `${utc(e.ts)} · ${e.actor}${e.approval_id ? " · approval " + e.approval_id : ""} · ${e.hash}`}),
+          detail ? h("div", {class: "d", text: detail}) : null, (e.evidence_ids || []).length ? idChips(e.evidence_ids, 8) : null)));
+    });
+    el.append(section("Timeline", `${evs.length} events from ${cf.path}`, h("div", {class: "panel"}, tl)));
+  }
+
+  // ------------------------------------------------------------------ Ring replay
+  function shortVal(e) {
+    if (!e) return "";
+    if (e.field === "device_key") return String(e.value).split("|")[0].trim() || String(e.value);
+    if (e.field === "addr1") return `region ${e.value}`;
+    return e.value;
+  }
+  function renderRing(a, d, el) {
+    const R = d.ring;
+    if (!R) { el.append(empty("No ring in this case", "The answer names no connected cards and no evidence claim names three or more cards.")); return; }
+    if (!R.available) { el.append(empty("Ring replay not available", R.reason, "Ring frames are built from the DuckDB index by python -m kavach site.")); return; }
+    const T = R.txns || [], MEM = (R.members || []).map(m => ({...m})), P = R.primary, c = a.case;
+    if (!T.length) { el.append(empty("No transactions in the ring window", `The query over ${MEM.length} cards returned no transactions.`)); return; }
+    const ms = s => Date.parse(String(s).replace(" ", "T") + "Z");
+    const t0 = ms(R.window.from), t1 = ms(R.window.to), span = Math.max(1, t1 - t0);
+    const xp = s => Math.max(0, Math.min(100, (ms(s) - t0) / span * 100));
+    const frameOf = new Map(T.map((t, i) => [t.id, i]));
+    MEM.forEach(m => m.frame = m.joined_txn && frameOf.has(m.joined_txn) ? frameOf.get(m.joined_txn) : null);
+    const counted = t => P ? t.primary : (t.cited || t.affected || t.flagged);
+    const cum = []; let tot = 0; T.forEach(t => { if (counted(t)) tot += t.amt; cum.push(tot); });
+    const joins = MEM.filter(m => m.frame !== null).map(m => m.frame).sort((x, y) => x - y);
+    const spendLabel = P ? "spend through the shared value" : "spend on cited transactions";
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    el.append(h("p", {class: "lede"}, `${MEM.length} cards, ${int(T.length)} transactions between ${R.window.from} and ${R.window.to}. `,
+      P ? [`They share the ${P.label} `, h("span", {class: "mono", text: P.value}), P.window_cards <= P.ring_cards ? `: ${P.ring_cards} of these cards used it, and no other card did in the window.` : `: ${P.ring_cards} of these cards used it, out of ${int(P.window_cards)} cards in the window.`]
+        : "No device profile, email domain or billing region is carried by most of these cards; the agent linked them by the claim below.",
+      " Press play to watch the ring form, or move the slider one transaction at a time."));
+
+    // hub
+    const W = 520, H = 360, cx = W / 2, cy = H / 2, rx = 172, ry = 136;
+    const svg = svgEl("svg", {viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": `Ring of ${MEM.length} cards around ${P ? P.label + " " + shortVal(P) : "the agent's ring claim"}`});
+    const gE = svgEl("g"), gN = svgEl("g"); svg.append(gE, gN);
+    const pos = MEM.map((m, i) => { const t = -Math.PI / 2 + 2 * Math.PI * i / MEM.length; return [cx + rx * Math.cos(t), cy + ry * Math.sin(t), t]; });
+    const showLabels = MEM.length <= 16;
+    const hubEdges = [], hubNodes = [], hubLabels = [];
+    MEM.forEach((m, i) => {
+      const [x, y, t] = pos[i];
+      const e = svgEl("line", {x1: cx, y1: cy, x2: x, y2: y, class: "he edge hot", opacity: 0}); gE.append(e); hubEdges.push(e);
+      const isCase = m.role === "case card";
+      const g = svgEl("g", {class: "hn", opacity: .22});
+      g.append(svgEl("circle", {cx: x, cy: y, r: isCase ? 10 : 6.5, fill: isCase ? "#15171c" : "#22262f", stroke: isCase ? (VHEX[c.verdict] || "#8d94a1") : "#b7bcc6", "stroke-width": isCase ? 2.5 : 1.5}));
+      const right = Math.cos(t) >= 0, lx = x + Math.cos(t) * 16, ly = y + Math.sin(t) * 14 + 3.5;
+      const lab = svgEl("text", {x: lx, y: ly, "text-anchor": Math.abs(Math.cos(t)) < .3 ? "middle" : right ? "start" : "end"});
+      lab.textContent = m.card; if (!showLabels && !isCase) lab.setAttribute("opacity", 0);
+      g.append(lab); gN.append(g); hubNodes.push(g); hubLabels.push(lab);
+    });
+    const cg = svgEl("g");
+    if (P) {
+      cg.append(svgEl("polygon", {points: [0, 1, 2, 3, 4, 5].map(k => { const t = Math.PI / 6 + k * Math.PI / 3; return `${cx + 22 * Math.cos(t)},${cy + 22 * Math.sin(t)}`; }).join(" "), fill: "#15171c", stroke: "#f58220", "stroke-width": 1.8}));
+    } else cg.append(svgEl("circle", {cx, cy, r: 20, fill: "#15171c", stroke: "#3a404d", "stroke-width": 1.5, "stroke-dasharray": "3 4"}));
+    const ct = svgEl("text", {x: cx, y: cy + 40, "text-anchor": "middle", class: "center"}); ct.textContent = P ? shortVal(P) : "ring claim"; cg.append(ct);
+    const ct2 = svgEl("text", {x: cx, y: cy + 54, "text-anchor": "middle"}); ct2.textContent = P ? P.label : "no shared value"; cg.append(ct2);
+    gN.append(cg);
+    const hub = h("div", {class: "panel hub"}, svg, h("div", {class: "legend"},
+      h("span", {}, hex("#f58220"), "shared element"), h("span", {}, ring(VHEX[c.verdict] || "#8d94a1"), "case card"), h("span", {}, ring("#b7bcc6"), "ring card, lit once it joins")));
+
+    // readouts and controls
+    const roTime = h("div", {class: "v t"}), roJoined = h("div", {class: "v"}), roSpend = h("div", {class: "v"});
+    const readouts = h("div", {class: "readouts"},
+      h("div", {}, roTime, h("div", {class: "pl", text: "time"})), h("div", {}, roJoined, h("div", {class: "pl", text: "cards joined"})),
+      h("div", {}, roSpend, h("div", {class: "pl", text: spendLabel})),
+      h("div", {}, h("div", {class: "v", text: money(c.exposure_usd)}), h("div", {class: "pl", text: "case exposure"})));
+    const playBtn = h("button", {type: "button", class: "cbtn primary", "aria-label": "Play the ring forming"}, icon("play"), h("span", {text: "Play"}));
+    const prevBtn = h("button", {type: "button", class: "cbtn icon", "aria-label": "Previous card joining", title: "Previous card joining"}, icon("prev"));
+    const nextBtn = h("button", {type: "button", class: "cbtn icon", "aria-label": "Next card joining", title: "Next card joining"}, icon("next"));
+    const slider = h("input", {type: "range", class: "scrub", min: "0", max: String(T.length - 1), step: "1", value: String(T.length - 1), "aria-label": "Replay position, one transaction per step"});
+    const now = h("div", {class: "now", "aria-live": "polite"});
+    const rp = h("div", {class: "panel rpanel"}, readouts, h("div", {class: "controls"}, playBtn, prevBtn, nextBtn, slider), now);
+    el.append(h("div", {class: "ring-top"}, hub, rp));
+
+    // spend chart + lanes
+    const VB = 1000, VH = 100;
+    const pts = []; let last = 0;
+    T.forEach((t, i) => { if (counted(t)) { pts.push([xp(t.ts) / 100 * VB, cum[i]]); last = cum[i]; } });
+    const yv = v => VH - (tot ? v / tot * 92 : 0);
+    let dpath = `M0,${VH}`; pts.forEach(([x, v], i) => { dpath += ` H${x.toFixed(1)} V${yv(v).toFixed(1)}`; }); dpath += ` H${VB}`;
+    const chart = svgEl("svg", {viewBox: `0 0 ${VB} ${VH}`, preserveAspectRatio: "none", "aria-hidden": "true"});
+    const cid = "clip-" + a.case_id.replace(/[^A-Za-z0-9]/g, "");
+    const defs = svgEl("defs"), clip = svgEl("clipPath", {id: cid}), clipR = svgEl("rect", {x: 0, y: -2, width: VB, height: VH + 4}); clip.append(clipR); defs.append(clip); chart.append(defs);
+    chart.append(svgEl("path", {d: dpath, fill: "none", stroke: "#3a404d", "stroke-width": 1.5, "vector-effect": "non-scaling-stroke", "stroke-dasharray": "3 4"}));
+    const past = svgEl("g", {"clip-path": `url(#${cid})`});
+    past.append(svgEl("path", {d: dpath + ` V${VH} Z`, fill: "rgba(245,130,32,.14)", stroke: "none"}), svgEl("path", {d: dpath, fill: "none", stroke: "#f58220", "stroke-width": 2, "vector-effect": "non-scaling-stroke"}));
+    chart.append(past);
+    const lanes = h("div", {class: "lanes"});
+    const cumB = h("b", {text: money(tot)});
+    lanes.append(h("div", {class: "chart"}, h("div", {class: "cl"}, spendLabel, cumB), chart));
+    const ax = h("div", {class: "ax", "aria-hidden": "true"});
+    const nt = window.innerWidth < 700 ? 3 : 6, days = span / 864e5, stepH = days > nt ? 24 * Math.ceil(days / nt) : days > 1.5 ? 24 : Math.max(1, Math.ceil(days * 24 / nt));
+    const fmt = (dt, withTime) => dt.toLocaleDateString("en-US", {month: "short", day: "numeric", timeZone: "UTC"}) + (withTime ? " " + String(dt.getUTCHours()).padStart(2, "0") + ":00" : "");
+    let tick = new Date(t0); if (stepH >= 24) tick.setUTCHours(0, 0, 0, 0); else tick.setUTCMinutes(0, 0, 0);
+    tick = new Date(tick.getTime() + stepH * 36e5);
+    for (let k = 0; k < 12 && tick.getTime() < t1; k++, tick = new Date(tick.getTime() + stepH * 36e5)) {
+      const p = (tick.getTime() - t0) / span * 100; if (p < 4 || p > 96) continue;
+      const s = h("span", {text: fmt(tick, stepH < 24)}); s.style.left = p + "%"; ax.append(s);
+    }
+    lanes.append(h("div", {class: "axis"}, h("span"), ax));
+    const marks = new Array(T.length), rows = [];
+    MEM.forEach((m, mi) => {
+      const track = h("div", {class: "track"});
+      const row = h("div", {class: "lrow" + (m.role === "case card" ? " own" : "")}, h("div", {class: "ll", title: `${m.card}, ${m.role}`}, h("i"), m.card), track);
+      if (m.role === "case card") row.style.setProperty("--vc", VCOL[c.verdict] || "var(--ink-3)");
+      rows.push(row); lanes.append(row); m._track = track;
+    });
+    const memIdx = new Map(MEM.map((m, i) => [m.card, i]));
+    T.forEach((t, i) => {
+      const isP = !!(P && t.primary), isC = !!(t.cited || t.affected);
+      const cls = ["mk", isP ? "p" : "", isC ? "c" : "", t.flagged ? "f" : "", !isP && !isC && !t.flagged ? "o" : ""].filter(Boolean);
+      const mk = h("i", {class: cls.join(" "), title: `${t.id} · ${t.ts} · ${money(t.amt)} · product ${t.product}${t.device_key ? " · " + t.device_key : ""}${t.R_emaildomain ? " · R " + t.R_emaildomain : ""}`});
+      mk.style.left = xp(t.ts) + "%";
+      const mi = memIdx.get(t.card); if (mi !== undefined) MEM[mi]._track.append(mk);
+      marks[i] = mk;
+    });
+    const playwrap = h("div", {class: "playwrap"}), head = h("div", {class: "playhead"}); playwrap.append(head); lanes.append(playwrap);
+    el.append(section("Who transacted when", `${MEM.length} lanes, one per card, in the order they joined`, h("div", {class: "panel"}, lanes),
+      h("div", {class: "graph"}, h("div", {class: "legend", style: "padding:10px 2px 0"},
+        h("span", {}, dot("#f58220"), P ? `through ${shortVal(P)}` : "counted"), h("span", {}, ring("#ff6b5b"), "cited by the agent or in the episode"),
+        h("span", {}, h("i", {style: "display:inline-block;width:2px;height:8px;background:#8d94a1;opacity:.6"}), "other activity on the card"),
+        h("span", {}, "outlined: the flagged transaction")))));
+
+    // join ledger
+    const jt = h("table", {class: "ledger joins"}, h("thead", {}, h("tr", {}, ["#", "Joined", "Card", "Role", "Via", "First transaction", "Shared txns", "Shared spend"].map((x, i) => h("th", {class: i >= 6 ? "num" : null, text: x})))));
+    const jb = h("tbody"), jrows = [];
+    MEM.forEach((m, i) => {
+      const via = m.joined_via === "primary" ? shortVal(P) : m.joined_via === "cited" ? "cited transaction" : m.joined_via === "first" ? "first transaction in the window" : "no transaction in the window";
+      const tr = h("tr", {tabindex: m.frame !== null ? "0" : null, "aria-label": m.frame !== null ? `Jump to ${m.card} joining` : null},
+        h("td", {class: "mono faint", text: String(i + 1)}), h("td", {class: "mono", text: m.joined_ts || "not in window"}), h("td", {}, h("span", {class: "id", text: m.card})),
+        h("td", {}, h("span", {class: "rolechip", text: m.role}), (m.named_in || []).length ? h("div", {class: "rr", text: `named in ${m.named_in.join(", ")}`}) : null),
+        h("td", {text: via}), h("td", {}, m.joined_txn ? h("span", {class: "id", text: m.joined_txn}) : "none"),
+        h("td", {class: "num", text: String(m.n_primary)}), h("td", {class: "num", text: money(m.amt_primary)}));
+      if (m.frame !== null) { const go = () => { stop(); setFrame(m.frame, true); }; tr.onclick = go; tr.onkeydown = e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } }; }
+      jb.append(tr); jrows.push(tr);
+    });
+    jt.append(jb);
+    el.append(section("Who joined when", "click a row to jump to that moment", h("div", {class: "panel"}, jt)));
+
+    // what they shared
+    const et = h("table", {class: "ledger"}, h("thead", {}, h("tr", {}, ["Element", "Value", "Ring cards", "Cards in the window", "Reading"].map((x, i) => h("th", {class: i === 2 || i === 3 ? "num" : null, text: x})))));
+    const eb = h("tbody");
+    (R.elements || []).forEach(e => {
+      const reading = e.primary ? "links the ring" : e.generic ? "placeholder device, links nothing" : !e.concentrated ? "too widespread to link anything" : "also in common";
+      eb.append(h("tr", {}, h("td", {text: e.label}), h("td", {}, h("span", {class: "elv", text: e.value})), h("td", {class: "num", "data-l": "Ring cards", text: String(e.ring_cards)}),
+        h("td", {class: "num", "data-l": "Cards in the window", text: int(e.window_cards)}), h("td", {}, h("span", {class: "tag" + (e.primary ? " lead" : ""), text: reading}), e.named ? h("div", {class: "rr", text: "named by the agent"}) : null)));
+    });
+    if (!(R.elements || []).length) eb.append(h("tr", {}, h("td", {colspan: "5", class: "faint", text: "No device profile, email domain or billing region is carried by two or more of these cards in the window."})));
+    et.append(eb);
+    el.append(section("What they shared", "device profile, email domains and billing region, counted over the query window", h("div", {class: "panel"}, et)));
+
+    // the agent's claims and how the frames were built
+    if ((R.claims || []).length) el.append(section("Why the agent linked them", null, h("div", {class: "panel"}, h("table", {class: "ledger"}, h("tbody", {},
+      R.claims.map(cl => h("tr", {}, h("td", {class: "cid2"}, h("span", {class: "clid", text: cl.id})), h("td", {class: "claim"}, cl.what, cl.ref ? h("div", {class: "ref", text: cl.ref}) : null), h("td", {}, howBlock(cl.how, cl.ref)))))))));
+    const B = R.built || {};
+    el.append(section("How these frames were built", "every frame comes from this query, not from a stored picture", h("div", {class: "panel", style: "padding:14px 16px"},
+      h("div", {class: "facts"}, h("span", {}, "Dataset ", h("b", {class: "mono", text: B.dataset_version || "unknown"})), h("span", {}, "Built ", h("b", {class: "mono", text: utc(B.at)})),
+        h("span", {}, "Query window ", h("b", {text: `${R.window.query_from} to ${R.window.query_to}`})), h("span", {}, "Window rule ", h("b", {text: R.window.source})),
+        R.omitted ? h("span", {}, "Omitted ", h("b", {text: `${int(R.omitted)} rows with no shared value and no cited id`})) : null),
+      h("pre", {class: "sql", text: B.sql}), h("pre", {class: "sql", style: "margin-top:8px", text: JSON.stringify(B.params)}),
+      h("div", {class: "cmdrow", style: "margin:12px 0 0"}, cmd(B.rerun || `python -m kavach.site ring ${a.case_id}`, "Re-run the frames")))));
+
+    // frame state
+    let cur = -1, timer = null;
+    function setFrame(i, announce) {
+      i = Math.max(0, Math.min(T.length - 1, i));
+      if (cur < 0) { marks.forEach((m, k) => m.classList.toggle("fut", k > i)); }
+      else if (i > cur) { for (let k = cur + 1; k <= i; k++) marks[k].classList.remove("fut"); }
+      else if (i < cur) { for (let k = i + 1; k <= cur; k++) marks[k].classList.add("fut"); }
+      cur = i;
+      const t = T[i], perCard = new Map();
+      for (let k = 0; k <= i; k++) if (P && T[k].primary) perCard.set(T[k].card, (perCard.get(T[k].card) || 0) + 1);
+      let joined = 0, lead = -1, leadF = -1;
+      MEM.forEach((m, mi) => {
+        const on = m.frame !== null && m.frame <= i;
+        if (on) { joined++; if (m.frame > leadF) { leadF = m.frame; lead = mi; } }
+        rows[mi].classList.toggle("joined", on);
+        hubNodes[mi].setAttribute("opacity", on ? 1 : .22);
+        hubEdges[mi].setAttribute("opacity", on ? 1 : 0);
+        hubEdges[mi].setAttribute("stroke-width", on ? Math.min(4.5, 1.2 + (perCard.get(m.card) || 0) * .55) : 1.2);
+        jrows[mi].classList.toggle("pending", !on);
+        jrows[mi].removeAttribute("aria-current");
+      });
+      MEM.forEach((m, mi) => { rows[mi].classList.toggle("lead", mi === lead); if (!showLabels && m.role !== "case card") hubLabels[mi].setAttribute("opacity", mi === lead ? 1 : 0); });
+      if (lead >= 0) jrows[lead].setAttribute("aria-current", "true");
+      roTime.textContent = t.ts; roJoined.textContent = `${joined} of ${MEM.length}`; roSpend.textContent = money(cum[i]); cumB.textContent = money(cum[i]);
+      const x = xp(t.ts); head.style.left = x + "%"; clipR.setAttribute("width", (x / 100 * VB).toFixed(1));
+      slider.value = String(i);
+      const vt = `${t.ts}, ${joined} of ${MEM.length} cards joined, ${money(cum[i])} so far`;
+      slider.setAttribute("aria-valuetext", vt);
+      now.setAttribute("aria-live", timer ? "off" : "polite");
+      now.innerHTML = "";
+      now.append(h("span", {class: "mono", text: t.card}), ` paid ${money(t.amt)}, product ${t.product}, transaction `, h("span", {class: "mono", text: t.id}),
+        ...(P && t.primary ? [", through ", h("span", {class: "mono", text: shortVal(P)})] : []), t.flagged ? ". This is the flagged transaction." : t.affected ? ". In the case episode." : ".");
+    }
+    function stop() { if (timer) { clearInterval(timer); timer = null; } playBtn.setAttribute("aria-label", "Play the ring forming"); playBtn.innerHTML = ""; playBtn.append(icon("play"), h("span", {text: "Play"})); now.setAttribute("aria-live", "polite"); }
+    function play() {
+      if (cur >= T.length - 1) setFrame(0);
+      const per = Math.max(1, Math.ceil(T.length / (reduce ? 60 : 320)));
+      timer = setInterval(() => { if (cur >= T.length - 1) { stop(); setFrame(cur, true); return; } setFrame(cur + per); }, reduce ? 250 : 40);
+      playBtn.setAttribute("aria-label", "Pause"); playBtn.innerHTML = ""; playBtn.append(icon("pause"), h("span", {text: "Pause"}));
+      now.setAttribute("aria-live", "off");
+    }
+    playBtn.onclick = () => timer ? stop() : play();
+    nextBtn.onclick = () => { stop(); const n = joins.find(f => f > cur); setFrame(n !== undefined ? n : T.length - 1, true); };
+    prevBtn.onclick = () => { stop(); const p = [...joins].reverse().find(f => f < cur); setFrame(p !== undefined ? p : 0, true); };
+    slider.addEventListener("input", () => { stop(); setFrame(+slider.value, true); });
+    stopRing = stop;
+    setFrame(T.length - 1);
+  }
+
+  // ------------------------------------------------------------------ Monitor and Detectors pages
   function renderMonitor() {
     const v = $("#view"); v.innerHTML = "";
     const t = h("table", {class: "ledger"}, h("thead", {}, h("tr", {}, ["Finding", "Sweep", "Card", "Verdict", "Pattern", "Exposure", "SAR"].map(x => h("th", {text: x})))));
     const tb = h("tbody");
     M.forEach(m => tb.append(h("tr", {}, h("td", {}, h("span", {class: "cid", text: m.case_id}), h("div", {class: "ref", text: m.why})),
-      h("td", {text: m.sweep.replaceAll("_", " ")}), h("td", {class: "mono", text: m.card}), h("td", {}, h("span", {class: "vd " + m.verdict}, h("i"), m.verdict)),
-      h("td", {text: PAT[m.pattern]}), h("td", {text: money(m.exposure)}), h("td", {text: m.sar ? "filed" : "no"}))));
+      h("td", {text: String(m.sweep || "").replace(/_/g, " ")}), h("td", {class: "mono", text: m.card}), h("td", {}, verdictDot(m.verdict)),
+      h("td", {text: PAT[m.pattern] || m.pattern}), h("td", {text: money(m.exposure)}), h("td", {text: m.sar ? "filed" : "no"}))));
+    if (!M.length) tb.append(h("tr", {}, h("td", {colspan: "7", class: "faint", text: "No monitor findings on disk (monitor/ or round1/monitor/)."})));
     t.append(tb);
     v.append(h("div", {class: "mon"}, h("h1", {text: "What the monitor found on its own"}),
-      h("p", {class: "lede", text: "Beyond the 20 exam cases, Kavach sweeps November and December for activity no alert pointed at: bursts of purchases just under a round limit, scripted device rings, and rare devices paying the same amount on several cards. Each finding was investigated by the same agent and policy engine."}),
+      h("p", {class: "lede", text: "Beyond the exam cases, Kavach sweeps November and December for activity no alert pointed at: bursts of purchases just under a round limit, scripted device rings, and rare devices paying the same amount on several cards. Each finding was investigated by the same agent and policy engine."}),
       h("div", {class: "panel"}, t)));
+    markPipes(v);
   }
 
-  function select(id, focus) {
-    const a = C.find(x => x.case_id === id) || C[0];
-    if (!a) return;
-    current = a.case_id;
-    if (location.hash !== "#" + a.case_id) history.replaceState(null, "", "#" + a.case_id);
-    setView("cases");
-    renderList(); renderCase(a);
-    $("#view").scrollTop = 0;
-    if (focus) $("#view").focus({preventScroll: true});
+  function btCell(v, label) { return h("div", {}, h("div", {class: "v", text: v}), h("div", {class: "pl", text: label})); }
+  function detectorBlock(s) {
+    const bt = s.backtest || {}, ap = s.approval, g = s.gate, fw = bt.forward || {};
+    const statusTag = s.kind === "approved" ? (g && g.passes === false ? h("span", {class: "tag", style: "color:var(--fraud);border-color:currentColor", text: "approved, refused at load"}) : h("span", {class: "tag lead", text: "approved, runs at detect time"}))
+      : s.kind === "rejected" ? h("span", {class: "tag", text: "rejected"}) : h("span", {class: "tag", style: "color:var(--uncertain);border-color:currentColor", text: "awaiting L2 approval"});
+    const rate = bt.population_rate !== undefined && bt.population_rate !== null ? (bt.population_rate * 100).toFixed(3) + "%" : "n/a";
+    const blk = h("div", {class: "panel det"},
+      h("div", {class: "det-h"}, h("span", {class: "nm", text: s.name}), s.title ? h("span", {class: "ti", text: s.title}) : null, h("span", {class: "sp"}), statusTag),
+      h("div", {class: "bt", role: "group", "aria-label": `Backtest of ${s.name}`},
+        btCell(`${int(bt.support)} of ${int(bt.n_fraud_cases)}`, "fraud caught"),
+        btCell(int(bt.cleared_hits), `legitimate hit, of ${int(bt.n_cleared_cases)}`),
+        btCell(bt.lift !== undefined ? Number(bt.lift).toFixed(2) : "n/a", "lift"),
+        btCell(bt.precision !== undefined ? Number(bt.precision).toFixed(2) : "n/a", "precision"),
+        btCell(rate, `fire rate, ${int(bt.population_sample)} txns`),
+        btCell(fw.fired_txns !== undefined ? plural(fw.fired_txns, "txn") : "n/a", `January, ${plural(fw.fired_cards, "card")}`)),
+      h("div", {class: "det-b"},
+        s.rule ? h("p", {class: "rule"}, "Rule: ", s.rule) : null,
+        s.description ? h("p", {}, s.description, s.description_source ? h("span", {class: "faint", text: ` (description: ${s.description_source})`}) : null) : null,
+        h("div", {class: "kvrow"},
+          h("span", {text: "Confirmed fraud it caught"}), idChips(bt.fraud_case_ids, 12),
+          h("span", {text: "Legitimate customers it would have acted against"}), (bt.cleared_case_ids || []).length ? idChips(bt.cleared_case_ids, 12) : h("span", {text: "none in the closed history"}),
+          (bt.example_txn_ids || []).length ? [h("span", {text: "Example transactions"}), idChips(bt.example_txn_ids, 10)] : null,
+          (fw.pack_flagged_txn_hits || []).length ? [h("span", {text: "Exam alerts it fires on"}), idChips(fw.pack_flagged_txn_hits, 10)] : null,
+          fw.entity_values ? [h("span", {text: "January values"}), h("span", {class: "mono", text: Object.entries(fw.entity_values).map(([k, n]) => `${k} (${n})`).join(", ")})] : null,
+          h("span", {text: "Parameters"}), h("span", {class: "mono", text: Object.entries(s.params || {}).map(([k, v]) => `${k}=${v}`).join(", ") || "none"}),
+          bt.lane ? [h("span", {text: "Mining lane"}), h("span", {}, `${bt.lane}${bt.status ? ", " + bt.status : ""}${bt.rediscovers ? ", rediscovers " + bt.rediscovers : ""}${bt.p_adj !== undefined ? `, adjusted p ${Number(bt.p_adj).toExponential(1)}` : ""}`)] : null,
+          h("span", {text: "Approval"}), h("span", {}, ap ? `${ap.role || ""} ${ap.id ? "record " + ap.id : ""} ${ap.ts ? "at " + utc(ap.ts) : ""}`.trim() : "none yet"),
+          g ? [h("span", {text: "Load gate"}), h("span", {class: g.passes ? "ok" : g.passes === false ? "bad" : "faint", text: g.reason})] : null,
+          h("span", {text: "Spec"}), h("span", {class: "mono", text: `${s.path}${s.dataset_version ? " · dataset " + s.dataset_version : ""}`}))));
+    return blk;
   }
+  function renderDetectors() {
+    const v = $("#view"); v.innerHTML = "";
+    const wrap = h("div", {class: "mon"});
+    const ap = DET.approved || [], pr = DET.proposed || [], rj = DET.rejected || [], ty = DET.typologies || [];
+    const any = [...ap, ...pr, ...rj][0];
+    const nf = any && any.backtest ? any.backtest.n_fraud_cases : null, nc = any && any.backtest ? any.backtest.n_cleared_cases : null;
+    wrap.append(h("h1", {text: "Detectors the agent grew"}),
+      h("p", {class: "lede", text: `The agent mines the bank's closed cases${nf ? ` (${int(nf)} confirmed fraud, ${int(nc)} cleared)` : ""} for patterns no hand-written detector covers, backtests each candidate, and asks a fraud manager (L2) to approve it before it joins the toolkit. Only an approved detector whose spec still matches its approval runs at detect time.`}));
+    wrap.append(section("Approved", ap.length ? `${ap.length}` : null,
+      ap.length ? ap.map(detectorBlock) : empty("No grown detector is approved yet", "Approval needs an L2 token; until then a proposal never runs.", "python -m kavach grow approve <name> --token <L2 token>")));
+    if (pr.length) wrap.append(section("Awaiting L2 approval", `${pr.length} proposal${pr.length > 1 ? "s" : ""}, not run by the agent`, pr.map(detectorBlock)));
+    if (rj.length) wrap.append(section("Rejected", `${rj.length}`, rj.map(detectorBlock)));
+    if (ty.length) {
+      const t = h("table", {class: "ledger"}, h("thead", {}, h("tr", {}, ["Detector", "Chosen parameters", "Fraud caught", "Legitimate hit", "Lift", "Precision", "January"].map((x, i) => h("th", {class: i >= 2 && i <= 5 ? "num" : null, text: x})))));
+      const tb = h("tbody");
+      ty.forEach(b => {
+        const ch = b.chosen || {};
+        tb.append(h("tr", {},
+          h("td", {}, h("span", {class: "mono", style: "font-weight:600", text: b.name}), h("div", {class: "rr", text: `${ch.status || ""}${ch.reason ? ": " + ch.reason : ""}`}), h("div", {class: "ref", text: `${b.path} · dataset ${b.dataset_version} · ${b.n_grid} grid points`})),
+          h("td", {class: "mono", style: "font-size:12px", text: Object.entries(ch.params || {}).map(([k, v]) => `${k}=${v}`).join(", ")}),
+          h("td", {class: "num", "data-l": "Fraud caught", text: `${int(ch.support)} of ${int(b.n_fraud)}`}),
+          h("td", {class: "num", "data-l": "Legitimate hit"}, `${int(ch.cleared_hits)} of ${int(b.n_cleared)}`, b.cleared.length ? h("div", {class: "ids", style: "justify-content:flex-end;margin-top:4px"}, b.cleared.slice(0, 6).map(x => h("span", {class: "id", title: `txn ${x.txn}, card ${x.card}`, text: x.case_id}))) : null),
+          h("td", {class: "num", "data-l": "Lift", text: ch.lift !== undefined ? Number(ch.lift).toFixed(2) : "n/a"}),
+          h("td", {class: "num", "data-l": "Precision", text: ch.precision_closed !== undefined ? Number(ch.precision_closed).toFixed(3) : "n/a"}),
+          h("td", {"data-l": "January", text: b.january && b.january.fired_txns !== undefined ? `${plural(b.january.fired_txns, "txn")}, ${plural(b.january.fired_cards, "card")}` : "n/a"})));
+      });
+      t.append(tb);
+      wrap.append(section("Hand-written typology detectors", "backtested on the same closed cases; legitimate hits are the customers each would have acted against", h("div", {class: "panel"}, t)));
+    }
+    if (DET.gate_error) wrap.append(h("p", {class: "faint", text: `Load gate not checked: ${DET.gate_error}`}));
+    v.append(wrap);
+    markPipes(v);
+  }
+
+  // ------------------------------------------------------------------ routing
   function setView(which) {
     view = which;
     $("#tab-cases").setAttribute("aria-selected", String(which === "cases"));
     $("#tab-monitor").setAttribute("aria-selected", String(which === "monitor"));
+    $("#tab-detectors").setAttribute("aria-selected", String(which === "detectors"));
+    renderBarMeta();
   }
-  $("#tab-cases").onclick = () => select(current || C[0].case_id);
-  $("#tab-monitor").onclick = () => { setView("monitor"); renderMonitor(); };
+  function select(id, t, focus, keepScroll) {
+    const a = byId(id) || inRound()[0] || ALL[0];
+    if (!a) return;
+    const sameCase = current === a.case_id && view === "cases";
+    current = a.case_id; round = a._round;
+    tab = t && TABS.some(([k]) => k === t) ? t : "decision";
+    const hash = "#" + a.case_id + (tab !== "decision" ? "/" + tab : "");
+    if (location.hash !== hash) history.replaceState(null, "", hash);
+    setView("cases");
+    renderRounds(); renderFilters(); renderList(); renderBarMeta();
+    const top = $("#view").scrollTop, wtop = window.scrollY;
+    renderCase(a);
+    if (keepScroll && sameCase) { $("#view").scrollTop = top; window.scrollTo(0, wtop); } else { $("#view").scrollTop = 0; }
+    if (focus) $("#view").focus({preventScroll: true});
+  }
+  function showPage(which) {
+    if (stopRing) { stopRing(); stopRing = null; }
+    setView(which);
+    renderList();
+    if (location.hash !== "#" + which) history.replaceState(null, "", "#" + which);
+    (which === "monitor" ? renderMonitor : renderDetectors)();
+    $("#view").scrollTop = 0;
+  }
+  function route() {
+    const raw = decodeURIComponent(location.hash.slice(1));
+    if (raw === "monitor" || raw === "detectors") { showPage(raw); return; }
+    const [id, t] = raw.split("/");
+    select(byId(id) ? id : (current || (inRound()[0] || ALL[0] || {}).case_id), t, false);
+  }
+  $("#tab-cases").onclick = () => select(current || (inRound()[0] || {}).case_id, tab);
+  $("#tab-monitor").onclick = () => showPage("monitor");
+  $("#tab-detectors").onclick = () => showPage("detectors");
   document.addEventListener("keydown", e => {
-    if (e.target.closest("input,textarea") || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.target.closest("input,textarea,select,[role=tab]") || e.metaKey || e.ctrlKey || e.altKey) return;
     if (e.key !== "j" && e.key !== "k") return;
     const list = visible(); const i = list.findIndex(x => x.case_id === current);
     const nx = list[Math.min(list.length - 1, Math.max(0, i + (e.key === "j" ? 1 : -1)))];
-    if (nx) select(nx.case_id, false);
+    if (nx) select(nx.case_id, tab, false);
   });
-  window.addEventListener("hashchange", () => { const id = location.hash.slice(1); if (id && id !== current) select(id, false); });
+  window.addEventListener("hashchange", () => {
+    const raw = decodeURIComponent(location.hash.slice(1)), [id, t] = raw.split("/");
+    if (raw === "monitor" || raw === "detectors") { if (view !== raw) showPage(raw); return; }
+    if (id && (id !== current || (t || "decision") !== tab || view !== "cases")) select(id, t, false);
+  });
 
-  renderFilters();
-  if (!C.length) { $("#view").append(h("div", {class: "mon"}, h("h1", {text: "No case data"}), h("p", {class: "lede", text: "Run python -m kavach site to build site/cases.js from the answer files."}))); return; }
-  select(location.hash.slice(1) || C[0].case_id, false);
+  renderRounds(); renderFilters();
+  if (!ALL.length) {
+    renderList();
+    $("#view").append(h("div", {class: "mon"}, h("h1", {text: "No case data"}), h("p", {class: "lede", text: "Run python -m kavach site to build site/cases.js and site/data/ from the answer files."})));
+    return;
+  }
+  route();
 })();
 </script>
 </body>

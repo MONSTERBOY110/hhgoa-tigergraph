@@ -1,0 +1,1000 @@
+{
+ "name": "recipient_fanin",
+ "run_at": "2026-10-29T17:52:20",
+ "duck_path": "kavach_r2.duckdb",
+ "dataset_version": "eb6caf5672c6",
+ "n_closed": 5585,
+ "n_fraud": 4675,
+ "n_cleared": 910,
+ "closed_anchor_missing": [],
+ "n_population": 200000,
+ "population": "reservoir sample (seed 42) of transactions before 2017-01-01 not in any confirmed-fraud closed case",
+ "grid": {
+  "min_cards": [
+   3,
+   5,
+   8
+  ],
+  "days": [
+   7,
+   14,
+   30
+  ],
+  "ratio": [
+   5.0
+  ],
+  "template": [
+   false,
+   true
+  ],
+  "fields": [
+   [
+    "R_emaildomain"
+   ],
+   [
+    "R_emaildomain",
+    "P_emaildomain"
+   ]
+  ]
+ },
+ "chosen": {
+  "params": {
+   "min_cards": 3,
+   "days": 30,
+   "ratio": 5.0,
+   "template": false,
+   "fields": [
+    "R_emaildomain"
+   ]
+  },
+  "support": 2,
+  "cleared_hits": 0,
+  "pop_hits": 0,
+  "p_fraud": 0.000428,
+  "p_cleared": 0.0,
+  "p_pop": 0.0,
+  "lift": 171.123,
+  "lift_ci95": null,
+  "lift_note": "population had no hits; lift uses 0.5 hits as the floor",
+  "precision_closed": 1.0,
+  "status": "weak",
+  "reason": "no grid point reaches support >= 15 with cleared hits <= 3; kept the best weak point (support 2, lift 171.12); runtime LLR capped at 0.5",
+  "llr": 0.5,
+  "grid_index": 8
+ },
+ "hits": {
+  "fraud": [
+   {
+    "case_id": "CC-4229",
+    "txn": "3317121",
+    "card": "C02716-K2",
+    "matched_txns": [
+     "3228502",
+     "3234995",
+     "3238397",
+     "3241820",
+     "3241854",
+     "3250618",
+     "3292070",
+     "3292077",
+     "3292080",
+     "3292081",
+     "3292084",
+     "3292086"
+    ],
+    "matched_cards": [
+     "C06979-K1",
+     "C11000-K2",
+     "C02513-K1",
+     "C03351-K2",
+     "C12897-K1",
+     "C03042-K1",
+     "C02231-K1",
+     "C11092-K2",
+     "C11304-K1"
+    ],
+    "value": "protonmail.com",
+    "field": "R_emaildomain"
+   },
+   {
+    "case_id": "CC-4242",
+    "txn": "3321206",
+    "card": "C07898-K1",
+    "matched_txns": [
+     "3234995",
+     "3238397",
+     "3241820",
+     "3241854",
+     "3250618",
+     "3292070",
+     "3292077",
+     "3292080",
+     "3292081",
+     "3292084",
+     "3292086",
+     "3305206"
+    ],
+    "matched_cards": [
+     "C11000-K2",
+     "C02513-K1",
+     "C03351-K2",
+     "C12897-K1",
+     "C03042-K1",
+     "C02231-K1",
+     "C11092-K2",
+     "C11304-K1",
+     "C02716-K2",
+     "C01155-K2"
+    ],
+    "value": "protonmail.com",
+    "field": "R_emaildomain"
+   }
+  ],
+  "cleared": [],
+  "population_sample": []
+ },
+ "results": [
+  {
+   "i": 0,
+   "params": {
+    "min_cards": 3,
+    "days": 7,
+    "ratio": 5.0,
+    "template": false,
+    "fields": [
+     "R_emaildomain"
+    ]
+   },
+   "support": 3,
+   "cleared_hits": 0,
+   "pop_hits": 20,
+   "p_fraud": 0.000642,
+   "p_cleared": 0.0,
+   "p_pop": 0.0001,
+   "lift": 6.417,
+   "lift_ci95": [
+    1.91,
+    21.59
+   ],
+   "lift_note": "",
+   "precision_closed": 1.0
+  },
+  {
+   "i": 1,
+   "params": {
+    "min_cards": 3,
+    "days": 7,
+    "ratio": 5.0,
+    "template": false,
+    "fields": [
+     "R_emaildomain",
+     "P_emaildomain"
+    ]
+   },
+   "support": 3,
+   "cleared_hits": 0,
+   "pop_hits": 20,
+   "p_fraud": 0.000642,
+   "p_cleared": 0.0,
+   "p_pop": 0.0001,
+   "lift": 6.417,
+   "lift_ci95": [
+    1.91,
+    21.59
+   ],
+   "lift_note": "",
+   "precision_closed": 1.0
+  },
+  {
+   "i": 2,
+   "params": {
+    "min_cards": 3,
+    "days": 7,
+    "ratio": 5.0,
+    "template": true,
+    "fields": [
+     "R_emaildomain"
+    ]
+   },
+   "support": 2,
+   "cleared_hits": 0,
+   "pop_hits": 3,
+   "p_fraud": 0.000428,
+   "p_cleared": 0.0,
+   "p_pop": 1.5e-05,
+   "lift": 28.52,
+   "lift_ci95": [
+    4.77,
+    170.65
+   ],
+   "lift_note": "",
+   "precision_closed": 1.0
+  },
+  {
+   "i": 3,
+   "params": {
+    "min_cards": 3,
+    "days": 7,
+    "ratio": 5.0,
+    "template": true,
+    "fields": [
+     "R_emaildomain",
+     "P_emaildomain"
+    ]
+   },
+   "support": 2,
+   "cleared_hits": 0,
+   "pop_hits": 3,
+   "p_fraud": 0.000428,
+   "p_cleared": 0.0,
+   "p_pop": 1.5e-05,
+   "lift": 28.52,
+   "lift_ci95": [
+    4.77,
+    170.65
+   ],
+   "lift_note": "",
+   "precision_closed": 1.0
+  },
+  {
+   "i": 4,
+   "params": {
+    "min_cards": 3,
+    "days": 14,
+    "ratio": 5.0,
+    "template": false,
+    "fields": [
+     "R_emaildomain"
+    ]
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 1,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 5e-06,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 5,
+   "params": {
+    "min_cards": 3,
+    "days": 14,
+    "ratio": 5.0,
+    "template": false,
+    "fields": [
+     "R_emaildomain",
+     "P_emaildomain"
+    ]
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 2,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 1e-05,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 6,
+   "params": {
+    "min_cards": 3,
+    "days": 14,
+    "ratio": 5.0,
+    "template": true,
+    "fields": [
+     "R_emaildomain"
+    ]
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 7,
+   "params": {
+    "min_cards": 3,
+    "days": 14,
+    "ratio": 5.0,
+    "template": true,
+    "fields": [
+     "R_emaildomain",
+     "P_emaildomain"
+    ]
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 8,
+   "params": {
+    "min_cards": 3,
+    "days": 30,
+    "ratio": 5.0,
+    "template": false,
+    "fields": [
+     "R_emaildomain"
+    ]
+   },
+   "support": 2,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.000428,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 171.123,
+   "lift_ci95": null,
+   "lift_note": "population had no hits; lift uses 0.5 hits as the floor",
+   "precision_closed": 1.0
+  },
+  {
+   "i": 9,
+   "params": {
+    "min_cards": 3,
+    "days": 30,
+    "ratio": 5.0,
+    "template": false,
+    "fields": [
+     "R_emaildomain",
+     "P_emaildomain"
+    ]
+   },
+   "support": 2,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.000428,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 171.123,
+   "lift_ci95": null,
+   "lift_note": "population had no hits; lift uses 0.5 hits as the floor",
+   "precision_closed": 1.0
+  },
+  {
+   "i": 10,
+   "params": {
+    "min_cards": 3,
+    "days": 30,
+    "ratio": 5.0,
+    "template": true,
+    "fields": [
+     "R_emaildomain"
+    ]
+   },
+   "support": 1,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.000214,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 85.561,
+   "lift_ci95": null,
+   "lift_note": "population had no hits; lift uses 0.5 hits as the floor",
+   "precision_closed": 1.0
+  },
+  {
+   "i": 11,
+   "params": {
+    "min_cards": 3,
+    "days": 30,
+    "ratio": 5.0,
+    "template": true,
+    "fields": [
+     "R_emaildomain",
+     "P_emaildomain"
+    ]
+   },
+   "support": 1,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.000214,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 85.561,
+   "lift_ci95": null,
+   "lift_note": "population had no hits; lift uses 0.5 hits as the floor",
+   "precision_closed": 1.0
+  },
+  {
+   "i": 12,
+   "params": {
+    "min_cards": 5,
+    "days": 7,
+    "ratio": 5.0,
+    "template": false,
+    "fields": [
+     "R_emaildomain"
+    ]
+   },
+   "support": 1,
+   "cleared_hits": 0,
+   "pop_hits": 15,
+   "p_fraud": 0.000214,
+   "p_cleared": 0.0,
+   "p_pop": 7.5e-05,
+   "lift": 2.852,
+   "lift_ci95": [
+    0.38,
+    21.59
+   ],
+   "lift_note": "",
+   "precision_closed": 1.0
+  },
+  {
+   "i": 13,
+   "params": {
+    "min_cards": 5,
+    "days": 7,
+    "ratio": 5.0,
+    "template": false,
+    "fields": [
+     "R_emaildomain",
+     "P_emaildomain"
+    ]
+   },
+   "support": 1,
+   "cleared_hits": 0,
+   "pop_hits": 16,
+   "p_fraud": 0.000214,
+   "p_cleared": 0.0,
+   "p_pop": 8e-05,
+   "lift": 2.674,
+   "lift_ci95": [
+    0.35,
+    20.16
+   ],
+   "lift_note": "",
+   "precision_closed": 1.0
+  },
+  {
+   "i": 14,
+   "params": {
+    "min_cards": 5,
+    "days": 7,
+    "ratio": 5.0,
+    "template": true,
+    "fields": [
+     "R_emaildomain"
+    ]
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 15,
+   "params": {
+    "min_cards": 5,
+    "days": 7,
+    "ratio": 5.0,
+    "template": true,
+    "fields": [
+     "R_emaildomain",
+     "P_emaildomain"
+    ]
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 16,
+   "params": {
+    "min_cards": 5,
+    "days": 14,
+    "ratio": 5.0,
+    "template": false,
+    "fields": [
+     "R_emaildomain"
+    ]
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 1,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 5e-06,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 17,
+   "params": {
+    "min_cards": 5,
+    "days": 14,
+    "ratio": 5.0,
+    "template": false,
+    "fields": [
+     "R_emaildomain",
+     "P_emaildomain"
+    ]
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 2,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 1e-05,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 18,
+   "params": {
+    "min_cards": 5,
+    "days": 14,
+    "ratio": 5.0,
+    "template": true,
+    "fields": [
+     "R_emaildomain"
+    ]
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 19,
+   "params": {
+    "min_cards": 5,
+    "days": 14,
+    "ratio": 5.0,
+    "template": true,
+    "fields": [
+     "R_emaildomain",
+     "P_emaildomain"
+    ]
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 20,
+   "params": {
+    "min_cards": 5,
+    "days": 30,
+    "ratio": 5.0,
+    "template": false,
+    "fields": [
+     "R_emaildomain"
+    ]
+   },
+   "support": 2,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.000428,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 171.123,
+   "lift_ci95": null,
+   "lift_note": "population had no hits; lift uses 0.5 hits as the floor",
+   "precision_closed": 1.0
+  },
+  {
+   "i": 21,
+   "params": {
+    "min_cards": 5,
+    "days": 30,
+    "ratio": 5.0,
+    "template": false,
+    "fields": [
+     "R_emaildomain",
+     "P_emaildomain"
+    ]
+   },
+   "support": 2,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.000428,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 171.123,
+   "lift_ci95": null,
+   "lift_note": "population had no hits; lift uses 0.5 hits as the floor",
+   "precision_closed": 1.0
+  },
+  {
+   "i": 22,
+   "params": {
+    "min_cards": 5,
+    "days": 30,
+    "ratio": 5.0,
+    "template": true,
+    "fields": [
+     "R_emaildomain"
+    ]
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 23,
+   "params": {
+    "min_cards": 5,
+    "days": 30,
+    "ratio": 5.0,
+    "template": true,
+    "fields": [
+     "R_emaildomain",
+     "P_emaildomain"
+    ]
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 24,
+   "params": {
+    "min_cards": 8,
+    "days": 7,
+    "ratio": 5.0,
+    "template": false,
+    "fields": [
+     "R_emaildomain"
+    ]
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 9,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 4.5e-05,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 25,
+   "params": {
+    "min_cards": 8,
+    "days": 7,
+    "ratio": 5.0,
+    "template": false,
+    "fields": [
+     "R_emaildomain",
+     "P_emaildomain"
+    ]
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 9,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 4.5e-05,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 26,
+   "params": {
+    "min_cards": 8,
+    "days": 7,
+    "ratio": 5.0,
+    "template": true,
+    "fields": [
+     "R_emaildomain"
+    ]
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 27,
+   "params": {
+    "min_cards": 8,
+    "days": 7,
+    "ratio": 5.0,
+    "template": true,
+    "fields": [
+     "R_emaildomain",
+     "P_emaildomain"
+    ]
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 28,
+   "params": {
+    "min_cards": 8,
+    "days": 14,
+    "ratio": 5.0,
+    "template": false,
+    "fields": [
+     "R_emaildomain"
+    ]
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 29,
+   "params": {
+    "min_cards": 8,
+    "days": 14,
+    "ratio": 5.0,
+    "template": false,
+    "fields": [
+     "R_emaildomain",
+     "P_emaildomain"
+    ]
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 30,
+   "params": {
+    "min_cards": 8,
+    "days": 14,
+    "ratio": 5.0,
+    "template": true,
+    "fields": [
+     "R_emaildomain"
+    ]
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 31,
+   "params": {
+    "min_cards": 8,
+    "days": 14,
+    "ratio": 5.0,
+    "template": true,
+    "fields": [
+     "R_emaildomain",
+     "P_emaildomain"
+    ]
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 32,
+   "params": {
+    "min_cards": 8,
+    "days": 30,
+    "ratio": 5.0,
+    "template": false,
+    "fields": [
+     "R_emaildomain"
+    ]
+   },
+   "support": 2,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.000428,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 171.123,
+   "lift_ci95": null,
+   "lift_note": "population had no hits; lift uses 0.5 hits as the floor",
+   "precision_closed": 1.0
+  },
+  {
+   "i": 33,
+   "params": {
+    "min_cards": 8,
+    "days": 30,
+    "ratio": 5.0,
+    "template": false,
+    "fields": [
+     "R_emaildomain",
+     "P_emaildomain"
+    ]
+   },
+   "support": 2,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.000428,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 171.123,
+   "lift_ci95": null,
+   "lift_note": "population had no hits; lift uses 0.5 hits as the floor",
+   "precision_closed": 1.0
+  },
+  {
+   "i": 34,
+   "params": {
+    "min_cards": 8,
+    "days": 30,
+    "ratio": 5.0,
+    "template": true,
+    "fields": [
+     "R_emaildomain"
+    ]
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 35,
+   "params": {
+    "min_cards": 8,
+    "days": 30,
+    "ratio": 5.0,
+    "template": true,
+    "fields": [
+     "R_emaildomain",
+     "P_emaildomain"
+    ]
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  }
+ ],
+ "errors": {
+  "closed": 0,
+  "population": 0,
+  "examples": []
+ },
+ "tool_calls": 32318,
+ "january": {
+  "anchors": 60196,
+  "fired_txns": 38,
+  "fired_cards": 18,
+  "cards": [
+   "C00534-K2",
+   "C01357-K1",
+   "C01507-K1",
+   "C01594-K1",
+   "C01727-K2",
+   "C02167-K2",
+   "C03060-K1",
+   "C04146-K1",
+   "C04668-K1",
+   "C05610-K1",
+   "C06115-K1",
+   "C06639-K1",
+   "C08384-K1",
+   "C10350-K1",
+   "C11294-K2",
+   "C11617-K1",
+   "C11743-K2",
+   "C11940-K1"
+  ],
+  "fired_txns_in_block_3660000_plus": 37,
+  "errors": 0
+ },
+ "seconds": 173.0
+}

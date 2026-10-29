@@ -11,7 +11,7 @@ HAVE_TG = bool(env("TG_HOST") and ((env("TG_USERNAME") and env("TG_PASSWORD")) o
 pytestmark = pytest.mark.skipif(not (HAVE_TG and os.environ.get("KAVACH_PARITY") == "1"),
                                 reason="TigerGraph not configured; set KAVACH_PARITY=1 with credentials in .env")
 
-CASES = ["HHG-006", "HHG-014", "HHG-001"]
+CASES = ["HHF-006", "HHF-007", "HHF-011"]   # a grown-detector ring, card testing, the wrong-card alert
 
 
 def _decisions(ans: dict) -> dict:
@@ -31,7 +31,7 @@ def test_duck_and_tg_agree(case_id):
     from kavach import duckq
     from kavach.agent import investigate
 
-    case = next(r for r in duckq.case_pack().to_dict("records") if r["case_id"] == case_id)
+    case = next(r for r in duckq.case_pack(2).to_dict("records") if r["case_id"] == case_id)
     a, _ = investigate(case, backend="duck")
     b, _ = investigate(case, backend="tg")
     assert _decisions(a) == _decisions(b)

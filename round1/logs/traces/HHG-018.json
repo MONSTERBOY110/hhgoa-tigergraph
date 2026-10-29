@@ -1,0 +1,188 @@
+{
+  "log": [
+    "gathered: 7079 card txns, device=None (on 0 cards), 20 closed-case hits",
+    "assess0: p=0.97 fraud groups={'history': 2.5, 'customer': 1.5, 'score': 0.2}"
+  ],
+  "tools": [
+    {
+      "step": 1,
+      "tool": "card_history",
+      "params": {
+        "card_id": "C02354-K2"
+      },
+      "ms": 1731.4,
+      "n_rows": 7079
+    },
+    {
+      "step": 2,
+      "tool": "customer_cards",
+      "params": {
+        "customer_id": "C02354"
+      },
+      "ms": 105.7,
+      "n_rows": 2
+    },
+    {
+      "step": 2,
+      "tool": "region_activity",
+      "params": {
+        "addr1": "126",
+        "t0": "2016-11-27 13:41:26",
+        "days": "3"
+      },
+      "ms": 114.8,
+      "n_rows": 146
+    },
+    {
+      "step": 3,
+      "tool": "closed_cases_for",
+      "params": {
+        "card_ids": "[C02354-K2]",
+        "customer_ids": "[]",
+        "txn_ids": "[3483355,3483390,3483447,3483592,3483742,...]",
+        "device_keys": "[]"
+      },
+      "ms": 108.2,
+      "n_rows": 20
+    },
+    {
+      "step": 3,
+      "tool": "holder_fraud_history",
+      "params": {
+        "holder_keys": "[19248|126.0|-166,19248|126.0|-176,19248|126.0|-185,19248|126.0|-245,19248|126.0|104,...]",
+        "before": "2016-11-27 14:41:26"
+      },
+      "ms": 104.1,
+      "n_rows": 27
+    },
+    {
+      "step": 10,
+      "tool": "vector_search_cases",
+      "params": {
+        "text": "confirmed fraud out_of_region_use: The account behind this transaction (holder 19248|126.0|-185) already appears in 7 confirmed-fraud closed case(s) (CC-0631, CC-1450, CC-2589, CC-3537); in the closed cases, 1,059 alerts on accounts with earlier confirmed fraud were fraud and none were cleared Customer C02354 disputes transaction 3491361 ($39.08); in the bank's closed cases every customer-reported alert was confirmed fraud",
+        "k": "40"
+      },
+      "ms": 159.7,
+      "n_rows": 40
+    },
+    {
+      "step": 10,
+      "tool": "similar_cases",
+      "params": {
+        "pattern": "out_of_region_use",
+        "verdict": "fraud",
+        "product": "W",
+        "channel": "in_person",
+        "amt": "124.08",
+        "n": "3",
+        "new_dev": "False",
+        "anon": "False",
+        "k": "3",
+        "exclude": "[CC-0631,CC-1450,CC-2589,CC-3537]"
+      },
+      "ms": 7.7,
+      "n_rows": 3
+    },
+    {
+      "step": 10,
+      "tool": "case_memory",
+      "params": {
+        "card_ids": "[C02354-K2]"
+      },
+      "ms": 83.4,
+      "n_rows": 0
+    },
+    {
+      "step": 10,
+      "tool": "similar_investigations",
+      "params": {
+        "text": "confirmed fraud out_of_region_use: The account behind this transaction (holder 19248|126.0|-185) already appears in 7 confirmed-fraud closed case(s) (CC-0631, CC-1450, CC-2589, CC-3537); in the closed cases, 1,059 alerts on accounts with earlier confirmed fraud were fraud and none were cleared Customer C02354 disputes transaction 3491361 ($39.08); in the bank's closed cases every customer-reported alert was confirmed fraud",
+        "k": "3"
+      },
+      "ms": 111.0,
+      "n_rows": 3
+    },
+    {
+      "step": 12,
+      "tool": "write_case",
+      "params": {
+        "case_id": "HHG-018"
+      },
+      "ms": 1841.9,
+      "n_rows": 1
+    }
+  ],
+  "signals": [
+    {
+      "name": "risk_score",
+      "group": "score",
+      "llr": 0.2,
+      "claim": "Model risk score 0.48 on the disputed transaction",
+      "entity_ids": [
+        "3491361"
+      ],
+      "ref": "query:card_history(card_id=C02354-K2)",
+      "source": "graph"
+    },
+    {
+      "name": "customer_dispute",
+      "group": "customer",
+      "llr": 1.5,
+      "claim": "Customer C02354 disputes transaction 3491361 ($39.08); in the bank's closed cases every customer-reported alert was confirmed fraud",
+      "entity_ids": [
+        "3491361",
+        "C02354"
+      ],
+      "ref": "case_pack:trigger_text",
+      "source": "customer"
+    },
+    {
+      "name": "holder_prior_fraud",
+      "group": "history",
+      "llr": 2.5,
+      "claim": "The account behind this transaction (holder 19248|126.0|-185) already appears in 7 confirmed-fraud closed case(s) (CC-0631, CC-1450, CC-2589, CC-3537); in the closed cases, 1,059 alerts on accounts with earlier confirmed fraud were fraud and none were cleared",
+      "entity_ids": [
+        "CC-0631",
+        "CC-1450",
+        "CC-2589",
+        "CC-3537",
+        "CC-4436",
+        "CC-4721",
+        "3491361"
+      ],
+      "ref": "query:holder_fraud_history(card_id=C02354-K2)",
+      "source": "graph"
+    }
+  ],
+  "sources": {
+    "summary": "llm"
+  },
+  "assess0": {
+    "p": 0.97,
+    "verdict": "fraud",
+    "fraud_groups": [
+      "history",
+      "customer"
+    ],
+    "legit_groups": [],
+    "by_group": {
+      "history": 2.5,
+      "customer": 1.5,
+      "score": 0.2
+    }
+  },
+  "assess1": {
+    "p": 0.97,
+    "verdict": "fraud",
+    "fraud_groups": [
+      "history",
+      "customer"
+    ],
+    "legit_groups": [],
+    "by_group": {
+      "history": 2.5,
+      "customer": 1.5,
+      "score": 0.2
+    }
+  }
+}

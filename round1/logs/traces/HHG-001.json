@@ -1,0 +1,198 @@
+{
+  "log": [
+    "gathered: 422 card txns, device=None (on 0 cards), 4 closed-case hits",
+    "assess0: p=0.06 legitimate groups={'sequence': -1.6, 'history': -0.9, 'score': -0.25}"
+  ],
+  "tools": [
+    {
+      "step": 1,
+      "tool": "card_history",
+      "params": {
+        "card_id": "C12382-K1"
+      },
+      "ms": 527.9,
+      "n_rows": 422
+    },
+    {
+      "step": 2,
+      "tool": "customer_cards",
+      "params": {
+        "customer_id": "C12382"
+      },
+      "ms": 77.5,
+      "n_rows": 1
+    },
+    {
+      "step": 2,
+      "tool": "region_activity",
+      "params": {
+        "addr1": "444",
+        "t0": "2016-12-04 19:55:28",
+        "days": "3"
+      },
+      "ms": 95.0,
+      "n_rows": 37
+    },
+    {
+      "step": 3,
+      "tool": "closed_cases_for",
+      "params": {
+        "card_ids": "[C12382-K1]",
+        "customer_ids": "[]",
+        "txn_ids": "[3510115,3510225,3510464,3510612,3511596,...]",
+        "device_keys": "[]"
+      },
+      "ms": 243.7,
+      "n_rows": 4
+    },
+    {
+      "step": 3,
+      "tool": "holder_fraud_history",
+      "params": {
+        "holder_keys": "[21139|110.0|-289,21139|191.0|-442,21139|203.0|155,21139|203.0|92,21139|204.0|-237,...]",
+        "before": "2016-12-05 01:55:28"
+      },
+      "ms": 228.2,
+      "n_rows": 0
+    },
+    {
+      "step": 10,
+      "tool": "vector_search_cases",
+      "params": {
+        "text": "cleared false alarm: Recurring weekly charge: 2 earlier W charges of about $77.07 on the same account (holder 21139|444.0|73) at weekly intervals The flagged transaction continues account 21139|444.0|73, which has 10 earlier transactions and no confirmed-fraud case The same amount ($77.08, product W) was charged on account 21139|444.0|73 before, on 2016-11-26",
+        "k": "40"
+      },
+      "ms": 739.9,
+      "n_rows": 40
+    },
+    {
+      "step": 10,
+      "tool": "similar_cases",
+      "params": {
+        "pattern": "none",
+        "verdict": "legitimate",
+        "product": "W",
+        "channel": "in_person",
+        "amt": "77.07",
+        "n": "1",
+        "new_dev": "False",
+        "anon": "False",
+        "k": "3",
+        "exclude": "[]"
+      },
+      "ms": 6.1,
+      "n_rows": 3
+    },
+    {
+      "step": 10,
+      "tool": "case_memory",
+      "params": {
+        "card_ids": "[C12382-K1]"
+      },
+      "ms": 185.4,
+      "n_rows": 0
+    },
+    {
+      "step": 10,
+      "tool": "similar_investigations",
+      "params": {
+        "text": "cleared false alarm: Recurring weekly charge: 2 earlier W charges of about $77.07 on the same account (holder 21139|444.0|73) at weekly intervals The flagged transaction continues account 21139|444.0|73, which has 10 earlier transactions and no confirmed-fraud case The same amount ($77.08, product W) was charged on account 21139|444.0|73 before, on 2016-11-26",
+        "k": "3"
+      },
+      "ms": 256.5,
+      "n_rows": 1
+    },
+    {
+      "step": 12,
+      "tool": "write_case",
+      "params": {
+        "case_id": "HHG-001"
+      },
+      "ms": 2990.1,
+      "n_rows": 1
+    }
+  ],
+  "signals": [
+    {
+      "name": "risk_score_calibrated",
+      "group": "score",
+      "llr": -0.25,
+      "claim": "Model risk score 0.61. For product W transactions without an identity record in this score band, 38% were confirmed fraud in July to October (3,436 transactions), so the score is read at that calibrated rate, not at face value",
+      "entity_ids": [
+        "3514030"
+      ],
+      "ref": "document:weights.json#score_calibration",
+      "source": "document"
+    },
+    {
+      "name": "amount_seen_before",
+      "group": "sequence",
+      "llr": -0.8,
+      "claim": "The same amount ($77.08, product W) was charged on account 21139|444.0|73 before, on 2016-11-26",
+      "entity_ids": [
+        "3490282",
+        "3514030"
+      ],
+      "ref": "query:card_history(card_id=C12382-K1)",
+      "source": "graph"
+    },
+    {
+      "name": "recurring_charge",
+      "group": "sequence",
+      "llr": -1.6,
+      "claim": "Recurring weekly charge: 2 earlier W charges of about $77.07 on the same account (holder 21139|444.0|73) at weekly intervals",
+      "entity_ids": [
+        "3471020",
+        "3490282",
+        "3514030"
+      ],
+      "ref": "query:recurring_check(card_id=C12382-K1, amt=77.07)",
+      "source": "graph"
+    },
+    {
+      "name": "account_continuity",
+      "group": "history",
+      "llr": -0.9,
+      "claim": "The flagged transaction continues account 21139|444.0|73, which has 10 earlier transactions and no confirmed-fraud case",
+      "entity_ids": [
+        "3441958",
+        "3471020",
+        "3490282",
+        "3514030"
+      ],
+      "ref": "query:holder_fraud_history(card_id=C12382-K1)",
+      "source": "graph"
+    }
+  ],
+  "sources": {
+    "summary": "llm"
+  },
+  "assess0": {
+    "p": 0.06,
+    "verdict": "legitimate",
+    "fraud_groups": [],
+    "legit_groups": [
+      "sequence",
+      "history"
+    ],
+    "by_group": {
+      "sequence": -1.6,
+      "history": -0.9,
+      "score": -0.25
+    }
+  },
+  "assess1": {
+    "p": 0.06,
+    "verdict": "legitimate",
+    "fraud_groups": [],
+    "legit_groups": [
+      "sequence",
+      "history"
+    ],
+    "by_group": {
+      "sequence": -1.6,
+      "history": -0.9,
+      "score": -0.25
+    }
+  }
+}

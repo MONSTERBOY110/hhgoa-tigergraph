@@ -35,9 +35,12 @@ def load_job(conn) -> None:
     _gsql(conn, f"USE GRAPH {graph}\n" + loading.job_gsql(graph))
 
 
-def queries(conn) -> None:
+QUERY_FILES = ("queries.gsql", "queries_r2.gsql", "queries_grow.gsql")
+
+
+def queries(conn, files=QUERY_FILES) -> None:
     graph = env("TG_GRAPH", "Fraud")
-    text = (GDIR / "queries.gsql").read_text(encoding="utf-8")
+    text = "\n".join((GDIR / f).read_text(encoding="utf-8") for f in files if (GDIR / f).exists())
     text = "\n".join(l for l in text.splitlines() if not l.strip().startswith("//"))
     blocks = re.split(r"(?=CREATE OR REPLACE QUERY)", text)
     names = []
@@ -54,7 +57,7 @@ def queries(conn) -> None:
 def counts(conn) -> dict:
     out = {}
     for v in ("Customer", "Card", "Holder", "Transaction", "DeviceProfile", "EmailDomain", "BillingRegion", "ClosedCase",
-              "InvestigationCase", "PolicyDoc"):
+              "InvestigationCase", "PolicyDoc", "CaseEvent", "Approval", "Detector"):
         out[v] = conn.getVertexCount(v)
     for e in ("OWNS", "MADE", "FROM_DEVICE", "PURCHASER_EMAIL", "RECIPIENT_EMAIL", "BILLED_IN", "NEXT_TXN", "HOLDER_CARD",
               "INVOLVES", "ON_CARD", "CONNECTED_TO"):
@@ -78,3 +81,14 @@ def run(step: str) -> None:
         queries(conn)
     if step in ("counts", "all"):
         counts(conn)
+
+
+def install_one(conn, name: str, file: str = "queries.gsql") -> None:
+    """Re-create and install a single query from a query file (after editing it), leaving the others untouched."""
+    import re as _re
+    graph = env("TG_GRAPH", "Fraud")
+    text = (GDIR / file).read_text(encoding="utf-8")
+    text = "\n".join(l for l in text.splitlines() if not l.strip().startswith("//"))
+    block = next(b for b in _re.split(r"(?=CREATE OR REPLACE QUERY)", text) if _re.search(rf"QUERY {name}\(", b))
+    _gsql(conn, f"USE GRAPH {graph}\n{block.replace('FOR GRAPH Fraud', f'FOR GRAPH {graph}')}")
+    _gsql(conn, f"USE GRAPH {graph}\nINSTALL QUERY {name}")

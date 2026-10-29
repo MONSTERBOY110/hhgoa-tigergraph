@@ -1,0 +1,538 @@
+{
+ "name": "micro_charges_peers",
+ "run_at": "2026-10-29T17:49:52",
+ "duck_path": "kavach_r2.duckdb",
+ "dataset_version": "eb6caf5672c6",
+ "n_closed": 5585,
+ "n_fraud": 4675,
+ "n_cleared": 910,
+ "closed_anchor_missing": [],
+ "n_population": 200000,
+ "population": "reservoir sample (seed 42) of transactions before 2017-01-01 not in any confirmed-fraud closed case",
+ "grid": {
+  "max_amt": [
+   5.0,
+   10.0
+  ],
+  "min_cards": [
+   3,
+   5,
+   8
+  ],
+  "days": [
+   7
+  ],
+  "tol": [
+   0.001
+  ]
+ },
+ "chosen": {
+  "params": {
+   "max_amt": 5.0,
+   "min_cards": 3,
+   "days": 7,
+   "tol": 0.001
+  },
+  "support": 4,
+  "cleared_hits": 0,
+  "pop_hits": 36,
+  "p_fraud": 0.000856,
+  "p_cleared": 0.0,
+  "p_pop": 0.00018,
+  "lift": 4.753,
+  "lift_ci95": [
+   1.69,
+   13.35
+  ],
+  "lift_note": "",
+  "precision_closed": 1.0,
+  "status": "weak",
+  "reason": "no grid point reaches support >= 15 with cleared hits <= 3; kept the best weak point (support 4, lift 4.75); runtime LLR capped at 0.5",
+  "llr": 0.5,
+  "grid_index": 0
+ },
+ "hits": {
+  "fraud": [
+   {
+    "case_id": "CC-2888",
+    "txn": "3224899",
+    "card": "C04146-K1",
+    "matched_txns": [
+     "3210661",
+     "3228114"
+    ],
+    "matched_cards": [
+     "C07840-K1",
+     "C09719-K1"
+    ]
+   },
+   {
+    "case_id": "CC-3151",
+    "txn": "3241974",
+    "card": "C06855-K1",
+    "matched_txns": [
+     "3245181",
+     "3259904"
+    ],
+    "matched_cards": [
+     "C11919-K2",
+     "C13447-K1"
+    ]
+   },
+   {
+    "case_id": "CC-3165",
+    "txn": "3245181",
+    "card": "C11919-K2",
+    "matched_txns": [
+     "3241974",
+     "3259904"
+    ],
+    "matched_cards": [
+     "C06855-K1",
+     "C13447-K1"
+    ]
+   },
+   {
+    "case_id": "CC-3404",
+    "txn": "3259904",
+    "card": "C13447-K1",
+    "matched_txns": [
+     "3241974",
+     "3245181"
+    ],
+    "matched_cards": [
+     "C06855-K1",
+     "C11919-K2"
+    ]
+   }
+  ],
+  "cleared": [],
+  "population_sample": [
+   {
+    "txn": "3013437",
+    "matched_txns": [
+     "3014480",
+     "3032158"
+    ],
+    "matched_cards": [
+     "C03047-K2",
+     "C10149-K1"
+    ]
+   },
+   {
+    "txn": "3022070",
+    "matched_txns": [
+     "3036491",
+     "3042504"
+    ],
+    "matched_cards": [
+     "C00750-K2",
+     "C12785-K2"
+    ]
+   },
+   {
+    "txn": "3036490",
+    "matched_txns": [
+     "3010723",
+     "3032666",
+     "3054752"
+    ],
+    "matched_cards": [
+     "C02716-K2",
+     "C06139-K2",
+     "C06962-K2"
+    ]
+   },
+   {
+    "txn": "3036491",
+    "matched_txns": [
+     "3022070",
+     "3042504"
+    ],
+    "matched_cards": [
+     "C00750-K2",
+     "C12267-K2"
+    ]
+   },
+   {
+    "txn": "3060410",
+    "matched_txns": [
+     "3085984",
+     "3089258"
+    ],
+    "matched_cards": [
+     "C05270-K1",
+     "C08299-K1"
+    ]
+   },
+   {
+    "txn": "3067571",
+    "matched_txns": [
+     "3054752",
+     "3105353"
+    ],
+    "matched_cards": [
+     "C05876-K2",
+     "C06962-K2"
+    ]
+   },
+   {
+    "txn": "3119252",
+    "matched_txns": [
+     "3128685",
+     "3141102"
+    ],
+    "matched_cards": [
+     "C04128-K1",
+     "C12267-K2"
+    ]
+   },
+   {
+    "txn": "3128685",
+    "matched_txns": [
+     "3119252",
+     "3141102"
+    ],
+    "matched_cards": [
+     "C00854-K2",
+     "C04128-K1"
+    ]
+   },
+   {
+    "txn": "3144649",
+    "matched_txns": [
+     "3162397",
+     "3163724"
+    ],
+    "matched_cards": [
+     "C03738-K2",
+     "C08623-K2"
+    ]
+   },
+   {
+    "txn": "3162397",
+    "matched_txns": [
+     "3144649",
+     "3163724"
+    ],
+    "matched_cards": [
+     "C03738-K2",
+     "C05876-K2"
+    ]
+   },
+   {
+    "txn": "3162401",
+    "matched_txns": [
+     "3141802",
+     "3179834"
+    ],
+    "matched_cards": [
+     "C12166-K2",
+     "C12267-K2"
+    ]
+   },
+   {
+    "txn": "3167622",
+    "matched_txns": [
+     "3145736",
+     "3173619"
+    ],
+    "matched_cards": [
+     "C11509-K2",
+     "C12581-K1"
+    ]
+   },
+   {
+    "txn": "3179053",
+    "matched_txns": [
+     "3189307",
+     "3193440"
+    ],
+    "matched_cards": [
+     "C02147-K2",
+     "C13471-K1"
+    ]
+   },
+   {
+    "txn": "3196192",
+    "matched_txns": [
+     "3185641",
+     "3193346"
+    ],
+    "matched_cards": [
+     "C03714-K1",
+     "C12267-K2"
+    ]
+   },
+   {
+    "txn": "3233126",
+    "matched_txns": [
+     "3235035",
+     "3246019"
+    ],
+    "matched_cards": [
+     "C05381-K2",
+     "C10760-K2"
+    ]
+   },
+   {
+    "txn": "3299954",
+    "matched_txns": [
+     "3285019",
+     "3320945"
+    ],
+    "matched_cards": [
+     "C01671-K1",
+     "C07840-K1"
+    ]
+   },
+   {
+    "txn": "3316579",
+    "matched_txns": [
+     "3306685",
+     "3322461"
+    ],
+    "matched_cards": [
+     "C04034-K2",
+     "C11923-K2"
+    ]
+   },
+   {
+    "txn": "3340992",
+    "matched_txns": [
+     "3326044",
+     "3350248"
+    ],
+    "matched_cards": [
+     "C04597-K2",
+     "C06663-K2"
+    ]
+   },
+   {
+    "txn": "3350248",
+    "matched_txns": [
+     "3326044",
+     "3340992"
+    ],
+    "matched_cards": [
+     "C06663-K2",
+     "C07220-K1"
+    ]
+   },
+   {
+    "txn": "3363514",
+    "matched_txns": [
+     "3344434",
+     "3371098",
+     "3376327"
+    ],
+    "matched_cards": [
+     "C03318-K1",
+     "C03738-K2",
+     "C10770-K1"
+    ]
+   },
+   {
+    "txn": "3412088",
+    "matched_txns": [
+     "3409065",
+     "3432506"
+    ],
+    "matched_cards": [
+     "C11444-K1",
+     "C11509-K2"
+    ]
+   },
+   {
+    "txn": "3439494",
+    "matched_txns": [
+     "3436633",
+     "3440897",
+     "3449112"
+    ],
+    "matched_cards": [
+     "C01519-K1",
+     "C02905-K1",
+     "C07775-K1"
+    ]
+   },
+   {
+    "txn": "3459193",
+    "matched_txns": [
+     "3440897",
+     "3449112",
+     "3472452"
+    ],
+    "matched_cards": [
+     "C01519-K1",
+     "C01806-K1",
+     "C07775-K1"
+    ]
+   },
+   {
+    "txn": "3467294",
+    "matched_txns": [
+     "3457908",
+     "3474626"
+    ],
+    "matched_cards": [
+     "C04388-K1",
+     "C11923-K2"
+    ]
+   },
+   {
+    "txn": "3493468",
+    "matched_txns": [
+     "3477443",
+     "3504899"
+    ],
+    "matched_cards": [
+     "C05381-K2",
+     "C10760-K2"
+    ]
+   }
+  ]
+ },
+ "results": [
+  {
+   "i": 0,
+   "params": {
+    "max_amt": 5.0,
+    "min_cards": 3,
+    "days": 7,
+    "tol": 0.001
+   },
+   "support": 4,
+   "cleared_hits": 0,
+   "pop_hits": 36,
+   "p_fraud": 0.000856,
+   "p_cleared": 0.0,
+   "p_pop": 0.00018,
+   "lift": 4.753,
+   "lift_ci95": [
+    1.69,
+    13.35
+   ],
+   "lift_note": "",
+   "precision_closed": 1.0
+  },
+  {
+   "i": 1,
+   "params": {
+    "max_amt": 5.0,
+    "min_cards": 5,
+    "days": 7,
+    "tol": 0.001
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 2,
+   "params": {
+    "max_amt": 5.0,
+    "min_cards": 8,
+    "days": 7,
+    "tol": 0.001
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 3,
+   "params": {
+    "max_amt": 10.0,
+    "min_cards": 3,
+    "days": 7,
+    "tol": 0.001
+   },
+   "support": 22,
+   "cleared_hits": 4,
+   "pop_hits": 499,
+   "p_fraud": 0.004706,
+   "p_cleared": 0.004396,
+   "p_pop": 0.002495,
+   "lift": 1.886,
+   "lift_ci95": [
+    1.23,
+    2.89
+   ],
+   "lift_note": "",
+   "precision_closed": 0.846
+  },
+  {
+   "i": 4,
+   "params": {
+    "max_amt": 10.0,
+    "min_cards": 5,
+    "days": 7,
+    "tol": 0.001
+   },
+   "support": 4,
+   "cleared_hits": 0,
+   "pop_hits": 112,
+   "p_fraud": 0.000856,
+   "p_cleared": 0.0,
+   "p_pop": 0.00056,
+   "lift": 1.528,
+   "lift_ci95": [
+    0.56,
+    4.14
+   ],
+   "lift_note": "",
+   "precision_closed": 1.0
+  },
+  {
+   "i": 5,
+   "params": {
+    "max_amt": 10.0,
+    "min_cards": 8,
+    "days": 7,
+    "tol": 0.001
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 8,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 4e-05,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  }
+ ],
+ "errors": {
+  "closed": 0,
+  "population": 0,
+  "examples": []
+ },
+ "tool_calls": 2394,
+ "january": {
+  "anchors": 60196,
+  "fired_txns": 1,
+  "fired_cards": 1,
+  "cards": [
+   "C03318-K1"
+  ],
+  "fired_txns_in_block_3660000_plus": 0,
+  "errors": 0
+ },
+ "seconds": 21.2
+}

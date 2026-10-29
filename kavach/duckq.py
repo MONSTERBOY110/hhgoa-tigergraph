@@ -158,8 +158,35 @@ def recurring_from_history(h: pd.DataFrame, amt: float, product_cd: str, before=
     return m[["TransactionID", "ts", "amt", "ProductCD", "addr1", "device_key", "P_emaildomain", "gap_days"]]
 
 
-def case_pack() -> pd.DataFrame:
+def case_pack(round: int | None = None) -> pd.DataFrame:
+    """The exam cases; Round 2 (HHF) by default when the index holds both packs, else whatever is loaded."""
+    cols = [r[0] for r in con().execute("describe cases").fetchall()]
+    if "round" in cols:
+        if round is None:
+            round = int(con().execute("select max(round) from cases").fetchone()[0])
+        return q("select * from cases where round = ? order by case_id", round)
     return q("select * from cases order by case_id")
+
+
+def dataset_version() -> dict:
+    """Which data this index was built from: per-file sha256 and row counts, plus a short combined version id.
+    Every attestation records it as its `when`."""
+    try:
+        rows = q("select name, bytes, sha256, rows, built_at from dataset_version order by name")
+    except Exception:
+        return {"version": "unknown", "built_at": "", "files": {}}
+    import hashlib
+    combined = hashlib.sha256("".join(rows.sha256).encode()).hexdigest()[:12]
+    return {"version": combined, "built_at": str(rows.built_at.iloc[0]) if len(rows) else "",
+            "files": {r.name: {"bytes": int(r.bytes), "sha256": r.sha256[:16], "rows": int(r.rows)} for r in rows.itertuples()}}
+
+
+def grader_scope_ids() -> set:
+    """TransactionIDs the organizer grader can see (the January file); episodes must stay inside this set."""
+    try:
+        return set(int(x) for x in q("select TransactionID from grader_scope").TransactionID)
+    except Exception:
+        return set()
 
 
 def closed_case(case_id: str) -> dict:

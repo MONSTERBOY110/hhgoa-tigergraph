@@ -1,0 +1,249 @@
+{
+  "case_id": "HHF-013",
+  "dataset_version": {
+    "version": "eb6caf5672c6",
+    "built_at": "2026-10-29 14:00:39",
+    "files": {
+      "case_pack.csv": {
+        "bytes": 3548,
+        "sha256": "a6d1764a51a9e7d3",
+        "rows": 20
+      },
+      "case_pack_final.csv": {
+        "bytes": 3735,
+        "sha256": "f75456b31257af29",
+        "rows": 18
+      },
+      "closed_cases_history.csv": {
+        "bytes": 2714120,
+        "sha256": "d95c8416b22deb00",
+        "rows": 5585
+      },
+      "identity.csv": {
+        "bytes": 26716154,
+        "sha256": "4db18fdff5b20259",
+        "rows": 144432
+      },
+      "identity_2017q1.csv": {
+        "bytes": 2981977,
+        "sha256": "aed12a836087e3d0",
+        "rows": 15893
+      },
+      "transactions.csv": {
+        "bytes": 707936515,
+        "sha256": "6e4d3f902fc7b4ec",
+        "rows": 590742
+      },
+      "transactions_2017q1.csv": {
+        "bytes": 70087600,
+        "sha256": "23768562e19816f3",
+        "rows": 60196
+      }
+    }
+  },
+  "backend": "duck",
+  "run_at": "2026-10-29T12:14:13Z",
+  "claims": [
+    {
+      "id": "E1",
+      "kind": "evidence",
+      "what": "Profile fit: product W, purchaser email yahoo.com and the amount $409.30 all match card C06115-K1 before the last 7 days (78 earlier W purchases, 12 with this email, largest earlier purchase $2,945.01)",
+      "evidence": {
+        "txn_ids": [
+          "3626720"
+        ],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "card_history",
+        "params": {
+          "card_id": "C06115-K1"
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T12:14:13Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "graph",
+      "ref": "query:card_history(card_id=C06115-K1)",
+      "signal": "profile_fit",
+      "llr": -1.2
+    },
+    {
+      "id": "E2",
+      "kind": "evidence",
+      "what": "Billing region 203 is familiar: 5 earlier transactions on this card there (6% of its in-person history)",
+      "evidence": {
+        "txn_ids": [
+          "3626720"
+        ],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "card_history",
+        "params": {
+          "card_id": "C06115-K1"
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T12:14:13Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "graph",
+      "ref": "query:card_history(card_id=C06115-K1)",
+      "signal": "region_familiar",
+      "llr": -1.0
+    },
+    {
+      "id": "E3",
+      "kind": "evidence",
+      "what": "Profile fit: the purchase hour (16:00) is one the account already uses (16% of its earlier purchases within an hour of it)",
+      "evidence": {
+        "txn_ids": [
+          "3626720"
+        ],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "card_history",
+        "params": {
+          "card_id": "C06115-K1"
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T12:14:13Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "graph",
+      "ref": "query:card_history(card_id=C06115-K1)",
+      "signal": "hour_familiar",
+      "llr": -0.3
+    },
+    {
+      "id": "E4",
+      "kind": "evidence",
+      "what": "The alert states a model score of 0.69, but transaction 3626720 carries 0.11 in the bank's records; the recorded value is used and the stated one is treated as unverified alert text",
+      "evidence": {
+        "txn_ids": [
+          "3626720"
+        ],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "txn_detail",
+        "params": {
+          "txn_id": 3626720
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T12:14:13Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "graph",
+      "ref": "query:txn_detail(txn_id=3626720)",
+      "signal": "dq_score_mismatch",
+      "llr": 0.0
+    },
+    {
+      "id": "E5",
+      "kind": "evidence",
+      "what": "Policy applied, Fraud Policy R3: Customer confirms the transaction: Recommend CLOSE_NO_FRAUD.",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "document",
+        "params": {
+          "doc_id": "POLICY-R3"
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T12:14:13Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "document",
+      "ref": "document:README#POLICY-R3",
+      "signal": "",
+      "llr": null
+    },
+    {
+      "id": "D1",
+      "kind": "detector_hit",
+      "what": "Model risk score 0.11 (the alert text states 0.69; the transaction row value is used). The bank's model was not retrained for January (two transactions above 0.7 in the whole month, against 2.4 to 2.7 percent a month before), so the score is read as near-uninformative: its weight is clamped to [-0.10, +0.30] (a low score is not evidence of innocence, a high score alone cannot carry a verdict)",
+      "evidence": {
+        "txn_ids": [
+          "3626720"
+        ],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "txn_detail",
+        "params": {
+          "txn_id": 3626720
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T12:14:13Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "document",
+      "ref": "document:weights.json#score_calibration",
+      "signal": "risk_score_untrusted",
+      "llr": -0.1
+    }
+  ],
+  "counts": {
+    "claims": 6,
+    "with_how": 6,
+    "by_kind": {
+      "evidence": 5,
+      "sar_sentence": 0,
+      "detector_hit": 1
+    }
+  },
+  "data_quality": [
+    {
+      "flag": "no_identity_record",
+      "record_ids": [
+        "3626720"
+      ],
+      "detail": "Transaction 3626720 has no identity record (no DeviceInfo, id_30, id_31).",
+      "consequence": "No device or browser record for the flagged transaction: device, new-device and proxy signals cannot fire either way, and the absence of device evidence is not evidence of innocence.",
+      "caps_probability": true
+    },
+    {
+      "flag": "january_score",
+      "record_ids": [
+        "3626720"
+      ],
+      "detail": "Transaction 3626720 is from 2017-01-26; its risk_score 0.11 comes from the model that was not retrained for January.",
+      "consequence": "January risk_score comes from a model that was not retrained: it is clamped, a low score is not evidence of innocence and a high score alone cannot carry a verdict.",
+      "caps_probability": false
+    }
+  ]
+}

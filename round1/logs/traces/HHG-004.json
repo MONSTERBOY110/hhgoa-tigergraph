@@ -1,0 +1,216 @@
+{
+  "log": [
+    "gathered: 216 card txns, device=' |  | firefox 47.0 | ' (on 6 cards), 4 closed-case hits",
+    "assess0: p=0.79 uncertain groups={'device': -0.19, 'customer': 1.5}",
+    "requested customer_validation; simulated reply: deny (p without customer 0.45)",
+    "assess1: p=0.88 fraud"
+  ],
+  "tools": [
+    {
+      "step": 1,
+      "tool": "card_history",
+      "params": {
+        "card_id": "C08106-K1"
+      },
+      "ms": 318.7,
+      "n_rows": 216
+    },
+    {
+      "step": 2,
+      "tool": "customer_cards",
+      "params": {
+        "customer_id": "C08106"
+      },
+      "ms": 70.5,
+      "n_rows": 1
+    },
+    {
+      "step": 2,
+      "tool": "device_popularity",
+      "params": {
+        "device_key": " |  | firefox 47.0 | "
+      },
+      "ms": 72.5,
+      "n_rows": 1
+    },
+    {
+      "step": 2,
+      "tool": "device_neighbors",
+      "params": {
+        "device_key": " |  | firefox 47.0 | ",
+        "t0": "2016-12-29 01:53:54",
+        "days": "30"
+      },
+      "ms": 71.4,
+      "n_rows": 1
+    },
+    {
+      "step": 2,
+      "tool": "device_txns",
+      "params": {
+        "device_key": " |  | firefox 47.0 | ",
+        "t0": "2016-12-29 01:53:54",
+        "days": "30"
+      },
+      "ms": 79.1,
+      "n_rows": 1
+    },
+    {
+      "step": 3,
+      "tool": "closed_cases_for",
+      "params": {
+        "card_ids": "[C08106-K1]",
+        "customer_ids": "[]",
+        "txn_ids": "[3580804,3583227,3583499,3583503,3584017,...]",
+        "device_keys": "[ |  | firefox 47.0 | ]"
+      },
+      "ms": 77.8,
+      "n_rows": 4
+    },
+    {
+      "step": 3,
+      "tool": "holder_fraud_history",
+      "params": {
+        "holder_keys": "[]",
+        "before": "2016-12-29 07:53:54"
+      },
+      "ms": 0.4,
+      "n_rows": 0
+    },
+    {
+      "step": 4,
+      "tool": "amount_peers",
+      "params": {
+        "product_cd": "C",
+        "amt": "128.33",
+        "t0": "2016-12-29 01:53:54",
+        "days": "7",
+        "tol": "0.01",
+        "email": "hotmail.com",
+        "email_field": "P_emaildomain"
+      },
+      "ms": 114.7,
+      "n_rows": 2
+    },
+    {
+      "step": 4,
+      "tool": "amount_peers",
+      "params": {
+        "product_cd": "C",
+        "amt": "128.33",
+        "t0": "2016-12-29 01:53:54",
+        "days": "7",
+        "tol": "0.01",
+        "email": "hotmail.com",
+        "email_field": "R_emaildomain"
+      },
+      "ms": 103.4,
+      "n_rows": 2
+    },
+    {
+      "step": 10,
+      "tool": "vector_search_cases",
+      "params": {
+        "text": "confirmed fraud card_not_present_new_device: Customer denied the transaction(s) when asked: Customer confirms the dispute: they did not make the purchase, did not share the card details, and still has the card",
+        "k": "40"
+      },
+      "ms": 169.1,
+      "n_rows": 40
+    },
+    {
+      "step": 10,
+      "tool": "similar_cases",
+      "params": {
+        "pattern": "card_not_present_new_device",
+        "verdict": "fraud",
+        "product": "C",
+        "channel": "online",
+        "amt": "128.33",
+        "n": "1",
+        "new_dev": "True",
+        "anon": "False",
+        "k": "3",
+        "exclude": "[]"
+      },
+      "ms": 8.2,
+      "n_rows": 3
+    },
+    {
+      "step": 10,
+      "tool": "case_memory",
+      "params": {
+        "card_ids": "[C08106-K1]"
+      },
+      "ms": 70.4,
+      "n_rows": 0
+    },
+    {
+      "step": 10,
+      "tool": "similar_investigations",
+      "params": {
+        "text": "confirmed fraud card_not_present_new_device: Customer denied the transaction(s) when asked: Customer confirms the dispute: they did not make the purchase, did not share the card details, and still has the card",
+        "k": "3"
+      },
+      "ms": 104.7,
+      "n_rows": 3
+    },
+    {
+      "step": 12,
+      "tool": "write_case",
+      "params": {
+        "case_id": "HHG-004"
+      },
+      "ms": 1346.8,
+      "n_rows": 1
+    }
+  ],
+  "signals": [
+    {
+      "name": "device_new_for_account",
+      "group": "device",
+      "llr": -0.19,
+      "claim": "Identity record marks the device ( |  | firefox 47.0 | ) as New for this account; 42% of the card's earlier online purchases were also from New devices (in the closed cases a New device is not more common in fraud than in normal traffic for this product)",
+      "entity_ids": [
+        "3583227"
+      ],
+      "ref": "query:card_history(card_id=C08106-K1)",
+      "source": "graph"
+    },
+    {
+      "name": "customer_denies",
+      "group": "customer",
+      "llr": 2.2,
+      "claim": "Customer denied the transaction(s) when asked: Customer confirms the dispute: they did not make the purchase, did not share the card details, and still has the card",
+      "entity_ids": [],
+      "ref": "evidence_request:1",
+      "source": "customer"
+    }
+  ],
+  "sources": {
+    "summary": "llm"
+  },
+  "assess0": {
+    "p": 0.79,
+    "verdict": "uncertain",
+    "fraud_groups": [
+      "customer"
+    ],
+    "legit_groups": [],
+    "by_group": {
+      "device": -0.19,
+      "customer": 1.5
+    }
+  },
+  "assess1": {
+    "p": 0.88,
+    "verdict": "fraud",
+    "fraud_groups": [
+      "customer"
+    ],
+    "legit_groups": [],
+    "by_group": {
+      "device": -0.19,
+      "customer": 2.2
+    }
+  }
+}

@@ -19,6 +19,7 @@ class Signal:
     entity_ids: list = field(default_factory=list)
     ref: str = ""
     source: str = "graph"
+    how: dict = field(default_factory=dict)   # {"tool": name, "params": {...}}: the re-runnable query behind the claim (attestation)
 
     def __post_init__(self):
         assert self.group in GROUPS, self.group

@@ -1,0 +1,149 @@
+{
+  "case_id": "HHF-001",
+  "case": {
+    "status": "escalated",
+    "verdict": "uncertain",
+    "fraud_probability": 0.42,
+    "pattern": "card_not_present_new_device",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3660106",
+      "3660108"
+    ],
+    "first_suspicious_txn_id": "3660106",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 1298.23,
+    "evidence": [
+      {
+        "claim": "Card C05061-K1 already has 3 confirmed-fraud closed case(s) (CC-2420, CC-2674, CC-4210). The account key is not usable in January, so the precedent is read at card level, where it is weaker: on cards of this size an earlier confirmed case made a new alert about 3.9 times as likely to be fraud",
+        "source": "graph",
+        "ref": "query:closed_cases_for(card_id=C05061-K1)",
+        "entity_ids": [
+          "CC-2420",
+          "CC-2674",
+          "CC-4210"
+        ]
+      },
+      {
+        "claim": "Purchaser email domain gmail.com is this account's own: 42 earlier transactions on card C05061-K1 used it",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C05061-K1)",
+        "entity_ids": [
+          "3660108"
+        ]
+      },
+      {
+        "claim": "Profile fit: $447.95 is within the account's earlier range (largest $2,147.02 over 116 purchases)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C05061-K1)",
+        "entity_ids": [
+          "3660108"
+        ]
+      },
+      {
+        "claim": "Profile fit: the purchase hour (20:00) is one the account already uses (20% of its earlier purchases within an hour of it)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C05061-K1)",
+        "entity_ids": [
+          "3660108"
+        ]
+      },
+      {
+        "claim": "Connection through an anonymous proxy (id_23), not seen before on this account",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C05061-K1)",
+        "entity_ids": [
+          "3660108"
+        ]
+      },
+      {
+        "claim": "Identity record marks the device (RCT6303W87M7 Build/MRA58K | Windows 7 | ie 11.0 for desktop | ) as New for this account; 48% of the card's earlier online purchases were also from New devices (in the closed cases a New device is not more common in fraud than in normal traffic for this product)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C05061-K1)",
+        "entity_ids": [
+          "3660108"
+        ]
+      },
+      {
+        "claim": "Policy applied, Fraud Policy R4: No reply within 24 hours: Recommend MONITOR_CARD and DECLINE_TRANSACTION for pending authorizations.",
+        "source": "document",
+        "ref": "document:README#POLICY-R4",
+        "entity_ids": []
+      },
+      {
+        "claim": "Pattern definition, Known fraud patterns: Card-not-present fraud from a new device: Same as above, with the identity record marking the device as New for this account, sometimes behind a proxy.",
+        "source": "document",
+        "ref": "document:README#PATTERN-3",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-2420",
+      "CC-2674",
+      "CC-4210",
+      "CC-1439",
+      "CC-4369",
+      "CC-4398"
+    ],
+    "summary": "Alert HHF-001 opened because an analyst asked for a review of transaction 3660108 and related activity on other cards ($447.95, product C, online, 2017-01-14 20:25) on card C05061-K1. The evidence is balanced (fraud probability 0.42): for fraud, Card C05061-K1 already has 3 confirmed-fraud closed case(s) (CC-2420, CC-2674, CC-4210). The account key is not usable in January, so the precedent is read at card level, where it is weaker: on cards of this size an earlier confirmed case made a new alert about 3.9 times as likely to be fraud; against, Purchaser email domain gmail.com is this account's own: 42 earlier transactions on card C05061-K1 used it; Profile fit: $447.95 is within the account's earlier range (largest $2,147.02 over 116 purchases). The case stays under monitoring pending the cardholder. Evidence request: No reply from the customer within 24 hours.",
+    "written_to_graph": false,
+    "graph_case_id": ""
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 6,
+      "assumed_response": "No reply from the customer within 24 hours"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1 and §5: fraud probability 0.42 is below 0.70; verify with the cardholder before any block"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "§3a: requesting evidence opens a case"
+      }
+    ],
+    "final": [
+      {
+        "action": "DECLINE_TRANSACTION",
+        "route": "L1",
+        "reason": "R4: decline pending authorizations while unverified"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "§3a: the evidence request opened a case"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "R4: no reply within 24 hours, raise monitoring for 72 hours"
+      },
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R4 and R8: no reply, uncertain, and exposure over $500"
+      }
+    ],
+    "what_changed": "No reply within 24 hours, so R4 applies and the probability stays at 0.42: DECLINE_TRANSACTION, CREATE_CASE, MONITOR_CARD, ESCALATE_TO_ANALYST."
+  },
+  "sar": {
+    "file": false,
+    "reason": "§3a: the verdict is not fraud, so no suspicious activity report; the case record is sufficient",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "The customer did not reply within 24 hours and the remaining graph evidence cannot move the probability (0.42) across a decision threshold, so the case stays open under R4 monitoring.",
+  "tool_calls": 12,
+  "tokens": 0,
+  "latency_s": 1.23
+}

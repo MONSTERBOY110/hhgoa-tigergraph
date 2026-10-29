@@ -1,0 +1,125 @@
+{
+  "case_id": "HHF-015",
+  "case": {
+    "status": "closed_legitimate",
+    "verdict": "legitimate",
+    "fraud_probability": 0.15,
+    "pattern": "none",
+    "pattern_description": "",
+    "affected_txn_ids": [],
+    "first_suspicious_txn_id": "",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 0.0,
+    "evidence": [
+      {
+        "claim": "Billing region 485 is familiar: 9 earlier transactions on this card there (8% of its in-person history)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C00543-K1)",
+        "entity_ids": [
+          "3601725"
+        ]
+      },
+      {
+        "claim": "Profile fit: product W is this account's usual product (109 earlier purchases on card C00543-K1)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C00543-K1)",
+        "entity_ids": [
+          "3601725"
+        ]
+      },
+      {
+        "claim": "Profile fit: $112.75 is within the account's earlier range (largest $418.03 over 111 purchases)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C00543-K1)",
+        "entity_ids": [
+          "3601725"
+        ]
+      },
+      {
+        "claim": "The alert states a model score of 0.71, but transaction 3601725 carries 0.07 in the bank's records; the recorded value is used and the stated one is treated as unverified alert text",
+        "source": "graph",
+        "ref": "query:txn_detail(txn_id=3601725)",
+        "entity_ids": [
+          "3601725"
+        ]
+      },
+      {
+        "claim": "Policy applied, Fraud Policy R3: Customer confirms the transaction: Recommend CLOSE_NO_FRAUD.",
+        "source": "document",
+        "ref": "document:README#POLICY-R3",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-4505",
+      "CC-4844",
+      "CC-1645",
+      "CC-5132",
+      "CC-4118"
+    ],
+    "summary": "Alert HHF-015 opened because the bank's model flagged transaction 3601725 (recorded score 0.07) ($112.75, product W, in person, 2017-01-22 09:21) on card C00543-K1. The evidence points to the cardholder: Billing region 485 is familiar: 9 earlier transactions on this card there (8% of its in-person history); Profile fit: product W is this account's usual product (109 earlier purchases on card C00543-K1); Profile fit: $112.75 is within the account's earlier range (largest $418.03 over 111 purchases). Fraud probability 0.15; the alert is closed as legitimate.",
+    "written_to_graph": false,
+    "graph_case_id": ""
+  },
+  "evidence_requests": [],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "ALLOW_TRANSACTION",
+        "route": "auto",
+        "reason": "§6: the flagged transaction is consistent with the cardholder, let it stand"
+      },
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "§6 and R3: confirm the purchase with the cardholder; the card stays active"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "§6: keep the card under 72-hour monitoring after the alert"
+      },
+      {
+        "action": "CLOSE_NO_FRAUD",
+        "route": "auto",
+        "reason": "§6, R3 and §3a: alert cleared; the bank records cleared alerts without a case"
+      }
+    ],
+    "final": [
+      {
+        "action": "ALLOW_TRANSACTION",
+        "route": "auto",
+        "reason": "§6: the flagged transaction is consistent with the cardholder, let it stand"
+      },
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "§6 and R3: confirm the purchase with the cardholder; the card stays active"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "§6: keep the card under 72-hour monitoring after the alert"
+      },
+      {
+        "action": "CLOSE_NO_FRAUD",
+        "route": "auto",
+        "reason": "§6, R3 and §3a: alert cleared; the bank records cleared alerts without a case"
+      }
+    ],
+    "what_changed": "nothing"
+  },
+  "sar": {
+    "file": false,
+    "reason": "§3a: the verdict is not fraud, so no suspicious activity report; the case record is sufficient",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "Fraud probability 0.15 is at or below 0.15 with 2 independent evidence groups (sequence, region), so section 6 allows a decision without asking the customer; further queries would not change the actions.",
+  "tool_calls": 8,
+  "tokens": 0,
+  "latency_s": 0.17
+}

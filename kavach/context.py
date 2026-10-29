@@ -28,10 +28,12 @@ class CaseContext:
     closed_hits: pd.DataFrame = None
     holder_hist: pd.DataFrame = None
     refs: dict = field(default_factory=dict)
+    resolved_card: str = ""                         # the card the flagged txn is actually on, when the alert names another
+    dq_notes: list = field(default_factory=list)    # data-quality findings met while gathering (record ids + consequence)
 
     @property
     def card_id(self) -> str:
-        return self.case["card_id"]
+        return self.resolved_card or self.case["card_id"]
 
     @property
     def customer_id(self) -> str:
@@ -55,7 +57,21 @@ def gather(case: dict, tools: ToolRegistry) -> CaseContext:
     ctx.h = card_features(raw)
     row = ctx.h[ctx.h.TransactionID == tid]
     if row.empty:
-        raise ValueError(f"flagged txn {tid} not on card {case['card_id']}")
+        # The alert names a card the flagged transaction is not on. Resolve the card from the transaction itself,
+        # investigate that card, and record the discrepancy (an alert-data error, never a reason to guess).
+        d = tools.call("txn_detail", txn_id=tid)
+        if not d or not d.get("card_id"):
+            raise ValueError(f"flagged txn {tid} does not exist; the alert cannot be investigated")
+        ctx.resolved_card = str(d["card_id"])
+        ctx.dq_notes.append({"flag": "alert_card_mismatch", "record_ids": [str(tid), case["card_id"], ctx.resolved_card],
+                             "detail": f"The alert names card {case['card_id']}, but transaction {tid} is on card {ctx.resolved_card} "
+                                       f"(card type {d.get('card6')}); the investigation follows the transaction's own card"})
+        raw = tools.call("card_history", card_id=ctx.resolved_card)
+        ctx.refs["history"] = tools.ref("card_history", card_id=ctx.resolved_card)
+        ctx.h = card_features(raw)
+        row = ctx.h[ctx.h.TransactionID == tid]
+        if row.empty:
+            raise ValueError(f"flagged txn {tid} not found on its own card {ctx.resolved_card}")
     ctx.f = row.iloc[0].to_dict()
     ctx.t0 = pd.Timestamp(ctx.f["ts"])
     ctx.opened = pd.Timestamp(case["opened_at"])
@@ -75,9 +91,9 @@ def gather(case: dict, tools: ToolRegistry) -> CaseContext:
 
     tools.step = 3
     win = ctx.window(72, 24)
-    ctx.closed_hits = tools.call("closed_cases_for", card_ids=[case["card_id"]], customer_ids=[],
+    ctx.closed_hits = tools.call("closed_cases_for", card_ids=[ctx.card_id], customer_ids=[],
                                  txn_ids=list(win.TransactionID), device_keys=[ctx.device] if ctx.device and ctx.device_pop <= RARE_DEVICE else [])
-    ctx.refs["closed"] = tools.ref("closed_cases_for", card_id=case["card_id"])
+    ctx.refs["closed"] = tools.ref("closed_cases_for", card_id=ctx.card_id)
     hks = sorted({k for k in ctx.window(24 * 7, 24).holder_key if isinstance(k, str) and "||" not in k})
     ctx.holder_hist = tools.call("holder_fraud_history", holder_keys=hks, before=ctx.opened)
     ctx.refs["holder"] = tools.ref("holder_fraud_history", card_id=case["card_id"])

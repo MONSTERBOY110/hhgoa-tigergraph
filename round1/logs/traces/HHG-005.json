@@ -1,0 +1,208 @@
+{
+  "log": [
+    "gathered: 92 card txns, device='iOS Device | iOS 9.3.5 | mobile safari 9.0 | 1024x768' (on 112 cards), 3 closed-case hits",
+    "assess0: p=0.09 legitimate groups={'sequence': -0.8, 'device': -0.07, 'score': -1.46}"
+  ],
+  "tools": [
+    {
+      "step": 1,
+      "tool": "card_history",
+      "params": {
+        "card_id": "C02923-K1"
+      },
+      "ms": 226.1,
+      "n_rows": 92
+    },
+    {
+      "step": 2,
+      "tool": "customer_cards",
+      "params": {
+        "customer_id": "C02923"
+      },
+      "ms": 80.6,
+      "n_rows": 1
+    },
+    {
+      "step": 2,
+      "tool": "device_popularity",
+      "params": {
+        "device_key": "iOS Device | iOS 9.3.5 | mobile safari 9.0 | 1024x768"
+      },
+      "ms": 80.3,
+      "n_rows": 1
+    },
+    {
+      "step": 3,
+      "tool": "closed_cases_for",
+      "params": {
+        "card_ids": "[C02923-K1]",
+        "customer_ids": "[]",
+        "txn_ids": "[3523199]",
+        "device_keys": "[]"
+      },
+      "ms": 82.2,
+      "n_rows": 3
+    },
+    {
+      "step": 3,
+      "tool": "holder_fraud_history",
+      "params": {
+        "holder_keys": "[22606|330.0|-4,22606|330.0|158]",
+        "before": "2016-12-08 03:38:37"
+      },
+      "ms": 81.3,
+      "n_rows": 0
+    },
+    {
+      "step": 4,
+      "tool": "amount_peers",
+      "params": {
+        "product_cd": "R",
+        "amt": "100.07",
+        "t0": "2016-12-07 21:38:37",
+        "days": "7",
+        "tol": "0.01",
+        "email": "icloud.com",
+        "email_field": "P_emaildomain"
+      },
+      "ms": 88.7,
+      "n_rows": 6
+    },
+    {
+      "step": 4,
+      "tool": "amount_peers",
+      "params": {
+        "product_cd": "R",
+        "amt": "100.07",
+        "t0": "2016-12-07 21:38:37",
+        "days": "7",
+        "tol": "0.01",
+        "email": "gmail.com",
+        "email_field": "R_emaildomain"
+      },
+      "ms": 233.2,
+      "n_rows": 238
+    },
+    {
+      "step": 10,
+      "tool": "vector_search_cases",
+      "params": {
+        "text": "cleared false alarm: The same amount ($99.92, product R) was charged on card C02923-K1 before, on 2016-07-15",
+        "k": "40"
+      },
+      "ms": 91.2,
+      "n_rows": 40
+    },
+    {
+      "step": 10,
+      "tool": "similar_cases",
+      "params": {
+        "pattern": "none",
+        "verdict": "legitimate",
+        "product": "R",
+        "channel": "online",
+        "amt": "100.07",
+        "n": "1",
+        "new_dev": "True",
+        "anon": "False",
+        "k": "3",
+        "exclude": "[]"
+      },
+      "ms": 6.5,
+      "n_rows": 3
+    },
+    {
+      "step": 10,
+      "tool": "case_memory",
+      "params": {
+        "card_ids": "[C02923-K1]"
+      },
+      "ms": 66.6,
+      "n_rows": 0
+    },
+    {
+      "step": 10,
+      "tool": "similar_investigations",
+      "params": {
+        "text": "cleared false alarm: The same amount ($99.92, product R) was charged on card C02923-K1 before, on 2016-07-15",
+        "k": "3"
+      },
+      "ms": 112.4,
+      "n_rows": 3
+    },
+    {
+      "step": 12,
+      "tool": "write_case",
+      "params": {
+        "case_id": "HHG-005"
+      },
+      "ms": 1334.8,
+      "n_rows": 1
+    }
+  ],
+  "signals": [
+    {
+      "name": "risk_score_calibrated",
+      "group": "score",
+      "llr": -1.46,
+      "claim": "Model risk score 0.54. For product R transactions with an identity record in this score band, 5% were confirmed fraud in July to October (3,908 transactions), so the score is read at that calibrated rate, not at face value",
+      "entity_ids": [
+        "3523199"
+      ],
+      "ref": "document:weights.json#score_calibration",
+      "source": "document"
+    },
+    {
+      "name": "amount_seen_before",
+      "group": "sequence",
+      "llr": -0.8,
+      "claim": "The same amount ($99.92, product R) was charged on card C02923-K1 before, on 2016-07-15",
+      "entity_ids": [
+        "3050502",
+        "3523199"
+      ],
+      "ref": "query:card_history(card_id=C02923-K1)",
+      "source": "graph"
+    },
+    {
+      "name": "device_new_for_account",
+      "group": "device",
+      "llr": -0.07,
+      "claim": "Identity record marks the device (iOS Device | iOS 9.3.5 | mobile safari 9.0 | 1024x768) as New for this account; 43% of the card's earlier online purchases were also from New devices (in the closed cases a New device is not more common in fraud than in normal traffic for this product)",
+      "entity_ids": [
+        "3523199"
+      ],
+      "ref": "query:card_history(card_id=C02923-K1)",
+      "source": "graph"
+    }
+  ],
+  "sources": {
+    "summary": "llm"
+  },
+  "assess0": {
+    "p": 0.09,
+    "verdict": "legitimate",
+    "fraud_groups": [],
+    "legit_groups": [
+      "sequence"
+    ],
+    "by_group": {
+      "sequence": -0.8,
+      "device": -0.07,
+      "score": -1.46
+    }
+  },
+  "assess1": {
+    "p": 0.09,
+    "verdict": "legitimate",
+    "fraud_groups": [],
+    "legit_groups": [
+      "sequence"
+    ],
+    "by_group": {
+      "sequence": -0.8,
+      "device": -0.07,
+      "score": -1.46
+    }
+  }
+}

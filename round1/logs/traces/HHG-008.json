@@ -1,0 +1,231 @@
+{
+  "log": [
+    "gathered: 927 card txns, device=' |  | chrome 66.0 | ' (on 175 cards), 19 closed-case hits",
+    "assess0: p=0.93 fraud groups={'sequence': 1.2, 'device': -0.8, 'identity_flags': 0.7, 'customer': 1.5}"
+  ],
+  "tools": [
+    {
+      "step": 1,
+      "tool": "card_history",
+      "params": {
+        "card_id": "C13171-K2"
+      },
+      "ms": 605.1,
+      "n_rows": 927
+    },
+    {
+      "step": 2,
+      "tool": "customer_cards",
+      "params": {
+        "customer_id": "C13171"
+      },
+      "ms": 92.0,
+      "n_rows": 2
+    },
+    {
+      "step": 2,
+      "tool": "device_popularity",
+      "params": {
+        "device_key": " |  | chrome 66.0 | "
+      },
+      "ms": 96.2,
+      "n_rows": 1
+    },
+    {
+      "step": 3,
+      "tool": "closed_cases_for",
+      "params": {
+        "card_ids": "[C13171-K2]",
+        "customer_ids": "[]",
+        "txn_ids": "[3549639,3550022,3550100,3551233,3551412,...]",
+        "device_keys": "[]"
+      },
+      "ms": 88.3,
+      "n_rows": 19
+    },
+    {
+      "step": 3,
+      "tool": "holder_fraud_history",
+      "params": {
+        "holder_keys": "[10114|284.0|166]",
+        "before": "2016-12-20 03:08:56"
+      },
+      "ms": 88.6,
+      "n_rows": 0
+    },
+    {
+      "step": 4,
+      "tool": "amount_peers",
+      "params": {
+        "product_cd": "C",
+        "amt": "55.68",
+        "t0": "2016-12-19 22:08:56",
+        "days": "7",
+        "tol": "0.01",
+        "email": "hotmail.com",
+        "email_field": "P_emaildomain"
+      },
+      "ms": 132.9,
+      "n_rows": 14
+    },
+    {
+      "step": 4,
+      "tool": "amount_peers",
+      "params": {
+        "product_cd": "C",
+        "amt": "55.68",
+        "t0": "2016-12-19 22:08:56",
+        "days": "7",
+        "tol": "0.01",
+        "email": "hotmail.com",
+        "email_field": "R_emaildomain"
+      },
+      "ms": 113.2,
+      "n_rows": 14
+    },
+    {
+      "step": 10,
+      "tool": "vector_search_cases",
+      "params": {
+        "text": "confirmed fraud card_not_present_fraud: Customer C13171 disputes transaction 3558054 ($55.68); in the bank's closed cases every customer-reported alert was confirmed fraud 3 online C charges of about $55.68 within 20 minutes The device profile was already used by this card 9 time(s) before",
+        "k": "40"
+      },
+      "ms": 170.7,
+      "n_rows": 40
+    },
+    {
+      "step": 10,
+      "tool": "similar_cases",
+      "params": {
+        "pattern": "card_not_present_fraud",
+        "verdict": "fraud",
+        "product": "C",
+        "channel": "online",
+        "amt": "166.97",
+        "n": "3",
+        "new_dev": "False",
+        "anon": "False",
+        "k": "3",
+        "exclude": "[]"
+      },
+      "ms": 15.4,
+      "n_rows": 3
+    },
+    {
+      "step": 10,
+      "tool": "case_memory",
+      "params": {
+        "card_ids": "[C13171-K2]"
+      },
+      "ms": 99.9,
+      "n_rows": 0
+    },
+    {
+      "step": 10,
+      "tool": "similar_investigations",
+      "params": {
+        "text": "confirmed fraud card_not_present_fraud: Customer C13171 disputes transaction 3558054 ($55.68); in the bank's closed cases every customer-reported alert was confirmed fraud 3 online C charges of about $55.68 within 20 minutes The device profile was already used by this card 9 time(s) before",
+        "k": "3"
+      },
+      "ms": 124.0,
+      "n_rows": 3
+    },
+    {
+      "step": 12,
+      "tool": "write_case",
+      "params": {
+        "case_id": "HHG-008"
+      },
+      "ms": 1650.2,
+      "n_rows": 1
+    }
+  ],
+  "signals": [
+    {
+      "name": "customer_dispute",
+      "group": "customer",
+      "llr": 1.5,
+      "claim": "Customer C13171 disputes transaction 3558054 ($55.68); in the bank's closed cases every customer-reported alert was confirmed fraud",
+      "entity_ids": [
+        "3558054",
+        "C13171"
+      ],
+      "ref": "case_pack:trigger_text",
+      "source": "customer"
+    },
+    {
+      "name": "duplicate_amount_burst",
+      "group": "sequence",
+      "llr": 1.2,
+      "claim": "3 online C charges of about $55.68 within 20 minutes",
+      "entity_ids": [
+        "3557979",
+        "3557987",
+        "3558054"
+      ],
+      "ref": "query:card_window(card_id=C13171-K2, hours=3)",
+      "source": "graph"
+    },
+    {
+      "name": "count_features_high",
+      "group": "identity_flags",
+      "llr": 0.7,
+      "claim": "Vesta count C2 = 43 on this transaction against a median of 2 on account (unnamed count features; on product C, C2 of 30 or more was about five times as often fraud in the closed months)",
+      "entity_ids": [
+        "3558054"
+      ],
+      "ref": "query:card_history(card_id=C13171-K2)",
+      "source": "graph"
+    },
+    {
+      "name": "device_known",
+      "group": "device",
+      "llr": -0.8,
+      "claim": "The device profile was already used by this card 9 time(s) before",
+      "entity_ids": [
+        "3558054"
+      ],
+      "ref": "query:card_history(card_id=C13171-K2)",
+      "source": "graph"
+    }
+  ],
+  "sources": {
+    "summary": "llm"
+  },
+  "assess0": {
+    "p": 0.93,
+    "verdict": "fraud",
+    "fraud_groups": [
+      "sequence",
+      "identity_flags",
+      "customer"
+    ],
+    "legit_groups": [
+      "device"
+    ],
+    "by_group": {
+      "sequence": 1.2,
+      "device": -0.8,
+      "identity_flags": 0.7,
+      "customer": 1.5
+    }
+  },
+  "assess1": {
+    "p": 0.93,
+    "verdict": "fraud",
+    "fraud_groups": [
+      "sequence",
+      "identity_flags",
+      "customer"
+    ],
+    "legit_groups": [
+      "device"
+    ],
+    "by_group": {
+      "sequence": 1.2,
+      "device": -0.8,
+      "identity_flags": 0.7,
+      "customer": 1.5
+    }
+  }
+}

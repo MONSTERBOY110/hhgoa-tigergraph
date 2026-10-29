@@ -62,7 +62,7 @@ class TgTools:
         self.conn = conn or connect()
 
     # installed-query parameters that are typed vertices (JSON {"id": ...}) or sets of them
-    VERTEX_PARAMS = {"c", "cu", "d", "t", "r", "e"}
+    VERTEX_PARAMS = {"c", "cu", "d", "t", "r", "e", "h"}
     VERTEX_SET_PARAMS = {"cards", "txns", "devices"}
 
     def _q(self, name: str, **params):
@@ -144,14 +144,20 @@ class TgTools:
         cards = list(card_ids)
         for cu in customer_ids:
             cards += list(self.customer_cards(cu).card_id)
-        r = self._q("closed_cases_for", cards=sorted(set(cards)), txns=[str(t) for t in txn_ids], devices=list(device_keys))
+        ph = lambda xs: sorted({str(x) for x in xs}) or [""]   # noqa: E731  (empty sets are sent as {""}: matches no vertex)
+        r = self._q("closed_cases_for", card_ids=ph(cards), txn_ids=ph(txn_ids), device_ids=ph(device_keys))
         rows = []
         for v in r[0]["R"]:
             a = v["attributes"]
-            rows.append({"case_id": v["v_id"], "via": ",".join(sorted(a["R.@via"])), "outcome": a["R.outcome"], "pattern": a["R.pattern"],
+            cards, conn = sorted(a.get("R.@card", [])), sorted(a.get("R.@conn", []))
+            rows.append({"case_id": v["v_id"], "via": ",".join(sorted(a["R.@via"])), "card_id": cards[0] if cards else None,
+                         "outcome": a["R.outcome"], "pattern": a["R.pattern"],
                          "opened_at": a["R.opened_at"], "n_txns": a["R.n_txns"], "exposure_usd": a["R.exposure_usd"],
+                         "connected_card_ids": "|".join(conn) if conn else None,
                          "report_filed": a["R.report_filed"], "analyst_notes": a["R.analyst_notes"]})
-        df = pd.DataFrame(rows)
+        cols = ["case_id", "via", "card_id", "outcome", "pattern", "opened_at", "n_txns", "exposure_usd", "connected_card_ids",
+                "report_filed", "analyst_notes"]
+        df = pd.DataFrame(rows, columns=cols)
         return df.sort_values("opened_at").reset_index(drop=True) if len(df) else df
 
     def holder_fraud_history(self, holder_keys, before) -> pd.DataFrame:
@@ -215,6 +221,57 @@ class TgTools:
         """Earlier InvestigationCases with the closest summaries (TigerVector)."""
         from kavach.graph import vectors_tg
         return vectors_tg.search_investigations(self.conn, text, k)
+
+    # ---- grown-detector tools (same names and shapes as kavach/grow/gtools.py; queries in queries_grow.gsql) ----
+    _ENTITY_Q = {"R_emaildomain": ("r", "e"), "P_emaildomain": ("p", "e"), "addr1": ("region", "r"), "holder_key": ("holder", "h")}
+
+    def _entity_args(self, entity: str, value) -> tuple[str, dict]:
+        suffix, param = self._ENTITY_Q[entity]
+        if entity == "addr1":
+            return suffix, {"r": str(int(float(value)))}
+        if entity == "holder_key":
+            return suffix, {"h": str(value), "key": str(value)}
+        return suffix, {"e": str(value)}
+
+    def grow_entity_txns(self, entity: str, value, t0, days: float = 7) -> pd.DataFrame:
+        t0 = pd.Timestamp(t0)
+        rng = {"t_from": _ts(t0 - timedelta(days=days)), "t_to": _ts(t0 + timedelta(days=days))}
+        if entity == "device_key":
+            return self.device_txns(value, t0, days)
+        suffix, args = self._entity_args(entity, value)
+        return _vertices_to_txn_frame(self._q(f"entity_txns_{suffix}", **args, **rng)[0]["T"])
+
+    def grow_entity_popularity(self, entity: str, value) -> int:
+        if entity == "device_key":
+            return self.device_popularity(value)
+        suffix, args = self._entity_args(entity, value)
+        return int(self._q(f"entity_cards_{suffix}", **args)[0]["n"])
+
+    def grow_entity_daily_cards(self, entity: str, value, d_from, d_to) -> pd.DataFrame:
+        rng = {"t_from": _ts(pd.Timestamp(d_from).normalize()), "t_to": _ts(pd.Timestamp(d_to).normalize() + timedelta(days=1))}
+        if entity == "device_key":
+            pairs = self._q("entity_daily_cards_device", d=str(value), **rng)[0]["pairs"]
+        elif entity == "holder_key":
+            t = self.grow_entity_txns(entity, value, pd.Timestamp(d_from) + (pd.Timestamp(d_to) - pd.Timestamp(d_from)) / 2,
+                                      days=(pd.Timestamp(d_to) - pd.Timestamp(d_from)).days / 2 + 1)
+            pairs = [f"{pd.Timestamp(r.ts):%Y-%m-%d}|{r.card_id}" for r in t.itertuples()] if len(t) else []
+        else:
+            suffix, args = self._entity_args(entity, value)
+            pairs = self._q(f"entity_daily_cards_{suffix}", **args, **rng)[0]["pairs"]
+        rows = sorted({tuple(p.split("|", 1)) for p in pairs})
+        df = pd.DataFrame(rows, columns=["d", "card_id"])
+        df["d"] = pd.to_datetime(df.d).dt.date if len(df) else df.d
+        lo, hi = pd.Timestamp(d_from).date(), pd.Timestamp(d_to).date()
+        return df[(df.d >= lo) & (df.d <= hi)].reset_index(drop=True) if len(df) else df
+
+    def grow_date_range(self) -> dict:
+        if not hasattr(self, "_date_range"):
+            r = self._q("txn_date_range")
+            d0 = next(x["d0"] for x in r if "d0" in x)
+            d1 = next(x["d1"] for x in r if "d1" in x)
+            # same string form as the DuckDB lane (a date cast read back by pandas prints as a midnight timestamp)
+            self._date_range = {"d0": str(pd.Timestamp(pd.Timestamp(d0).date())), "d1": str(pd.Timestamp(pd.Timestamp(d1).date()))}
+        return self._date_range
 
     def card_profile(self, card_id: str, before=None) -> dict:
         from kavach import duckq

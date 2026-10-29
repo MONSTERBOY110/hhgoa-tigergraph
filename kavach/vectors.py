@@ -28,9 +28,18 @@ def embed(texts: list[str]) -> np.ndarray:
     return v / np.linalg.norm(v, axis=1, keepdims=True)
 
 
+def _readme_text() -> str:
+    """The organizer README (patterns + Fraud Policy v1.0) as downloaded by `kavach download --round 1`. docs/ is not part of
+    the repository, so a clean clone reads the organizer's own file."""
+    for p in (DATA / "raw" / "README.md", ROOT / "docs" / "TASK-README.md"):
+        if p.exists():
+            return p.read_text(encoding="utf-8")
+    raise FileNotFoundError("organizer README not found: run `python -m kavach download --round 1`")
+
+
 def policy_docs() -> list[dict]:
     """Sections of the organizer README that the agent cites: the five patterns, rules R1 to R10, 3a, 3b, 4, 5, 6."""
-    text = (ROOT / "docs" / "TASK-README.md").read_text(encoding="utf-8")
+    text = _readme_text()
     docs = []
     pat = text[text.index("## The five known fraud patterns"):text.index("## Regulatory references")]
     for m in re.finditer(r"\*\*(\d)\. ([^*]+)\*\*(.*?)(?=\n\*\*\d\.|\Z)", pat, re.S):
@@ -53,9 +62,12 @@ def build() -> dict:
     docs = policy_docs()
     cv = embed(notes)
     dv = embed([f"{d['section']}. {d['text']}" for d in docs])
-    np.savez_compressed(VEC_PATH, case_ids=np.array(closed.case_id, dtype=str), case_vecs=cv,
+    tmp = VEC_PATH.with_suffix(".tmp.npz")   # write then rename: other processes may be reading the index
+    np.savez_compressed(tmp, case_ids=np.array(closed.case_id, dtype=str), case_vecs=cv,
                         doc_ids=np.array([d["id"] for d in docs], dtype=str), doc_sections=np.array([d["section"] for d in docs], dtype=str),
                         doc_texts=np.array([d["text"] for d in docs], dtype=str), doc_vecs=dv)
+    import os
+    os.replace(tmp, VEC_PATH)
     print(f"embedded {len(notes)} closed-case notes and {len(docs)} policy/pattern sections -> {VEC_PATH}")
     return {"cases": len(notes), "docs": len(docs)}
 

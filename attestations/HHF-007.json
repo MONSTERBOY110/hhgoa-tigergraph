@@ -1,0 +1,375 @@
+{
+  "case_id": "HHF-007",
+  "dataset_version": {
+    "version": "eb6caf5672c6",
+    "built_at": "2026-10-29 14:00:39",
+    "files": {
+      "case_pack.csv": {
+        "bytes": 3548,
+        "sha256": "a6d1764a51a9e7d3",
+        "rows": 20
+      },
+      "case_pack_final.csv": {
+        "bytes": 3735,
+        "sha256": "f75456b31257af29",
+        "rows": 18
+      },
+      "closed_cases_history.csv": {
+        "bytes": 2714120,
+        "sha256": "d95c8416b22deb00",
+        "rows": 5585
+      },
+      "identity.csv": {
+        "bytes": 26716154,
+        "sha256": "4db18fdff5b20259",
+        "rows": 144432
+      },
+      "identity_2017q1.csv": {
+        "bytes": 2981977,
+        "sha256": "aed12a836087e3d0",
+        "rows": 15893
+      },
+      "transactions.csv": {
+        "bytes": 707936515,
+        "sha256": "6e4d3f902fc7b4ec",
+        "rows": 590742
+      },
+      "transactions_2017q1.csv": {
+        "bytes": 70087600,
+        "sha256": "23768562e19816f3",
+        "rows": 60196
+      }
+    }
+  },
+  "backend": "duck",
+  "run_at": "2026-10-29T12:14:11Z",
+  "claims": [
+    {
+      "id": "E1",
+      "kind": "evidence",
+      "what": "4 online authorizations under $10 within an hour, then a $236.28 purchase",
+      "evidence": {
+        "txn_ids": [
+          "3660346",
+          "3660347",
+          "3660348",
+          "3660349",
+          "3660350"
+        ],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "card_window",
+        "params": {
+          "card_id": "C09582-K1",
+          "t0": "2017-01-14 13:57:30",
+          "hours_before": 3,
+          "hours_after": 3
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T12:14:11Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "graph",
+      "ref": "query:card_window(card_id=C09582-K1, hours=3)",
+      "signal": "card_testing",
+      "llr": 2.4
+    },
+    {
+      "id": "E2",
+      "kind": "evidence",
+      "what": "Customer C09582 disputes transaction 3660350 ($236.28); a dispute is strong but not conclusive evidence (in the Round 1 review 7 of 8 customer reports were confirmed fraud, and one was cleared because the purchase fitted the cardholder)",
+      "evidence": {
+        "txn_ids": [
+          "3660350"
+        ],
+        "card_ids": [],
+        "customer_ids": [
+          "C09582"
+        ],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "txn_detail",
+        "params": {
+          "txn_id": 3660350
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T12:14:11Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "customer",
+      "ref": "case_pack:trigger_text",
+      "signal": "customer_dispute",
+      "llr": 0.9
+    },
+    {
+      "id": "E3",
+      "kind": "evidence",
+      "what": "Purchaser email domain gmail.com is this account's own: 4 earlier transactions on card C09582-K1 in its region 476 used it",
+      "evidence": {
+        "txn_ids": [
+          "3660350"
+        ],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "card_history",
+        "params": {
+          "card_id": "C09582-K1"
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T12:14:11Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "graph",
+      "ref": "query:card_history(card_id=C09582-K1)",
+      "signal": "email_familiar",
+      "llr": -0.5
+    },
+    {
+      "id": "E4",
+      "kind": "evidence",
+      "what": "$236.28 is 2.2 times the largest earlier purchase on card C09582-K1 in its region 476",
+      "evidence": {
+        "txn_ids": [
+          "3660350"
+        ],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "card_history",
+        "params": {
+          "card_id": "C09582-K1"
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T12:14:11Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "graph",
+      "ref": "query:card_history(card_id=C09582-K1)",
+      "signal": "amount_above_account_max",
+      "llr": 0.41
+    },
+    {
+      "id": "E5",
+      "kind": "evidence",
+      "what": "Online purchase on a card whose history is 99% in person (708 earlier transactions)",
+      "evidence": {
+        "txn_ids": [
+          "3660350"
+        ],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "card_history",
+        "params": {
+          "card_id": "C09582-K1"
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T12:14:11Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "graph",
+      "ref": "query:card_history(card_id=C09582-K1)",
+      "signal": "online_on_in_person_card",
+      "llr": 0.3
+    },
+    {
+      "id": "E6",
+      "kind": "evidence",
+      "what": "Profile fit: the purchase hour (13:00) is one the account already uses (10% of its earlier purchases within an hour of it)",
+      "evidence": {
+        "txn_ids": [
+          "3660350"
+        ],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "card_history",
+        "params": {
+          "card_id": "C09582-K1"
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T12:14:11Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "graph",
+      "ref": "query:card_history(card_id=C09582-K1)",
+      "signal": "hour_familiar",
+      "llr": -0.3
+    },
+    {
+      "id": "E7",
+      "kind": "evidence",
+      "what": "Policy applied, Fraud Policy R2: Customer denies the transaction: Recommend BLOCK_CARD and CREATE_CASE.",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "document",
+        "params": {
+          "doc_id": "POLICY-R2"
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T12:14:11Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "document",
+      "ref": "document:README#POLICY-R2",
+      "signal": "",
+      "llr": null
+    },
+    {
+      "id": "E8",
+      "kind": "evidence",
+      "what": "Pattern definition, Known fraud patterns: Card testing: A stolen card number is checked before use: three or more tiny online authorizations, often under $5, then a larger purchase.",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "document",
+        "params": {
+          "doc_id": "PATTERN-1"
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T12:14:11Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "document",
+      "ref": "document:README#PATTERN-1",
+      "signal": "",
+      "llr": null
+    },
+    {
+      "id": "D1",
+      "kind": "detector_hit",
+      "what": "Model risk score 0.19 on the disputed transaction (January score, weight clamped: the bank's model was not retrained for January)",
+      "evidence": {
+        "txn_ids": [
+          "3660350"
+        ],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "txn_detail",
+        "params": {
+          "txn_id": 3660350
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T12:14:11Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "graph",
+      "ref": "query:card_history(card_id=C09582-K1)",
+      "signal": "risk_score",
+      "llr": -0.1
+    },
+    {
+      "id": "D2",
+      "kind": "detector_hit",
+      "what": "Card C09582-K1 already has 1 confirmed-fraud closed case(s) (CC-2822). The account key is not usable in January, so the precedent is read at card level, where it is weaker: this card pools many accounts, and an earlier confirmed case barely separates fraud from cleared alerts",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [
+          "CC-2822"
+        ],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "closed_cases_for",
+        "params": {
+          "card_ids": [
+            "C09582-K1"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T12:14:11Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "graph",
+      "ref": "query:closed_cases_for(card_id=C09582-K1)",
+      "signal": "card_prior_fraud",
+      "llr": 0.13
+    }
+  ],
+  "counts": {
+    "claims": 10,
+    "with_how": 10,
+    "by_kind": {
+      "evidence": 8,
+      "sar_sentence": 0,
+      "detector_hit": 2
+    }
+  },
+  "data_quality": [
+    {
+      "flag": "placeholder_device",
+      "record_ids": [
+        "3660350",
+        " |  |  | "
+      ],
+      "detail": "Device profile of transaction 3660350 uses placeholder values: empty id_30.",
+      "consequence": "The device profile is a generic value shared by many customers; it can neither link cards nor separate them.",
+      "caps_probability": false
+    },
+    {
+      "flag": "january_score",
+      "record_ids": [
+        "3660350"
+      ],
+      "detail": "Transaction 3660350 is from 2017-01-14; its risk_score 0.19 comes from the model that was not retrained for January.",
+      "consequence": "January risk_score comes from a model that was not retrained: it is clamped, a low score is not evidence of innocence and a high score alone cannot carry a verdict.",
+      "caps_probability": false
+    }
+  ]
+}

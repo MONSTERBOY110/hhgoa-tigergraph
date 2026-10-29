@@ -1,0 +1,202 @@
+{
+  "log": [
+    "gathered: 61 card txns, device='Windows |  | edge 16.0 | ' (on 160 cards), 0 closed-case hits",
+    "assess0: p=0.95 fraud groups={'device': -0.19, 'network': 1.6, 'customer': 1.5}"
+  ],
+  "tools": [
+    {
+      "step": 1,
+      "tool": "card_history",
+      "params": {
+        "card_id": "C09988-K1"
+      },
+      "ms": 233.2,
+      "n_rows": 61
+    },
+    {
+      "step": 2,
+      "tool": "customer_cards",
+      "params": {
+        "customer_id": "C09988"
+      },
+      "ms": 89.1,
+      "n_rows": 1
+    },
+    {
+      "step": 2,
+      "tool": "device_popularity",
+      "params": {
+        "device_key": "Windows |  | edge 16.0 | "
+      },
+      "ms": 88.0,
+      "n_rows": 1
+    },
+    {
+      "step": 3,
+      "tool": "closed_cases_for",
+      "params": {
+        "card_ids": "[C09988-K1]",
+        "customer_ids": "[]",
+        "txn_ids": "[3534820]",
+        "device_keys": "[]"
+      },
+      "ms": 84.8,
+      "n_rows": 0
+    },
+    {
+      "step": 3,
+      "tool": "holder_fraud_history",
+      "params": {
+        "holder_keys": "[]",
+        "before": "2016-12-12 01:39:08"
+      },
+      "ms": 0.2,
+      "n_rows": 0
+    },
+    {
+      "step": 4,
+      "tool": "amount_peers",
+      "params": {
+        "product_cd": "C",
+        "amt": "59.67",
+        "t0": "2016-12-11 22:39:08",
+        "days": "7",
+        "tol": "0.01",
+        "email": "hotmail.com",
+        "email_field": "P_emaildomain"
+      },
+      "ms": 103.4,
+      "n_rows": 16
+    },
+    {
+      "step": 10,
+      "tool": "vector_search_cases",
+      "params": {
+        "text": "confirmed fraud card_not_present_new_device: 13 other cards made online C purchases within 1% of $59.67 with P email hotmail.com within 7 days, and 7 of them share this transaction's time-delta feature D15 = 21, which points to one actor behind several card numbers Customer C09988 disputes transaction 3534820 ($59.67); in the bank's closed cases every customer-reported alert was confirmed fraud",
+        "k": "40"
+      },
+      "ms": 139.0,
+      "n_rows": 40
+    },
+    {
+      "step": 10,
+      "tool": "similar_cases",
+      "params": {
+        "pattern": "card_not_present_new_device",
+        "verdict": "fraud",
+        "product": "C",
+        "channel": "online",
+        "amt": "59.67",
+        "n": "1",
+        "new_dev": "True",
+        "anon": "False",
+        "k": "3",
+        "exclude": "[]"
+      },
+      "ms": 6.2,
+      "n_rows": 3
+    },
+    {
+      "step": 10,
+      "tool": "case_memory",
+      "params": {
+        "card_ids": "[C09988-K1,C00854-K2,C03047-K2,C05630-K1,C05793-K1,...]"
+      },
+      "ms": 516.4,
+      "n_rows": 0
+    },
+    {
+      "step": 10,
+      "tool": "similar_investigations",
+      "params": {
+        "text": "confirmed fraud card_not_present_new_device: 13 other cards made online C purchases within 1% of $59.67 with P email hotmail.com within 7 days, and 7 of them share this transaction's time-delta feature D15 = 21, which points to one actor behind several card numbers Customer C09988 disputes transaction 3534820 ($59.67); in the bank's closed cases every customer-reported alert was confirmed fraud",
+        "k": "3"
+      },
+      "ms": 101.9,
+      "n_rows": 3
+    },
+    {
+      "step": 12,
+      "tool": "write_case",
+      "params": {
+        "case_id": "HHG-016"
+      },
+      "ms": 2344.8,
+      "n_rows": 1
+    }
+  ],
+  "signals": [
+    {
+      "name": "customer_dispute",
+      "group": "customer",
+      "llr": 1.5,
+      "claim": "Customer C09988 disputes transaction 3534820 ($59.67); in the bank's closed cases every customer-reported alert was confirmed fraud",
+      "entity_ids": [
+        "3534820",
+        "C09988"
+      ],
+      "ref": "case_pack:trigger_text",
+      "source": "customer"
+    },
+    {
+      "name": "device_new_for_account",
+      "group": "device",
+      "llr": -0.19,
+      "claim": "Identity record marks the device (Windows |  | edge 16.0 | ) as New for this account; 31% of the card's earlier online purchases were also from New devices (in the closed cases a New device is not more common in fraud than in normal traffic for this product)",
+      "entity_ids": [
+        "3534820"
+      ],
+      "ref": "query:card_history(card_id=C09988-K1)",
+      "source": "graph"
+    },
+    {
+      "name": "fixed_amount_ring",
+      "group": "network",
+      "llr": 1.6,
+      "claim": "13 other cards made online C purchases within 1% of $59.67 with P email hotmail.com within 7 days, and 7 of them share this transaction's time-delta feature D15 = 21, which points to one actor behind several card numbers",
+      "entity_ids": [
+        "C00854-K2",
+        "C03047-K2",
+        "C05630-K1",
+        "C05793-K1",
+        "C06224-K2",
+        "C09251-K1",
+        "C12987-K1"
+      ],
+      "ref": "query:amount_peers(product=C, amt=59.67, email=hotmail.com, days=7)",
+      "source": "graph"
+    }
+  ],
+  "sources": {
+    "summary": "llm",
+    "sar": "llm"
+  },
+  "assess0": {
+    "p": 0.95,
+    "verdict": "fraud",
+    "fraud_groups": [
+      "network",
+      "customer"
+    ],
+    "legit_groups": [],
+    "by_group": {
+      "device": -0.19,
+      "network": 1.6,
+      "customer": 1.5
+    }
+  },
+  "assess1": {
+    "p": 0.95,
+    "verdict": "fraud",
+    "fraud_groups": [
+      "network",
+      "customer"
+    ],
+    "legit_groups": [],
+    "by_group": {
+      "device": -0.19,
+      "network": 1.6,
+      "customer": 1.5
+    }
+  }
+}

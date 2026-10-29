@@ -1,0 +1,130 @@
+{
+  "case_id": "HHF-002",
+  "case": {
+    "status": "escalated",
+    "verdict": "uncertain",
+    "fraud_probability": 0.41,
+    "pattern": "card_not_present_new_device",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3660127"
+    ],
+    "first_suspicious_txn_id": "3660127",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 770.78,
+    "evidence": [
+      {
+        "claim": "Profile fit: $770.78 is within the account's earlier range (largest $2,794.03 over 17 purchases)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C06220-K1)",
+        "entity_ids": [
+          "3660127"
+        ]
+      },
+      {
+        "claim": "Profile fit: the purchase hour (18:00) is one the account already uses (47% of its earlier purchases within an hour of it)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C06220-K1)",
+        "entity_ids": [
+          "3660127"
+        ]
+      },
+      {
+        "claim": "Connection through an anonymous proxy (id_23), not seen before on this account",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C06220-K1)",
+        "entity_ids": [
+          "3660127"
+        ]
+      },
+      {
+        "claim": "Identity record marks the device (SM-J700T1 |  |  | ) as New for this account; 57% of the card's earlier online purchases were also from New devices (in the closed cases a New device is not more common in fraud than in normal traffic for this product)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C06220-K1)",
+        "entity_ids": [
+          "3660127"
+        ]
+      },
+      {
+        "claim": "Policy applied, Fraud Policy R4: No reply within 24 hours: Recommend MONITOR_CARD and DECLINE_TRANSACTION for pending authorizations.",
+        "source": "document",
+        "ref": "document:README#POLICY-R4",
+        "entity_ids": []
+      },
+      {
+        "claim": "Pattern definition, Known fraud patterns: Card-not-present fraud from a new device: Same as above, with the identity record marking the device as New for this account, sometimes behind a proxy.",
+        "source": "document",
+        "ref": "document:README#PATTERN-3",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-0626",
+      "CC-2539",
+      "CC-2807",
+      "CC-4224",
+      "CC-2852",
+      "CC-4207"
+    ],
+    "summary": "Alert HHF-002 opened because an analyst asked for a review of transaction 3660127 and related activity on other cards ($770.78, product C, online, 2017-01-19 18:18) on card C06220-K1. The evidence is balanced (fraud probability 0.41): for fraud, little beyond the alert; against, Profile fit: $770.78 is within the account's earlier range (largest $2,794.03 over 17 purchases). The case stays under monitoring pending the cardholder. Evidence request: No reply from the customer within 24 hours.",
+    "written_to_graph": false,
+    "graph_case_id": ""
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 6,
+      "assumed_response": "No reply from the customer within 24 hours"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1 and §5: fraud probability 0.41 is below 0.70; verify with the cardholder before any block"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "§3a: requesting evidence opens a case"
+      }
+    ],
+    "final": [
+      {
+        "action": "DECLINE_TRANSACTION",
+        "route": "L1",
+        "reason": "R4: decline pending authorizations while unverified"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "§3a: the evidence request opened a case"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "R4: no reply within 24 hours, raise monitoring for 72 hours"
+      },
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R4 and R8: no reply, uncertain, and exposure over $500"
+      }
+    ],
+    "what_changed": "No reply within 24 hours, so R4 applies and the probability stays at 0.41: DECLINE_TRANSACTION, CREATE_CASE, MONITOR_CARD, ESCALATE_TO_ANALYST."
+  },
+  "sar": {
+    "file": false,
+    "reason": "§3a: the verdict is not fraud, so no suspicious activity report; the case record is sufficient",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "The customer did not reply within 24 hours and the remaining graph evidence cannot move the probability (0.41) across a decision threshold, so the case stays open under R4 monitoring.",
+  "tool_calls": 11,
+  "tokens": 0,
+  "latency_s": 0.25
+}

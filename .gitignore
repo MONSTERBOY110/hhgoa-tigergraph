@@ -12,3 +12,5 @@ __pycache__/
 .impeccable/
 /docs/
 /CLAUDE.md
+incidents/
+.vscode/

@@ -1,0 +1,163 @@
+{
+  "log": [
+    "gathered: 988 card txns, device=None (on 0 cards), 2 closed-case hits",
+    "assess0: p=0.27 legitimate groups={'score': -0.98}",
+    "requested customer_validation; simulated reply: confirm (p without customer 0.27)",
+    "assess1: p=0.03 legitimate"
+  ],
+  "tools": [
+    {
+      "step": 1,
+      "tool": "card_history",
+      "params": {
+        "card_id": "C05876-K2"
+      },
+      "ms": 820.9,
+      "n_rows": 988
+    },
+    {
+      "step": 2,
+      "tool": "customer_cards",
+      "params": {
+        "customer_id": "C05876"
+      },
+      "ms": 83.7,
+      "n_rows": 2
+    },
+    {
+      "step": 2,
+      "tool": "region_activity",
+      "params": {
+        "addr1": "494",
+        "t0": "2016-12-18 04:00:31",
+        "days": "3"
+      },
+      "ms": 110.4,
+      "n_rows": 58
+    },
+    {
+      "step": 3,
+      "tool": "closed_cases_for",
+      "params": {
+        "card_ids": "[C05876-K2]",
+        "customer_ids": "[]",
+        "txn_ids": "[3544871,3544886,3545086,3545223,3545599,...]",
+        "device_keys": "[]"
+      },
+      "ms": 87.3,
+      "n_rows": 2
+    },
+    {
+      "step": 3,
+      "tool": "holder_fraud_history",
+      "params": {
+        "holder_keys": "[12947|122.0|12,12947|123.0|151,12947|123.0|166,12947|126.0|167,12947|184.0|-80,...]",
+        "before": "2016-12-18 05:00:31"
+      },
+      "ms": 88.4,
+      "n_rows": 0
+    },
+    {
+      "step": 10,
+      "tool": "vector_search_cases",
+      "params": {
+        "text": "cleared false alarm: Customer confirmed the transaction when asked: Customer confirms they made the purchase",
+        "k": "40"
+      },
+      "ms": 167.1,
+      "n_rows": 40
+    },
+    {
+      "step": 10,
+      "tool": "similar_cases",
+      "params": {
+        "pattern": "none",
+        "verdict": "legitimate",
+        "product": "W",
+        "channel": "in_person",
+        "amt": "30.91",
+        "n": "1",
+        "new_dev": "False",
+        "anon": "False",
+        "k": "3",
+        "exclude": "[]"
+      },
+      "ms": 6.4,
+      "n_rows": 3
+    },
+    {
+      "step": 10,
+      "tool": "case_memory",
+      "params": {
+        "card_ids": "[C05876-K2]"
+      },
+      "ms": 82.3,
+      "n_rows": 0
+    },
+    {
+      "step": 10,
+      "tool": "similar_investigations",
+      "params": {
+        "text": "cleared false alarm: Customer confirmed the transaction when asked: Customer confirms they made the purchase",
+        "k": "3"
+      },
+      "ms": 100.6,
+      "n_rows": 3
+    },
+    {
+      "step": 12,
+      "tool": "write_case",
+      "params": {
+        "case_id": "HHG-012"
+      },
+      "ms": 1219.1,
+      "n_rows": 1
+    }
+  ],
+  "signals": [
+    {
+      "name": "risk_score_calibrated",
+      "group": "score",
+      "llr": -0.98,
+      "claim": "Model risk score 0.55. For product W transactions without an identity record in this score band, 12% were confirmed fraud in July to October (9,307 transactions), so the score is read at that calibrated rate, not at face value",
+      "entity_ids": [
+        "3553342"
+      ],
+      "ref": "document:weights.json#score_calibration",
+      "source": "document"
+    },
+    {
+      "name": "customer_confirms",
+      "group": "customer",
+      "llr": -3.0,
+      "claim": "Customer confirmed the transaction when asked: Customer confirms they made the purchase",
+      "entity_ids": [],
+      "ref": "evidence_request:1",
+      "source": "customer"
+    }
+  ],
+  "sources": {
+    "summary": "llm"
+  },
+  "assess0": {
+    "p": 0.27,
+    "verdict": "legitimate",
+    "fraud_groups": [],
+    "legit_groups": [],
+    "by_group": {
+      "score": -0.98
+    }
+  },
+  "assess1": {
+    "p": 0.03,
+    "verdict": "legitimate",
+    "fraud_groups": [],
+    "legit_groups": [
+      "customer"
+    ],
+    "by_group": {
+      "customer": -3.0,
+      "score": -0.98
+    }
+  }
+}

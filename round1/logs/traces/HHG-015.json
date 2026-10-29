@@ -1,0 +1,226 @@
+{
+  "log": [
+    "gathered: 79 card txns, device='Trident/7.0 | Windows 8.1 | ie 11.0 for desktop | 1680x1050' (on 8 cards), 3 closed-case hits",
+    "assess0: p=0.15 legitimate groups={'device': -0.34, 'score': -1.43}",
+    "requested customer_validation; simulated reply: confirm (p without customer 0.15)",
+    "assess1: p=0.03 legitimate"
+  ],
+  "tools": [
+    {
+      "step": 1,
+      "tool": "card_history",
+      "params": {
+        "card_id": "C03042-K1"
+      },
+      "ms": 313.2,
+      "n_rows": 79
+    },
+    {
+      "step": 2,
+      "tool": "customer_cards",
+      "params": {
+        "customer_id": "C03042"
+      },
+      "ms": 186.9,
+      "n_rows": 1
+    },
+    {
+      "step": 2,
+      "tool": "device_popularity",
+      "params": {
+        "device_key": "Trident/7.0 | Windows 8.1 | ie 11.0 for desktop | 1680x1050"
+      },
+      "ms": 101.5,
+      "n_rows": 1
+    },
+    {
+      "step": 2,
+      "tool": "device_neighbors",
+      "params": {
+        "device_key": "Trident/7.0 | Windows 8.1 | ie 11.0 for desktop | 1680x1050",
+        "t0": "2016-11-17 14:03:36",
+        "days": "30"
+      },
+      "ms": 115.1,
+      "n_rows": 2
+    },
+    {
+      "step": 2,
+      "tool": "device_txns",
+      "params": {
+        "device_key": "Trident/7.0 | Windows 8.1 | ie 11.0 for desktop | 1680x1050",
+        "t0": "2016-11-17 14:03:36",
+        "days": "30"
+      },
+      "ms": 200.7,
+      "n_rows": 2
+    },
+    {
+      "step": 3,
+      "tool": "closed_cases_for",
+      "params": {
+        "card_ids": "[C03042-K1]",
+        "customer_ids": "[]",
+        "txn_ids": "[3462385,3462387,3462404,3464869]",
+        "device_keys": "[Trident/7.0 | Windows 8.1 | ie 11.0 for desktop | 1680x1050]"
+      },
+      "ms": 193.1,
+      "n_rows": 3
+    },
+    {
+      "step": 3,
+      "tool": "holder_fraud_history",
+      "params": {
+        "holder_keys": "[15158|299.0|68,15158|327.0|138]",
+        "before": "2016-11-17 19:03:36"
+      },
+      "ms": 94.7,
+      "n_rows": 0
+    },
+    {
+      "step": 4,
+      "tool": "amount_peers",
+      "params": {
+        "product_cd": "R",
+        "amt": "599.94",
+        "t0": "2016-11-17 14:03:36",
+        "days": "7",
+        "tol": "0.01",
+        "email": "anonymous.com",
+        "email_field": "P_emaildomain"
+      },
+      "ms": 204.1,
+      "n_rows": 3
+    },
+    {
+      "step": 4,
+      "tool": "amount_peers",
+      "params": {
+        "product_cd": "R",
+        "amt": "599.94",
+        "t0": "2016-11-17 14:03:36",
+        "days": "7",
+        "tol": "0.01",
+        "email": "anonymous.com",
+        "email_field": "R_emaildomain"
+      },
+      "ms": 127.7,
+      "n_rows": 3
+    },
+    {
+      "step": 10,
+      "tool": "vector_search_cases",
+      "params": {
+        "text": "cleared false alarm: Customer confirmed the transaction when asked: Customer confirms they made the purchase",
+        "k": "40"
+      },
+      "ms": 192.3,
+      "n_rows": 40
+    },
+    {
+      "step": 10,
+      "tool": "similar_cases",
+      "params": {
+        "pattern": "none",
+        "verdict": "legitimate",
+        "product": "R",
+        "channel": "online",
+        "amt": "599.94",
+        "n": "1",
+        "new_dev": "True",
+        "anon": "False",
+        "k": "3",
+        "exclude": "[]"
+      },
+      "ms": 5.2,
+      "n_rows": 3
+    },
+    {
+      "step": 10,
+      "tool": "case_memory",
+      "params": {
+        "card_ids": "[C03042-K1]"
+      },
+      "ms": 89.7,
+      "n_rows": 0
+    },
+    {
+      "step": 10,
+      "tool": "similar_investigations",
+      "params": {
+        "text": "cleared false alarm: Customer confirmed the transaction when asked: Customer confirms they made the purchase",
+        "k": "3"
+      },
+      "ms": 109.5,
+      "n_rows": 3
+    },
+    {
+      "step": 12,
+      "tool": "write_case",
+      "params": {
+        "case_id": "HHG-015"
+      },
+      "ms": 11408.2,
+      "n_rows": 1
+    }
+  ],
+  "signals": [
+    {
+      "name": "risk_score_calibrated",
+      "group": "score",
+      "llr": -1.43,
+      "claim": "Model risk score 0.77. For product R transactions with an identity record in this score band, 5% were confirmed fraud in July to October (4,365 transactions), so the score is read at that calibrated rate, not at face value",
+      "entity_ids": [
+        "3464869"
+      ],
+      "ref": "document:weights.json#score_calibration",
+      "source": "document"
+    },
+    {
+      "name": "device_new_for_account",
+      "group": "device",
+      "llr": -0.34,
+      "claim": "Identity record marks the device (Trident/7.0 | Windows 8.1 | ie 11.0 for desktop | 1680x1050) as New for this account; 36% of the card's earlier online purchases were also from New devices (in the closed cases a New device is not more common in fraud than in normal traffic for this product)",
+      "entity_ids": [
+        "3464869"
+      ],
+      "ref": "query:card_history(card_id=C03042-K1)",
+      "source": "graph"
+    },
+    {
+      "name": "customer_confirms",
+      "group": "customer",
+      "llr": -3.0,
+      "claim": "Customer confirmed the transaction when asked: Customer confirms they made the purchase",
+      "entity_ids": [],
+      "ref": "evidence_request:1",
+      "source": "customer"
+    }
+  ],
+  "sources": {
+    "summary": "llm"
+  },
+  "assess0": {
+    "p": 0.15,
+    "verdict": "legitimate",
+    "fraud_groups": [],
+    "legit_groups": [],
+    "by_group": {
+      "device": -0.34,
+      "score": -1.43
+    }
+  },
+  "assess1": {
+    "p": 0.03,
+    "verdict": "legitimate",
+    "fraud_groups": [],
+    "legit_groups": [
+      "customer"
+    ],
+    "by_group": {
+      "device": -0.34,
+      "customer": -3.0,
+      "score": -1.43
+    }
+  }
+}

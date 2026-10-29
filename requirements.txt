@@ -10,3 +10,6 @@ rich
 typer
 numpy
 pytest
+fastapi
+uvicorn
+httpx

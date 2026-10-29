@@ -1,0 +1,139 @@
+{
+  "case_id": "HHF-018",
+  "case": {
+    "status": "escalated",
+    "verdict": "uncertain",
+    "fraud_probability": 0.27,
+    "pattern": "card_not_present_fraud",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3612011"
+    ],
+    "first_suspicious_txn_id": "3612011",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 34.22,
+    "evidence": [
+      {
+        "claim": "Profile fit: product H, purchaser email aol.com and the amount $34.22 all match card C02753-K1 before the last 7 days (6 earlier H purchases, 5 with this email, largest earlier purchase $3,162.97)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C02753-K1)",
+        "entity_ids": [
+          "3612011"
+        ]
+      },
+      {
+        "claim": "Card C02753-K1 already has 2 confirmed-fraud closed case(s) (CC-1739, CC-4010). The account key is not usable in January, so the precedent is read at card level, where it is weaker: on cards of this size an earlier confirmed case made a new alert about 3.9 times as likely to be fraud",
+        "source": "graph",
+        "ref": "query:closed_cases_for(card_id=C02753-K1)",
+        "entity_ids": [
+          "CC-1739",
+          "CC-4010"
+        ]
+      },
+      {
+        "claim": "The anonymous proxy on this purchase is not new: purchases on card C02753-K1 more than 7 days earlier came through one too",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C02753-K1)",
+        "entity_ids": [
+          "3612011"
+        ]
+      },
+      {
+        "claim": "Profile fit: the purchase hour (15:00) is one the account already uses (23% of its earlier purchases within an hour of it)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C02753-K1)",
+        "entity_ids": [
+          "3612011"
+        ]
+      },
+      {
+        "claim": "The alert states a model score of 0.80, but transaction 3612011 carries 0.03 in the bank's records; the recorded value is used and the stated one is treated as unverified alert text",
+        "source": "graph",
+        "ref": "query:txn_detail(txn_id=3612011)",
+        "entity_ids": [
+          "3612011"
+        ]
+      },
+      {
+        "claim": "Policy applied, Fraud Policy R4: No reply within 24 hours: Recommend MONITOR_CARD and DECLINE_TRANSACTION for pending authorizations.",
+        "source": "document",
+        "ref": "document:README#POLICY-R4",
+        "entity_ids": []
+      },
+      {
+        "claim": "Pattern definition, Known fraud patterns: Card-not-present fraud: The number is used online without the card.",
+        "source": "document",
+        "ref": "document:README#PATTERN-2",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-1739",
+      "CC-4010",
+      "CC-0791",
+      "CC-3497",
+      "CC-0340",
+      "CC-3098"
+    ],
+    "summary": "Alert HHF-018 opened because the bank's model flagged transaction 3612011 (recorded score 0.03) ($34.22, product H, online, 2017-01-01 15:29) on card C02753-K1. The evidence is balanced (fraud probability 0.27): for fraud, Card C02753-K1 already has 2 confirmed-fraud closed case(s) (CC-1739, CC-4010). The account key is not usable in January, so the precedent is read at card level, where it is weaker: on cards of this size an earlier confirmed case made a new alert about 3.9 times as likely to be fraud; against, Profile fit: product H, purchaser email aol.com and the amount $34.22 all match card C02753-K1 before the last 7 days (6 earlier H purchases, 5 with this email, largest earlier purchase $3,162.97); The anonymous proxy on this purchase is not new: purchases on card C02753-K1 more than 7 days earlier came through one too. The case stays under monitoring pending the cardholder. Evidence request: No reply from the customer within 24 hours.",
+    "written_to_graph": false,
+    "graph_case_id": ""
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 6,
+      "assumed_response": "No reply from the customer within 24 hours"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1 and §5: fraud probability 0.27 is below 0.70; verify with the cardholder before any block"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "§3a: requesting evidence opens a case"
+      }
+    ],
+    "final": [
+      {
+        "action": "DECLINE_TRANSACTION",
+        "route": "L1",
+        "reason": "R4: decline pending authorizations while unverified"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "§3a: the evidence request opened a case"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "R4: no reply within 24 hours, raise monitoring for 72 hours"
+      },
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R8: evidence conflicts"
+      }
+    ],
+    "what_changed": "No reply within 24 hours, so R4 applies and the probability stays at 0.27: DECLINE_TRANSACTION, CREATE_CASE, MONITOR_CARD, ESCALATE_TO_ANALYST."
+  },
+  "sar": {
+    "file": false,
+    "reason": "§3a: the verdict is not fraud, so no suspicious activity report; the case record is sufficient",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "The customer did not reply within 24 hours and the remaining graph evidence cannot move the probability (0.27) across a decision threshold, so the case stays open under R4 monitoring.",
+  "tool_calls": 10,
+  "tokens": 0,
+  "latency_s": 0.24
+}

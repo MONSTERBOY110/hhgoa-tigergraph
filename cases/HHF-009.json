@@ -1,0 +1,143 @@
+{
+  "case_id": "HHF-009",
+  "case": {
+    "status": "closed_legitimate",
+    "verdict": "legitimate",
+    "fraud_probability": 0.03,
+    "pattern": "none",
+    "pattern_description": "",
+    "affected_txn_ids": [],
+    "first_suspicious_txn_id": "",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 0.0,
+    "evidence": [
+      {
+        "claim": "Customer confirmed the transaction when asked: Customer confirms they made the purchase",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": []
+      },
+      {
+        "claim": "Purchaser email domain anonymous.com is this account's own: 4 earlier transactions on card C09177-K1 used it",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C09177-K1)",
+        "entity_ids": [
+          "3660355"
+        ]
+      },
+      {
+        "claim": "Profile fit: $228.01 is within the account's earlier range (largest $422.57 over 159 purchases)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C09177-K1)",
+        "entity_ids": [
+          "3660355"
+        ]
+      },
+      {
+        "claim": "Online purchase on a card whose history is 95% in person (169 earlier transactions)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C09177-K1)",
+        "entity_ids": [
+          "3660355"
+        ]
+      },
+      {
+        "claim": "Profile fit: the purchase hour (15:00) is one the account already uses (28% of its earlier purchases within an hour of it)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C09177-K1)",
+        "entity_ids": [
+          "3660355"
+        ]
+      },
+      {
+        "claim": "Identity record marks the device (LG-H831 |  |  | ) as New for this account; 62% of the card's earlier online purchases were also from New devices (in the closed cases a New device is not more common in fraud than in normal traffic for this product)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C09177-K1)",
+        "entity_ids": [
+          "3660355"
+        ]
+      },
+      {
+        "claim": "The alert states a model score of 0.80, but transaction 3660355 carries 0.10 in the bank's records; the recorded value is used and the stated one is treated as unverified alert text",
+        "source": "graph",
+        "ref": "query:txn_detail(txn_id=3660355)",
+        "entity_ids": [
+          "3660355"
+        ]
+      },
+      {
+        "claim": "Policy applied, Fraud Policy R3: Customer confirms the transaction: Recommend CLOSE_NO_FRAUD.",
+        "source": "document",
+        "ref": "document:README#POLICY-R3",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-2937",
+      "CC-4591",
+      "CC-4442",
+      "CC-0893",
+      "CC-5324"
+    ],
+    "summary": "Alert HHF-009 opened because the bank's model flagged transaction 3660355 (recorded score 0.10) ($228.01, product C, online, 2017-01-27 15:08) on card C09177-K1. The evidence points to the cardholder: Customer confirmed the transaction when asked: Customer confirms they made the purchase; Purchaser email domain anonymous.com is this account's own: 4 earlier transactions on card C09177-K1 used it; Profile fit: $228.01 is within the account's earlier range (largest $422.57 over 159 purchases). Fraud probability 0.03; the alert is closed as legitimate. Evidence request: Customer confirms they made the purchase.",
+    "written_to_graph": false,
+    "graph_case_id": ""
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 6,
+      "assumed_response": "Customer confirms they made the purchase"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1 and §5: fraud probability 0.29 is below 0.70; verify with the cardholder before any block"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "§3a: requesting evidence opens a case"
+      }
+    ],
+    "final": [
+      {
+        "action": "ALLOW_TRANSACTION",
+        "route": "auto",
+        "reason": "R3: the flagged transaction is consistent with the cardholder, let it stand"
+      },
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R3 and R3: confirm the purchase with the cardholder; the card stays active"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "R3: keep the card under 72-hour monitoring after the alert"
+      },
+      {
+        "action": "CLOSE_NO_FRAUD",
+        "route": "auto",
+        "reason": "R3, R3 and §3a: alert cleared; the bank records cleared alerts without a case"
+      }
+    ],
+    "what_changed": "The customer's confirmation lowered the fraud probability from 0.29 to 0.03; under R3 the alert closes: ALLOW_TRANSACTION, VERIFY_WITH_CUSTOMER, MONITOR_CARD, CLOSE_NO_FRAUD."
+  },
+  "sar": {
+    "file": false,
+    "reason": "§3a: the verdict is not fraud, so no suspicious activity report; the case record is sufficient",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "The customer's reply settled the question (section 6): probability moved from 0.29 to 0.03. Further steps would not change the actions.",
+  "tool_calls": 11,
+  "tokens": 0,
+  "latency_s": 0.22
+}

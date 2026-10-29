@@ -21,7 +21,14 @@ PATTERN_WORDS = {
 
 
 def pattern_description(facts: dict) -> str:
-    kind = facts.get("undocumented_kind")
+    kind = facts.get("undocumented_kind") or ""
+    g = facts.get("grown") or {}
+    if kind.startswith("grown:") and g:
+        return (f"Several unrelated customers' cards paid the same {g.get('label', 'entity')} ({g.get('value')}) in a short spike that "
+                f"the bank had rarely seen before; this case card is one of {facts.get('n_connected', 0) + 1} cards in the spike. "
+                "It matches none of the documented typologies: each card's own purchases look ordinary, and the abuse only shows "
+                "across customers. It was found by a detector the agent discovered in the closed cases and an L2 manager approved "
+                f"(approval {g.get('approval', '')}), which then fired on this alert.")
     if kind == "sub_threshold":
         thr = facts["threshold"] or 500
         return (f"A stolen card number is cashed out through a tight run of online purchases, each priced just under ${thr:,.0f}, "
@@ -88,7 +95,9 @@ def write_all(llm: Llm, facts: dict, want_sar: bool, undocumented: bool) -> dict
         facts, tmpl, check=lambda t: 2 <= sentences(t) <= 6)
     out["summary"], out["sources"]["summary"] = text, src
     if want_sar:
+        from kavach.attest import check_llm_sar, cite_sentences, sar_sentences_template
         tmpl = sar_template(facts)
+        tmpl_s = sar_sentences_template(facts)   # the template, sentence by sentence, with the ids each sentence cites
         sar_facts = {k: v for k, v in facts.items() if k not in ("top_legit", "headline", "rule", "trigger")}
         text, src = llm.write(
             "Write the narrative of a Suspicious Activity Report in 7 to 11 sentences, FinCEN style, so it stands on its own: "
@@ -98,9 +107,10 @@ def write_all(llm: Llm, facts: dict, want_sar: bool, undocumented: bool) -> dict
             "customer_statement. Do not mention risk scores, internal policy rule numbers or policy thresholds. Past tense, factual, no speculation beyond the facts, "
             "no bullet points. Use identifiers exactly as given."
             + (" The pattern is undocumented: say it matches none of the documented fraud typologies." if undocumented else ""),
-            sar_facts, tmpl, check=lambda t: 6 <= sentences(t) <= 12 and (not BAD_SAR.search(t) or (
+            sar_facts, tmpl, check=lambda t: 6 <= sentences(t) <= 12 and check_llm_sar(t, tmpl_s) and (not BAD_SAR.search(t) or (
                 facts.get("undocumented_kind") == "sub_threshold" and not re.search(r"\b(customer|cardholder)\b[^.]{0,60}\b(used|made)\b(?![^.]{0,30}\bnot\b)", t, re.I))))
         out["sar"], out["sources"]["sar"] = text, src
+        out["sar_sentences"] = tmpl_s if src == "template" else cite_sentences(text, tmpl_s)
     if undocumented:
         tmpl = pattern_description(facts)
         text, src = llm.write(

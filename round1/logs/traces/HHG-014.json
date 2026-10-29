@@ -1,0 +1,262 @@
+{
+  "log": [
+    "gathered: 85 card txns, device='SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080' (on 52 cards), 4 closed-case hits",
+    "assess0: p=0.97 fraud groups={'sequence': 0.3, 'device': 0.010000000000000009, 'network': 2.8, 'history': 2.2, 'score': -1.69}"
+  ],
+  "tools": [
+    {
+      "step": 1,
+      "tool": "card_history",
+      "params": {
+        "card_id": "C13487-K1"
+      },
+      "ms": 318.3,
+      "n_rows": 85
+    },
+    {
+      "step": 2,
+      "tool": "customer_cards",
+      "params": {
+        "customer_id": "C13487"
+      },
+      "ms": 113.5,
+      "n_rows": 1
+    },
+    {
+      "step": 2,
+      "tool": "device_popularity",
+      "params": {
+        "device_key": "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080"
+      },
+      "ms": 148.8,
+      "n_rows": 1
+    },
+    {
+      "step": 2,
+      "tool": "device_neighbors",
+      "params": {
+        "device_key": "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080",
+        "t0": "2016-11-22 16:11:00",
+        "days": "30"
+      },
+      "ms": 102.8,
+      "n_rows": 28
+    },
+    {
+      "step": 2,
+      "tool": "device_txns",
+      "params": {
+        "device_key": "SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080",
+        "t0": "2016-11-22 16:11:00",
+        "days": "30"
+      },
+      "ms": 111.8,
+      "n_rows": 60
+    },
+    {
+      "step": 3,
+      "tool": "closed_cases_for",
+      "params": {
+        "card_ids": "[C13487-K1]",
+        "customer_ids": "[]",
+        "txn_ids": "[3477218,3478561,3478886]",
+        "device_keys": "[SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080]"
+      },
+      "ms": 93.6,
+      "n_rows": 4
+    },
+    {
+      "step": 3,
+      "tool": "holder_fraud_history",
+      "params": {
+        "holder_keys": "[13250|191.0|-350,13250|191.0|136,13250|191.0|143,13250|272.0|-1]",
+        "before": "2016-11-22 20:11:00"
+      },
+      "ms": 87.5,
+      "n_rows": 0
+    },
+    {
+      "step": 10,
+      "tool": "vector_search_cases",
+      "params": {
+        "text": "confirmed fraud undocumented: Device profile SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080 (seen on only 52 cards ever) made 60 purchases on 28 different customers' cards within 19 days, 100% marked New and 100% behind an anonymous proxy Device profile SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080 appears in 4 confirmed-fraud closed case(s) (CC-2649, CC-2971, CC-2985, CC-3035), labelled undocumented by the analysts",
+        "k": "40"
+      },
+      "ms": 257.3,
+      "n_rows": 40
+    },
+    {
+      "step": 10,
+      "tool": "similar_cases",
+      "params": {
+        "pattern": "undocumented",
+        "verdict": "fraud",
+        "product": "C",
+        "channel": "online",
+        "amt": "439.61",
+        "n": "3",
+        "new_dev": "True",
+        "anon": "True",
+        "k": "3",
+        "exclude": "[CC-2649,CC-2971,CC-2985,CC-3035]"
+      },
+      "ms": 7.9,
+      "n_rows": 3
+    },
+    {
+      "step": 10,
+      "tool": "vector_search_docs",
+      "params": {
+        "text": "confirmed fraud undocumented: Device profile SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080 (seen on only 52 cards ever) made 60 purchases on 28 different customers' cards within 19 days, 100% marked New and 100% behind an anonymous proxy Device profile SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080 appears in 4 confirmed-fraud closed case(s) (CC-2649, CC-2971, CC-2985, CC-3035), labelled undocumented by the analysts",
+        "k": "19"
+      },
+      "ms": 249.5,
+      "n_rows": 19
+    },
+    {
+      "step": 10,
+      "tool": "case_memory",
+      "params": {
+        "card_ids": "[C13487-K1,C01289-K1,C01996-K2,C02910-K1,C02975-K1,...]"
+      },
+      "ms": 559.0,
+      "n_rows": 6
+    },
+    {
+      "step": 10,
+      "tool": "similar_investigations",
+      "params": {
+        "text": "confirmed fraud undocumented: Device profile SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080 (seen on only 52 cards ever) made 60 purchases on 28 different customers' cards within 19 days, 100% marked New and 100% behind an anonymous proxy Device profile SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080 appears in 4 confirmed-fraud closed case(s) (CC-2649, CC-2971, CC-2985, CC-3035), labelled undocumented by the analysts",
+        "k": "3"
+      },
+      "ms": 303.3,
+      "n_rows": 3
+    },
+    {
+      "step": 12,
+      "tool": "write_case",
+      "params": {
+        "case_id": "HHG-014"
+      },
+      "ms": 5319.7,
+      "n_rows": 1
+    }
+  ],
+  "signals": [
+    {
+      "name": "risk_score_calibrated",
+      "group": "score",
+      "llr": -1.69,
+      "claim": "Model risk score 0.05. For product C transactions with an identity record in this score band, 3% were confirmed fraud in July to October (27,303 transactions), so the score is read at that calibrated rate, not at face value",
+      "entity_ids": [
+        "3478561"
+      ],
+      "ref": "document:weights.json#score_calibration",
+      "source": "document"
+    },
+    {
+      "name": "online_on_in_person_card",
+      "group": "sequence",
+      "llr": 0.3,
+      "claim": "Online purchase on a card whose history is 97% in person (71 earlier transactions)",
+      "entity_ids": [
+        "3478561"
+      ],
+      "ref": "query:card_history(card_id=C13487-K1)",
+      "source": "graph"
+    },
+    {
+      "name": "device_new_for_account",
+      "group": "device",
+      "llr": -0.19,
+      "claim": "Identity record marks the device (SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080) as New for this account (in the closed cases a New device is not more common in fraud than in normal traffic for this product)",
+      "entity_ids": [
+        "3478561"
+      ],
+      "ref": "query:card_history(card_id=C13487-K1)",
+      "source": "graph"
+    },
+    {
+      "name": "anonymous_proxy",
+      "group": "device",
+      "llr": 0.2,
+      "claim": "Connection through an anonymous proxy (id_23)",
+      "entity_ids": [
+        "3478561"
+      ],
+      "ref": "query:card_history(card_id=C13487-K1)",
+      "source": "graph"
+    },
+    {
+      "name": "scripted_device_ring",
+      "group": "network",
+      "llr": 2.8,
+      "claim": "Device profile SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080 (seen on only 52 cards ever) made 60 purchases on 28 different customers' cards within 19 days, 100% marked New and 100% behind an anonymous proxy",
+      "entity_ids": [
+        "C01289-K1",
+        "C01996-K2",
+        "C02910-K1",
+        "C02975-K1",
+        "C03676-K2",
+        "C04108-K2",
+        "C04274-K1",
+        "C05448-K2",
+        "C06031-K2",
+        "C06650-K2"
+      ],
+      "ref": "query:device_neighbors(device_key=SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080, days=30)",
+      "source": "graph"
+    },
+    {
+      "name": "device_in_confirmed_cases",
+      "group": "history",
+      "llr": 2.2,
+      "claim": "Device profile SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080 appears in 4 confirmed-fraud closed case(s) (CC-2649, CC-2971, CC-2985, CC-3035), labelled undocumented by the analysts",
+      "entity_ids": [
+        "CC-2649",
+        "CC-2971",
+        "CC-2985",
+        "CC-3035"
+      ],
+      "ref": "query:closed_cases_for(card_id=C13487-K1)",
+      "source": "graph"
+    }
+  ],
+  "sources": {
+    "summary": "llm",
+    "sar": "llm",
+    "pattern_description": "llm"
+  },
+  "assess0": {
+    "p": 0.97,
+    "verdict": "fraud",
+    "fraud_groups": [
+      "network",
+      "history"
+    ],
+    "legit_groups": [],
+    "by_group": {
+      "sequence": 0.3,
+      "device": 0.010000000000000009,
+      "network": 2.8,
+      "history": 2.2,
+      "score": -1.69
+    }
+  },
+  "assess1": {
+    "p": 0.97,
+    "verdict": "fraud",
+    "fraud_groups": [
+      "network",
+      "history"
+    ],
+    "legit_groups": [],
+    "by_group": {
+      "sequence": 0.3,
+      "device": 0.010000000000000009,
+      "network": 2.8,
+      "history": 2.2,
+      "score": -1.69
+    }
+  }
+}

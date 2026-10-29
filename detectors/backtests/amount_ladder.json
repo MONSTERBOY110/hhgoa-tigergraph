@@ -1,0 +1,788 @@
+{
+ "name": "amount_ladder",
+ "run_at": "2026-10-29T18:47:51",
+ "duck_path": "kavach_r2.duckdb",
+ "dataset_version": "eb6caf5672c6",
+ "n_closed": 5585,
+ "n_fraud": 4675,
+ "n_cleared": 910,
+ "closed_anchor_missing": [],
+ "n_population": 200000,
+ "population": "reservoir sample (seed 42) of transactions before 2017-01-01 not in any confirmed-fraud closed case",
+ "grid": {
+  "min_n": [
+   4
+  ],
+  "min_steps": [
+   2,
+   3
+  ],
+  "ratio": [
+   1.5,
+   1.8
+  ],
+  "min_max": [
+   500.0,
+   1000.0
+  ],
+  "days": [
+   7,
+   14
+  ]
+ },
+ "chosen": {
+  "params": {
+   "min_n": 4,
+   "min_steps": 2,
+   "ratio": 1.8,
+   "min_max": 500.0,
+   "days": 7
+  },
+  "support": 3,
+  "cleared_hits": 3,
+  "pop_hits": 54,
+  "p_fraud": 0.000642,
+  "p_cleared": 0.003297,
+  "p_pop": 0.00027,
+  "lift": 2.377,
+  "lift_ci95": [
+   0.74,
+   7.6
+  ],
+  "lift_note": "",
+  "precision_closed": 0.5,
+  "status": "weak",
+  "reason": "no grid point reaches support >= 15 with cleared hits <= 3; kept the best weak point (support 3, lift 2.38); runtime LLR capped at 0.5",
+  "llr": 0.43,
+  "grid_index": 4
+ },
+ "hits": {
+  "fraud": [
+   {
+    "case_id": "CC-1532",
+    "txn": "3127881",
+    "card": "C08374-K1",
+    "matched_txns": [
+     "3120609",
+     "3127881",
+     "3134243",
+     "3134279"
+    ],
+    "matched_cards": [],
+    "n": 4
+   },
+   {
+    "case_id": "CC-1813",
+    "txn": "3143481",
+    "card": "C09274-K1",
+    "matched_txns": [
+     "3143481",
+     "3149427",
+     "3158429",
+     "3158469"
+    ],
+    "matched_cards": [],
+    "n": 4
+   },
+   {
+    "case_id": "CC-1912",
+    "txn": "3158429",
+    "card": "C09274-K1",
+    "matched_txns": [
+     "3143481",
+     "3149427",
+     "3158429",
+     "3158469"
+    ],
+    "matched_cards": [],
+    "n": 4
+   }
+  ],
+  "cleared": [
+   {
+    "case_id": "CC-0987",
+    "txn": "3085769",
+    "card": "C05992-K1",
+    "matched_txns": [
+     "3071032",
+     "3082389",
+     "3085732",
+     "3085769"
+    ],
+    "matched_cards": [],
+    "n": 4
+   },
+   {
+    "case_id": "CC-1065",
+    "txn": "3090551",
+    "card": "C01137-K1",
+    "matched_txns": [
+     "3064769",
+     "3088973",
+     "3090512",
+     "3090551"
+    ],
+    "matched_cards": [],
+    "n": 4
+   },
+   {
+    "case_id": "CC-1295",
+    "txn": "3111449",
+    "card": "C06897-K1",
+    "matched_txns": [
+     "3105433",
+     "3111449",
+     "3112510",
+     "3112687"
+    ],
+    "matched_cards": [],
+    "n": 4
+   }
+  ],
+  "population_sample": [
+   {
+    "txn": "3011356",
+    "matched_txns": [
+     "3011356",
+     "3013116",
+     "3013122",
+     "3013217",
+     "3013256",
+     "3013259"
+    ],
+    "matched_cards": []
+   },
+   {
+    "txn": "3012884",
+    "matched_txns": [
+     "3012884",
+     "3014792",
+     "3014868",
+     "3014883"
+    ],
+    "matched_cards": []
+   },
+   {
+    "txn": "3013116",
+    "matched_txns": [
+     "3011356",
+     "3013116",
+     "3013122",
+     "3013217",
+     "3013256",
+     "3013259"
+    ],
+    "matched_cards": []
+   },
+   {
+    "txn": "3013256",
+    "matched_txns": [
+     "3011356",
+     "3013116",
+     "3013122",
+     "3013217",
+     "3013256",
+     "3013259"
+    ],
+    "matched_cards": []
+   },
+   {
+    "txn": "3013259",
+    "matched_txns": [
+     "3011356",
+     "3013116",
+     "3013122",
+     "3013217",
+     "3013256",
+     "3013259"
+    ],
+    "matched_cards": []
+   },
+   {
+    "txn": "3014792",
+    "matched_txns": [
+     "3012884",
+     "3014792",
+     "3014868",
+     "3014883"
+    ],
+    "matched_cards": []
+   },
+   {
+    "txn": "3014868",
+    "matched_txns": [
+     "3012884",
+     "3014792",
+     "3014868",
+     "3014883"
+    ],
+    "matched_cards": []
+   },
+   {
+    "txn": "3019454",
+    "matched_txns": [
+     "3019454",
+     "3020029",
+     "3021647",
+     "3021668"
+    ],
+    "matched_cards": []
+   },
+   {
+    "txn": "3021668",
+    "matched_txns": [
+     "3019454",
+     "3020029",
+     "3021647",
+     "3021668"
+    ],
+    "matched_cards": []
+   },
+   {
+    "txn": "3022342",
+    "matched_txns": [
+     "3022342",
+     "3022710",
+     "3024070",
+     "3024117",
+     "3024327"
+    ],
+    "matched_cards": []
+   },
+   {
+    "txn": "3027247",
+    "matched_txns": [
+     "3027056",
+     "3027247",
+     "3027841",
+     "3027944"
+    ],
+    "matched_cards": []
+   },
+   {
+    "txn": "3044952",
+    "matched_txns": [
+     "3044952",
+     "3045122",
+     "3045151",
+     "3045208"
+    ],
+    "matched_cards": []
+   },
+   {
+    "txn": "3045122",
+    "matched_txns": [
+     "3044952",
+     "3045122",
+     "3045151",
+     "3045208"
+    ],
+    "matched_cards": []
+   },
+   {
+    "txn": "3046420",
+    "matched_txns": [
+     "3046420",
+     "3046730",
+     "3047211",
+     "3047253",
+     "3047370"
+    ],
+    "matched_cards": []
+   },
+   {
+    "txn": "3047211",
+    "matched_txns": [
+     "3046420",
+     "3046730",
+     "3047211",
+     "3047253",
+     "3047370"
+    ],
+    "matched_cards": []
+   },
+   {
+    "txn": "3047253",
+    "matched_txns": [
+     "3046420",
+     "3046730",
+     "3047211",
+     "3047253",
+     "3047370"
+    ],
+    "matched_cards": []
+   },
+   {
+    "txn": "3064279",
+    "matched_txns": [
+     "3038575",
+     "3042908",
+     "3060199",
+     "3063939",
+     "3064175",
+     "3064273",
+     "3064279",
+     "3064326",
+     "3064329",
+     "3064614",
+     "3064757",
+     "3064877"
+    ],
+    "matched_cards": []
+   },
+   {
+    "txn": "3064329",
+    "matched_txns": [
+     "3038575",
+     "3042908",
+     "3060199",
+     "3063939",
+     "3064175",
+     "3064273",
+     "3064279",
+     "3064326",
+     "3064329",
+     "3064614",
+     "3064757",
+     "3064877"
+    ],
+    "matched_cards": []
+   },
+   {
+    "txn": "3064877",
+    "matched_txns": [
+     "3038575",
+     "3042908",
+     "3060199",
+     "3063939",
+     "3064175",
+     "3064273",
+     "3064279",
+     "3064326",
+     "3064329",
+     "3064614",
+     "3064757",
+     "3064877"
+    ],
+    "matched_cards": []
+   },
+   {
+    "txn": "3073078",
+    "matched_txns": [
+     "3073044",
+     "3073078",
+     "3073229",
+     "3073277"
+    ],
+    "matched_cards": []
+   },
+   {
+    "txn": "3073277",
+    "matched_txns": [
+     "3073044",
+     "3073078",
+     "3073229",
+     "3073277"
+    ],
+    "matched_cards": []
+   },
+   {
+    "txn": "3077322",
+    "matched_txns": [
+     "3077322",
+     "3077340",
+     "3077365",
+     "3077413"
+    ],
+    "matched_cards": []
+   },
+   {
+    "txn": "3077365",
+    "matched_txns": [
+     "3077322",
+     "3077340",
+     "3077365",
+     "3077413"
+    ],
+    "matched_cards": []
+   },
+   {
+    "txn": "3082389",
+    "matched_txns": [
+     "3071032",
+     "3082389",
+     "3085732",
+     "3085769"
+    ],
+    "matched_cards": []
+   },
+   {
+    "txn": "3082903",
+    "matched_txns": [
+     "3082903",
+     "3083001",
+     "3083146",
+     "3083164",
+     "3083175"
+    ],
+    "matched_cards": []
+   }
+  ]
+ },
+ "results": [
+  {
+   "i": 0,
+   "params": {
+    "min_n": 4,
+    "min_steps": 2,
+    "ratio": 1.5,
+    "min_max": 500.0,
+    "days": 7
+   },
+   "support": 3,
+   "cleared_hits": 4,
+   "pop_hits": 80,
+   "p_fraud": 0.000642,
+   "p_cleared": 0.004396,
+   "p_pop": 0.0004,
+   "lift": 1.604,
+   "lift_ci95": [
+    0.51,
+    5.08
+   ],
+   "lift_note": "",
+   "precision_closed": 0.429
+  },
+  {
+   "i": 1,
+   "params": {
+    "min_n": 4,
+    "min_steps": 2,
+    "ratio": 1.5,
+    "min_max": 500.0,
+    "days": 14
+   },
+   "support": 3,
+   "cleared_hits": 4,
+   "pop_hits": 85,
+   "p_fraud": 0.000642,
+   "p_cleared": 0.004396,
+   "p_pop": 0.000425,
+   "lift": 1.51,
+   "lift_ci95": [
+    0.48,
+    4.77
+   ],
+   "lift_note": "",
+   "precision_closed": 0.429
+  },
+  {
+   "i": 2,
+   "params": {
+    "min_n": 4,
+    "min_steps": 2,
+    "ratio": 1.5,
+    "min_max": 1000.0,
+    "days": 7
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 10,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 5e-05,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 3,
+   "params": {
+    "min_n": 4,
+    "min_steps": 2,
+    "ratio": 1.5,
+    "min_max": 1000.0,
+    "days": 14
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 10,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 5e-05,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 4,
+   "params": {
+    "min_n": 4,
+    "min_steps": 2,
+    "ratio": 1.8,
+    "min_max": 500.0,
+    "days": 7
+   },
+   "support": 3,
+   "cleared_hits": 3,
+   "pop_hits": 54,
+   "p_fraud": 0.000642,
+   "p_cleared": 0.003297,
+   "p_pop": 0.00027,
+   "lift": 2.377,
+   "lift_ci95": [
+    0.74,
+    7.6
+   ],
+   "lift_note": "",
+   "precision_closed": 0.5
+  },
+  {
+   "i": 5,
+   "params": {
+    "min_n": 4,
+    "min_steps": 2,
+    "ratio": 1.8,
+    "min_max": 500.0,
+    "days": 14
+   },
+   "support": 3,
+   "cleared_hits": 3,
+   "pop_hits": 59,
+   "p_fraud": 0.000642,
+   "p_cleared": 0.003297,
+   "p_pop": 0.000295,
+   "lift": 2.175,
+   "lift_ci95": [
+    0.68,
+    6.94
+   ],
+   "lift_note": "",
+   "precision_closed": 0.5
+  },
+  {
+   "i": 6,
+   "params": {
+    "min_n": 4,
+    "min_steps": 2,
+    "ratio": 1.8,
+    "min_max": 1000.0,
+    "days": 7
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 7,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 3.5e-05,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 7,
+   "params": {
+    "min_n": 4,
+    "min_steps": 2,
+    "ratio": 1.8,
+    "min_max": 1000.0,
+    "days": 14
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 7,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 3.5e-05,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 8,
+   "params": {
+    "min_n": 4,
+    "min_steps": 3,
+    "ratio": 1.5,
+    "min_max": 500.0,
+    "days": 7
+   },
+   "support": 0,
+   "cleared_hits": 1,
+   "pop_hits": 15,
+   "p_fraud": 0.0,
+   "p_cleared": 0.001099,
+   "p_pop": 7.5e-05,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": 0.0
+  },
+  {
+   "i": 9,
+   "params": {
+    "min_n": 4,
+    "min_steps": 3,
+    "ratio": 1.5,
+    "min_max": 500.0,
+    "days": 14
+   },
+   "support": 0,
+   "cleared_hits": 1,
+   "pop_hits": 16,
+   "p_fraud": 0.0,
+   "p_cleared": 0.001099,
+   "p_pop": 8e-05,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": 0.0
+  },
+  {
+   "i": 10,
+   "params": {
+    "min_n": 4,
+    "min_steps": 3,
+    "ratio": 1.5,
+    "min_max": 1000.0,
+    "days": 7
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 11,
+   "params": {
+    "min_n": 4,
+    "min_steps": 3,
+    "ratio": 1.5,
+    "min_max": 1000.0,
+    "days": 14
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 12,
+   "params": {
+    "min_n": 4,
+    "min_steps": 3,
+    "ratio": 1.8,
+    "min_max": 500.0,
+    "days": 7
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 7,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 3.5e-05,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 13,
+   "params": {
+    "min_n": 4,
+    "min_steps": 3,
+    "ratio": 1.8,
+    "min_max": 500.0,
+    "days": 14
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 8,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 4e-05,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 14,
+   "params": {
+    "min_n": 4,
+    "min_steps": 3,
+    "ratio": 1.8,
+    "min_max": 1000.0,
+    "days": 7
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  },
+  {
+   "i": 15,
+   "params": {
+    "min_n": 4,
+    "min_steps": 3,
+    "ratio": 1.8,
+    "min_max": 1000.0,
+    "days": 14
+   },
+   "support": 0,
+   "cleared_hits": 0,
+   "pop_hits": 0,
+   "p_fraud": 0.0,
+   "p_cleared": 0.0,
+   "p_pop": 0.0,
+   "lift": 0.0,
+   "lift_ci95": null,
+   "lift_note": "",
+   "precision_closed": null
+  }
+ ],
+ "errors": {
+  "closed": 0,
+  "population": 0,
+  "examples": []
+ },
+ "tool_calls": 12057,
+ "january": {
+  "anchors": 60196,
+  "fired_txns": 30,
+  "fired_cards": 6,
+  "cards": [
+   "C03080-K2",
+   "C04096-K1",
+   "C08943-K2",
+   "C09026-K1",
+   "C09148-K1",
+   "C11663-K1"
+  ],
+  "fired_txns_in_block_3660000_plus": 30,
+  "errors": 0
+ },
+ "seconds": 93.1
+}

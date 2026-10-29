@@ -1,0 +1,138 @@
+{
+  "case_id": "HHF-012",
+  "case": {
+    "status": "escalated",
+    "verdict": "uncertain",
+    "fraud_probability": 0.17,
+    "pattern": "account_takeover",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3655457"
+    ],
+    "first_suspicious_txn_id": "3655457",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 261.51,
+    "evidence": [
+      {
+        "claim": "Profile fit: product W, purchaser email yahoo.com and the amount $261.51 all match card C12223-K1 before the last 7 days (129 earlier W purchases, 31 with this email, largest earlier purchase $884.02)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C12223-K1)",
+        "entity_ids": [
+          "3655457"
+        ]
+      },
+      {
+        "claim": "Billing region 476 is familiar: 138 earlier transactions on this card there (100% of its in-person history)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C12223-K1)",
+        "entity_ids": [
+          "3655457"
+        ]
+      },
+      {
+        "claim": "Card C12223-K1 already has 1 confirmed-fraud closed case(s) (CC-0179). The account key is not usable in January, so the precedent is read at card level, where it is weaker: on cards of this size an earlier confirmed case made a new alert about 3.9 times as likely to be fraud",
+        "source": "graph",
+        "ref": "query:closed_cases_for(card_id=C12223-K1)",
+        "entity_ids": [
+          "CC-0179"
+        ]
+      },
+      {
+        "claim": "Profile fit: the purchase hour (00:00) is one the account already uses (19% of its earlier purchases within an hour of it)",
+        "source": "graph",
+        "ref": "query:card_history(card_id=C12223-K1)",
+        "entity_ids": [
+          "3655457"
+        ]
+      },
+      {
+        "claim": "The alert states a model score of 0.53, but transaction 3655457 carries 0.05 in the bank's records; the recorded value is used and the stated one is treated as unverified alert text",
+        "source": "graph",
+        "ref": "query:txn_detail(txn_id=3655457)",
+        "entity_ids": [
+          "3655457"
+        ]
+      },
+      {
+        "claim": "Policy applied, Fraud Policy R4: No reply within 24 hours: Recommend MONITOR_CARD and DECLINE_TRANSACTION for pending authorizations.",
+        "source": "document",
+        "ref": "document:README#POLICY-R4",
+        "entity_ids": []
+      },
+      {
+        "claim": "Pattern definition, Known fraud patterns: Account takeover: Mixed-channel activity inconsistent with the cardholder, often with device and match-flag anomalies, pointing to stolen credentials rather than a stolen number.",
+        "source": "document",
+        "ref": "document:README#PATTERN-5",
+        "entity_ids": []
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-0179",
+      "CC-3649",
+      "CC-1441",
+      "CC-2827",
+      "CC-0013",
+      "CC-3247"
+    ],
+    "summary": "Alert HHF-012 opened because the bank's model flagged transaction 3655457 (recorded score 0.05) ($261.51, product W, in person, 2017-01-09 00:34) on card C12223-K1. The evidence is balanced (fraud probability 0.17): for fraud, Card C12223-K1 already has 1 confirmed-fraud closed case(s) (CC-0179). The account key is not usable in January, so the precedent is read at card level, where it is weaker: on cards of this size an earlier confirmed case made a new alert about 3.9 times as likely to be fraud; against, Profile fit: product W, purchaser email yahoo.com and the amount $261.51 all match card C12223-K1 before the last 7 days (129 earlier W purchases, 31 with this email, largest earlier purchase $884.02); Billing region 476 is familiar: 138 earlier transactions on this card there (100% of its in-person history). The case stays under monitoring pending the cardholder. Evidence request: No reply from the customer within 24 hours.",
+    "written_to_graph": false,
+    "graph_case_id": ""
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 6,
+      "assumed_response": "No reply from the customer within 24 hours"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1 and §5: fraud probability 0.17 is below 0.70; verify with the cardholder before any block"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "§3a: requesting evidence opens a case"
+      }
+    ],
+    "final": [
+      {
+        "action": "DECLINE_TRANSACTION",
+        "route": "L1",
+        "reason": "R4: decline pending authorizations while unverified"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "§3a: the evidence request opened a case"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "R4: no reply within 24 hours, raise monitoring for 72 hours"
+      },
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R8: evidence conflicts"
+      }
+    ],
+    "what_changed": "No reply within 24 hours, so R4 applies and the probability stays at 0.17: DECLINE_TRANSACTION, CREATE_CASE, MONITOR_CARD, ESCALATE_TO_ANALYST."
+  },
+  "sar": {
+    "file": false,
+    "reason": "§3a: the verdict is not fraud, so no suspicious activity report; the case record is sufficient",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "The customer did not reply within 24 hours and the remaining graph evidence cannot move the probability (0.17) across a decision threshold, so the case stays open under R4 monitoring.",
+  "tool_calls": 8,
+  "tokens": 0,
+  "latency_s": 0.19
+}

@@ -1,0 +1,182 @@
+{
+  "log": [
+    "gathered: 2788 card txns, device=None (on 0 cards), 19 closed-case hits",
+    "assess0: p=0.93 uncertain groups={'history': 2.5, 'score': 0.14}",
+    "requested customer_validation; simulated reply: deny (p without customer 0.93)",
+    "assess1: p=0.97 fraud"
+  ],
+  "tools": [
+    {
+      "step": 1,
+      "tool": "card_history",
+      "params": {
+        "card_id": "C09933-K2"
+      },
+      "ms": 1490.1,
+      "n_rows": 2788
+    },
+    {
+      "step": 2,
+      "tool": "customer_cards",
+      "params": {
+        "customer_id": "C09933"
+      },
+      "ms": 113.5,
+      "n_rows": 2
+    },
+    {
+      "step": 2,
+      "tool": "region_activity",
+      "params": {
+        "addr1": "264",
+        "t0": "2016-12-05 00:46:14",
+        "days": "3"
+      },
+      "ms": 215.9,
+      "n_rows": 358
+    },
+    {
+      "step": 3,
+      "tool": "closed_cases_for",
+      "params": {
+        "card_ids": "[C09933-K2]",
+        "customer_ids": "[]",
+        "txn_ids": "[3505442,3505566,3505647,3505874,3505901,...]",
+        "device_keys": "[]"
+      },
+      "ms": 98.5,
+      "n_rows": 19
+    },
+    {
+      "step": 3,
+      "tool": "holder_fraud_history",
+      "params": {
+        "holder_keys": "[15868|184.0|155,15868|264.0|-11,15868|264.0|-110,15868|264.0|-111,15868|264.0|-149,...]",
+        "before": "2016-12-05 03:46:14"
+      },
+      "ms": 109.5,
+      "n_rows": 22
+    },
+    {
+      "step": 10,
+      "tool": "vector_search_cases",
+      "params": {
+        "text": "confirmed fraud account_takeover: The account behind this transaction (holder 15868|264.0|50) already appears in 3 confirmed-fraud closed case(s) (CC-2565, CC-2834, CC-5521); in the closed cases, 1,059 alerts on accounts with earlier confirmed fraud were fraud and none were cleared Customer denied the transaction(s) when asked: Customer states they did not make these purchases and still has the card",
+        "k": "40"
+      },
+      "ms": 153.8,
+      "n_rows": 40
+    },
+    {
+      "step": 10,
+      "tool": "similar_cases",
+      "params": {
+        "pattern": "account_takeover",
+        "verdict": "fraud",
+        "product": "W",
+        "channel": "in_person",
+        "amt": "228.88",
+        "n": "2",
+        "new_dev": "False",
+        "anon": "False",
+        "k": "3",
+        "exclude": "[CC-2565,CC-2834,CC-5521]"
+      },
+      "ms": 9.2,
+      "n_rows": 3
+    },
+    {
+      "step": 10,
+      "tool": "case_memory",
+      "params": {
+        "card_ids": "[C09933-K2]"
+      },
+      "ms": 88.5,
+      "n_rows": 0
+    },
+    {
+      "step": 10,
+      "tool": "similar_investigations",
+      "params": {
+        "text": "confirmed fraud account_takeover: The account behind this transaction (holder 15868|264.0|50) already appears in 3 confirmed-fraud closed case(s) (CC-2565, CC-2834, CC-5521); in the closed cases, 1,059 alerts on accounts with earlier confirmed fraud were fraud and none were cleared Customer denied the transaction(s) when asked: Customer states they did not make these purchases and still has the card",
+        "k": "3"
+      },
+      "ms": 220.9,
+      "n_rows": 3
+    },
+    {
+      "step": 12,
+      "tool": "write_case",
+      "params": {
+        "case_id": "HHG-007"
+      },
+      "ms": 1555.7,
+      "n_rows": 1
+    }
+  ],
+  "signals": [
+    {
+      "name": "risk_score_calibrated",
+      "group": "score",
+      "llr": 0.14,
+      "claim": "Model risk score 0.87. For product W transactions without an identity record in this score band, 57% were confirmed fraud in July to October (1,518 transactions), so the score is read at that calibrated rate, not at face value",
+      "entity_ids": [
+        "3514948"
+      ],
+      "ref": "document:weights.json#score_calibration",
+      "source": "document"
+    },
+    {
+      "name": "holder_prior_fraud",
+      "group": "history",
+      "llr": 2.5,
+      "claim": "The account behind this transaction (holder 15868|264.0|50) already appears in 3 confirmed-fraud closed case(s) (CC-2565, CC-2834, CC-5521); in the closed cases, 1,059 alerts on accounts with earlier confirmed fraud were fraud and none were cleared",
+      "entity_ids": [
+        "CC-2565",
+        "CC-2834",
+        "CC-5521",
+        "3514948"
+      ],
+      "ref": "query:holder_fraud_history(card_id=C09933-K2)",
+      "source": "graph"
+    },
+    {
+      "name": "customer_denies",
+      "group": "customer",
+      "llr": 2.2,
+      "claim": "Customer denied the transaction(s) when asked: Customer states they did not make these purchases and still has the card",
+      "entity_ids": [],
+      "ref": "evidence_request:1",
+      "source": "customer"
+    }
+  ],
+  "sources": {
+    "summary": "llm"
+  },
+  "assess0": {
+    "p": 0.93,
+    "verdict": "uncertain",
+    "fraud_groups": [
+      "history"
+    ],
+    "legit_groups": [],
+    "by_group": {
+      "history": 2.5,
+      "score": 0.14
+    }
+  },
+  "assess1": {
+    "p": 0.97,
+    "verdict": "fraud",
+    "fraud_groups": [
+      "history",
+      "customer"
+    ],
+    "legit_groups": [],
+    "by_group": {
+      "history": 2.5,
+      "customer": 2.2,
+      "score": 0.14
+    }
+  }
+}

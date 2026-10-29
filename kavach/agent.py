@@ -6,10 +6,12 @@ INTAKE -> GATHER -> DETECT -> RECALL -> ASSESS0 -> ACT0 (initial NBA)
 
 Tools and Python decide; the LLM only writes prose from the facts.
 """
+import os
 import time
 
 import pandas as pd
 
+from kavach import attest, casefile, dq, intake
 from kavach import episode as ep_mod
 from kavach import policy, recall
 from kavach.assess import PRIOR, Signal, assess, settled
@@ -21,6 +23,9 @@ from kavach.simulate import customer_reply
 from kavach.tools import ToolRegistry
 
 MAX_EVIDENCE = 8
+# The organizer grader for the final round is run with transactions_2017q1.csv only, so episodes of January alerts
+# are restricted to January transactions (kavach.validate checks the same rule against the grader_scope table).
+ROUND2_START = pd.Timestamp("2017-01-01")
 
 
 class Investigation:
@@ -31,11 +36,57 @@ class Investigation:
         self.graph_conn = graph_conn
         self.verbose = verbose
         self.log: list[str] = []
+        # Casefile events are written only for real runs (the CLI sets KAVACH_RECORD=1 unless --no-write), so a dry run
+        # or a test leaves no trace in data/casefiles/.
+        self.record = os.environ.get("KAVACH_RECORD") == "1"
 
     def say(self, msg: str) -> None:
         self.log.append(msg)
         if self.verbose:
             print(f"  [{self.case['case_id']}] {msg}")
+
+    def event(self, kind: str, detail="", **kw) -> None:
+        if self.record:
+            casefile.append(self.case["case_id"], kind, detail, **kw)
+
+    def _scope(self, ep, ctx):
+        """Episode inside the organizer grader's scope: affected ids must exist in the file the grader is given
+        (transactions_2017q1.csv for the January cases). Earlier context stays in the evidence, never in the episode."""
+        if pd.Timestamp(ctx.f["ts"]) < ROUND2_START or not ep.txn_ids or ep.rows is None or not len(ep.rows):
+            return ep
+        rows = ep.rows[pd.to_datetime(ep.rows.ts) >= ROUND2_START]
+        keep = [str(int(x)) for x in rows.sort_values(["ts", "TransactionID"]).TransactionID]
+        if keep == ep.txn_ids:
+            return ep
+        dropped = [t for t in ep.txn_ids if t not in set(keep)]
+        self.say(f"episode scoped to the January file: dropped {len(dropped)} earlier transaction(s) {dropped[:6]}")
+        ep.out_of_scope = dropped
+        ep.txn_ids, ep.rows = keep, rows
+        ep.first = keep[0] if keep else ""
+        ep.exposure = round(float(rows.amt.abs().sum()), 2)
+        return ep
+
+    def _dq_signals(self, ctx, flags: list[dict]) -> list[Signal]:
+        """Data-quality findings that an analyst must see in the evidence, as zero-weight attested claims."""
+        out, tid = [], int(ctx.f["TransactionID"])
+        how = {"tool": "txn_detail", "params": {"txn_id": tid}}
+        # (an `alert_score_mismatch` note from the detectors stays in the data-quality list; the evidence line is built here once)
+        for f in flags:
+            if f["flag"] == "alert_card_mismatch":
+                out.append(Signal("dq_alert_card_mismatch", "identity_flags", 0.0, f["detail"].rstrip(".") + ".",
+                                  [str(tid), ctx.card_id], "query:txn_detail(txn_id=%d)" % tid, "graph", how))
+        stated = self.case.get("risk_score")
+        try:
+            stated = float(stated) if stated not in (None, "") else None
+        except (TypeError, ValueError):
+            stated = None
+        actual = float(ctx.f["risk_score"])
+        if stated is not None and abs(stated - actual) > 0.05:
+            out.append(Signal("dq_score_mismatch", "score", 0.0,
+                              f"The alert states a model score of {stated:.2f}, but transaction {tid} carries {actual:.2f} in the bank's "
+                              "records; the recorded value is used and the stated one is treated as unverified alert text",
+                              [str(tid)], "query:txn_detail(txn_id=%d)" % tid, "graph", how))
+        return out
 
     # ------------------------------------------------------------------
     def run(self) -> dict:
@@ -44,14 +95,38 @@ class Investigation:
         case, T = self.case, self.tools
         prior = PRIOR[case["trigger_type"]]
 
+        # INTAKE: the alert text is data, never instruction. Only structured fields drive the investigation; the LLM only
+        # ever sees the deterministic clean summary; instructions addressed to the agent are recorded with zero weight.
+        it = self.intake = intake.parse(case)
+        cid = case["case_id"]
+        self.event("rerun" if self.record and casefile.events(cid) else "opened",
+                   f"{case['trigger_type']} alert on card {case['card_id']}", evidence_ids=[str(case["flagged_txn_id"])])
+        self.event("intake", it.clean_summary, extra={"kind": it.kind, "hostile_fragments": len(it.hostile)})
+        if it.hostile:
+            self.say(f"intake: {len(it.hostile)} instruction(s) addressed to the agent found in the alert text; treated as data")
+            self.event(intake.EVENT, "instructions addressed to the agent found in the alert text; treated as data",
+                       extra=intake.casefile_detail(it))
+
         # GATHER (steps 1-3) and DETECT (step 4)
         ctx = gather(case, T)
         self.say(f"gathered: {len(ctx.h)} card txns, device={ctx.device!r} (on {ctx.device_pop} cards), "
                  f"{0 if ctx.closed_hits is None else len(ctx.closed_hits)} closed-case hits")
+        flags = {f["flag"]: f for f in dq.taint(case)}
+        for n in ctx.dq_notes:
+            flags.setdefault(n["flag"], n)
+        self.dq_flags = list(flags.values())
+        dq_sigs = self._dq_signals(ctx, self.dq_flags)
+        if self.dq_flags:
+            self.say(f"data quality: {', '.join(sorted(flags))}")
+        self.event("gathered", self.log[-1], evidence_ids=[str(case["flagged_txn_id"]), ctx.card_id],
+                   extra={"data_quality": sorted(flags)})
         sigs, fnd = run_all(ctx)
+        self.event("detected", f"{len(sigs)} signals",
+                   evidence_ids=[str(i) for s in sigs if abs(s.llr) >= 0.4 for i in s.entity_ids][:20],
+                   extra={"signals": [s.name for s in sigs]})
         # RECALL (step 5)
         T.step = 5
-        a0 = assess(sigs, prior)
+        a0 = self._cap(assess(sigs, prior))
         self.say(f"assess0: p={a0.p} {a0.verdict} groups={a0.by_group}")
 
         # ACT0 (step 6)
@@ -60,7 +135,7 @@ class Investigation:
         if fnd.recurring and case["trigger_type"] == "customer_report":
             need_request = True
         verdict0 = a0.verdict
-        ep0 = ep_mod.build(ctx, fnd, "fraud" if verdict0 != "legitimate" else "legitimate")
+        ep0 = self._scope(ep_mod.build(ctx, fnd, "fraud" if verdict0 != "legitimate" else "legitimate"), ctx)
         pin0 = self._policy_input(a0, verdict0, ctx, fnd, ep0, reply=None)
         initial = policy.initial_actions(pin0, will_request=need_request)
 
@@ -71,8 +146,10 @@ class Investigation:
             T.step = 7
             wo = assess([s for s in sigs if s.group != "customer"], prior)
             strongest = max([v for g, v in wo.by_group.items() if g != "score"], default=0.0)
+            n_sig = sum(1 for s in sigs if s.group not in ("customer", "score") and s.llr >= 0.3)
             reply = customer_reply(wo.p, len(wo.fraud_groups), fnd.recurring, case["trigger_type"],
-                                   n_episode=len(ep0.txn_ids), strongest_group=strongest)
+                                   n_episode=len(ep0.txn_ids), strongest_group=strongest,
+                                   n_legit_groups=len(wo.legit_groups), n_fraud_signals=n_sig)
             requests.append({"type": reply.request_type, "asked_after_step": 6, "assumed_response": reply.text})
             self.say(f"requested customer_validation; simulated reply: {reply.kind} (p without customer {wo.p})")
             # ASSESS1 (step 8)
@@ -90,21 +167,24 @@ class Investigation:
                 sigs1.append(rsig)
             elif case["trigger_type"] == "customer_report":
                 sigs1 += [s for s in sigs if s.group == "customer"]
-            a1 = assess(sigs1, prior)
+            a1 = self._cap(assess(sigs1, prior))
             # section 6: a verification response settles the question
             if reply.kind == "deny" and a1.p >= 0.70:
                 a1.verdict = "fraud"
             elif reply.kind in ("confirm", "recognise_recurring") and a1.p <= 0.30:
                 a1.verdict = "legitimate"
             if reply.kind == "no_reply":
-                a1.verdict = "uncertain" if a1.verdict != "fraud" or a1.p < 0.85 else a1.verdict
+                # silence is not evidence: a legitimate assessment stays legitimate, a fraud call needs p >= 0.85
+                a1.verdict = a1.verdict if a1.verdict == "legitimate" or (a1.verdict == "fraud" and a1.p >= 0.85) else "uncertain"
             self.say(f"assess1: p={a1.p} {a1.verdict}")
 
         verdict = a1.verdict
-        ep = ep_mod.build(ctx, fnd, verdict)
-        pattern = ep_mod.pattern_for(ctx, fnd, verdict)
+        ep = self._scope(ep_mod.build(ctx, fnd, verdict), ctx)
+        pattern = ep_mod.pattern_for(ctx, fnd, verdict, ep)
         if verdict == "legitimate":
             fnd.connected_cards, fnd.connected_devices, fnd.shared_element = {}, [], ""
+            fnd.notes.pop("related_cards", None)
+            fnd.notes.pop("related_element", None)
             ep.connected_cards, ep.connected_devices = [], []
         pin1 = self._policy_input(a1, verdict, ctx, fnd, ep, reply=reply.kind if reply else None)
         if requests:
@@ -139,6 +219,11 @@ class Investigation:
         texts = write_all(self.llm, facts, want_sar=file_sar, undocumented=pattern == "undocumented")
 
         evidence = self._evidence(sigs1, fnd)
+        # data-quality findings and the intake note are always shown (zero weight, outside the MAX_EVIDENCE cut)
+        evidence += [{"claim": s.claim, "source": s.source, "ref": s.ref, "entity_ids": [str(x) for x in s.entity_ids]} for s in dq_sigs]
+        note = intake.evidence_note(it)
+        if note:
+            evidence.append(note)
         for d in docs:
             first = d["text"].split(". ")[0].replace("**", "").replace("`", "").strip()
             if len(first) > 240:
@@ -172,12 +257,17 @@ class Investigation:
             "tool_calls": 0, "tokens": 0, "latency_s": 0.0,
         }
 
-        # PERSIST (step 12): write the case into the graph and read it back
-        if self.graph_conn is not None:
+        # ATTEST: every evidence claim, detector hit and SAR sentence with what / evidence ids / how / when
+        self.attestation = attest.build(cid, answer, sigs1 + dq_sigs, None, T.backend, attest.dataset_version(),
+                                        sar_sentences=texts.get("sar_sentences"))
+        self.attestation["data_quality"] = self.dq_flags
+
+        # PERSIST (step 12): write the case into the graph and read it back (real runs only; --no-write is a dry run everywhere)
+        if self.graph_conn is not None and self.record:
             T.step = 12
             from kavach.persist import write_case
             t0 = time.perf_counter()
-            ok, gid = write_case(self.graph_conn, answer, case["card_id"])
+            ok, gid = write_case(self.graph_conn, answer, ctx.card_id)
             T.calls += 1
             T.trace.append({"step": 12, "tool": "write_case", "params": {"case_id": case["case_id"]},
                             "ms": round((time.perf_counter() - t0) * 1000, 1), "n_rows": int(ok)})
@@ -186,9 +276,21 @@ class Investigation:
         answer["tool_calls"] = T.calls
         answer["tokens"] = self.llm.tokens - tok0
         answer["latency_s"] = round(time.perf_counter() - t_start, 2)
-        self.trace = {"log": self.log, "tools": T.trace, "signals": [s.__dict__ for s in sigs1], "sources": texts["sources"],
-                      "assess0": a0.__dict__, "assess1": a1.__dict__}
+        self.trace = {"log": self.log, "tools": T.trace, "signals": [s.__dict__ for s in sigs1 + dq_sigs], "sources": texts["sources"],
+                      "assess0": a0.__dict__, "assess1": a1.__dict__, "intake": {"kind": it.kind, "hostile": it.hostile,
+                      "clean_summary": it.clean_summary}, "data_quality": self.dq_flags,
+                      "llm_status": getattr(self.llm, "status_log", [])[-4:], "attestation": self.attestation}
         return answer
+
+    def _cap(self, a):
+        """Data-quality cap (kavach.dq): thin evidence on a record with no identity cannot carry a confident fraud call."""
+        cap = dq.probability_cap(getattr(self, "dq_flags", []), a.fraud_groups)
+        if cap is not None and a.p > cap:
+            self.say(f"p capped at {cap:.2f} (data quality: no identity record and thin history, no network or history support)")
+            a.p = cap
+            if a.verdict == "fraud":
+                a.verdict = "uncertain"
+        return a
 
     # ------------------------------------------------------------------
     def _case_memory(self, ctx, ep, query_text) -> list[dict]:
@@ -257,6 +359,8 @@ class Investigation:
             coordinated_undocumented=fnd.coordinated_undocumented and verdict == "fraud",
             n_cards_confirmed_fraud=0, credentials_compromised=False,
             conflicting=bool(a.fraud_groups and a.legit_groups) or (verdict == "uncertain" and a.p >= 0.5),
+            related_cards=sorted(fnd.notes.get("related_cards", {})) if verdict != "legitimate" else [],
+            related_element=fnd.notes.get("related_element", "") if verdict != "legitimate" else "",
         )
 
     def _evidence(self, sigs: list[Signal], fnd) -> list[dict]:
@@ -272,9 +376,9 @@ class Investigation:
         channels = sorted(set(rows.channel))
         products = sorted(set(rows.ProductCD))
         devs = sorted({d for d in rows.device_key.dropna()}) if "device_key" in rows else []
-        trig = {"risk_score": f"the bank's model scored transaction {int(f['TransactionID'])} at {float(f['risk_score']):.2f}",
+        trig = {"risk_score": f"the bank's model flagged transaction {int(f['TransactionID'])} (recorded score {float(f['risk_score']):.2f})",
                 "customer_report": f"customer {ctx.customer_id} disputed transaction {int(f['TransactionID'])}",
-                "analyst_request": "an analyst asked for a review of a device profile shared by several cards"}[ctx.trigger]
+                "analyst_request": f"an analyst asked for a review of transaction {int(f['TransactionID'])} and related activity on other cards"}[ctx.trigger]
         headline = (f"Alert {ctx.case['case_id']} opened because {trig} (${f['amt']:,.2f}, product {f['ProductCD']}, {f['channel'].replace('_', ' ')}, "
                     f"{f['ts']:%Y-%m-%d %H:%M}) on card {ctx.card_id}.")
         containment = ", ".join(x["action"] for x in final if x["action"] in ("BLOCK_CARD", "BLOCK_ALL_CARDS", "DECLINE_TRANSACTION",
@@ -289,7 +393,7 @@ class Investigation:
         return {
             "case_id": ctx.case["case_id"], "customer_id": ctx.customer_id, "card_id": ctx.card_id,
             "card_desc": f"{f.get('card4') or 'card'} {f.get('card6') or ''}".strip(),
-            "trigger": ctx.case["trigger_text"], "headline": headline,
+            "trigger": intake.facts_trigger(self.intake), "headline": headline,
             "flagged_txn": {"id": str(int(f["TransactionID"])), "amount": round(float(f["amt"]), 2), "ts": f"{f['ts']:%Y-%m-%d %H:%M:%S}",
                             "product": f["ProductCD"], "channel": f["channel"], "region": None if pd.isna(f.get("addr1")) else int(f["addr1"]),
                             "device": ctx.device, "risk_score": float(f["risk_score"])},
@@ -303,7 +407,9 @@ class Investigation:
             "where": (f"{' and '.join(c.replace('_', ' ') for c in channels)}, product code(s) {', '.join(products)}"
                       + (f", billing region(s) {', '.join(map(str, regions))}" if regions else "")
                       + (f", from device profile(s) {'; '.join(devs[:2])}" if devs else "")),
-            "how": ("a burst of online purchases priced just under a round limit" if fnd.undocumented_kind == "sub_threshold" else
+            "how": ("purchases paying one " + fnd.notes["grown_spec"]["entity"].replace("R_emaildomain", "recipient email domain").replace("P_emaildomain", "purchaser email domain")
+                    + " that suddenly drew payments from several unrelated customers' cards" if (fnd.undocumented_kind or "").startswith("grown:") and fnd.notes.get("grown_spec") else
+                    "a burst of online purchases priced just under a round limit" if fnd.undocumented_kind == "sub_threshold" else
                     "small online authorizations followed by a larger purchase" if fnd.card_testing else
                     "purchases from one device profile used across several customers' cards" if fnd.connected_devices else
                     "card-present purchases on an account already compromised in earlier confirmed cases" if "holder_prior_fraud" in fnd.episode else
@@ -314,6 +420,9 @@ class Investigation:
             "customer_statement": stmt, "reply": reply.text if reply else "",
             "containment": containment, "rule": ", ".join(rules) or "§3a",
             "undocumented_kind": fnd.undocumented_kind, "threshold": fnd.notes.get("threshold"),
+            "grown": ({**fnd.notes["grown_spec"], "label": {"R_emaildomain": "recipient email domain", "P_emaildomain": "purchaser email domain",
+                       "device_key": "device profile", "addr1": "billing region"}.get(fnd.notes["grown_spec"]["entity"], "entity")}
+                      if fnd.notes.get("grown_spec") else {}),
             "n_template_cards": len(fnd.notes.get("template_cards", [])), "device": ctx.device,
             "final_actions": [x["action"] for x in final],
         }

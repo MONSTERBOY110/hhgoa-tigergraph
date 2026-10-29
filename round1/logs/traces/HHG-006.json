@@ -1,0 +1,257 @@
+{
+  "log": [
+    "gathered: 261 card txns, device='Trident/7.0 | Windows 7 | ie 11.0 for desktop | 1920x1080' (on 543 cards), 0 closed-case hits",
+    "assess0: p=0.97 fraud groups={'sequence': 2.6, 'device': -0.19, 'network': 1.5, 'customer': 1.5}"
+  ],
+  "tools": [
+    {
+      "step": 1,
+      "tool": "card_history",
+      "params": {
+        "card_id": "C07297-K1"
+      },
+      "ms": 521.7,
+      "n_rows": 261
+    },
+    {
+      "step": 2,
+      "tool": "customer_cards",
+      "params": {
+        "customer_id": "C07297"
+      },
+      "ms": 156.6,
+      "n_rows": 1
+    },
+    {
+      "step": 2,
+      "tool": "device_popularity",
+      "params": {
+        "device_key": "Trident/7.0 | Windows 7 | ie 11.0 for desktop | 1920x1080"
+      },
+      "ms": 79.4,
+      "n_rows": 1
+    },
+    {
+      "step": 3,
+      "tool": "closed_cases_for",
+      "params": {
+        "card_ids": "[C07297-K1]",
+        "customer_ids": "[]",
+        "txn_ids": "[3469605,3473012,3474057,3476602,3476633,...]",
+        "device_keys": "[]"
+      },
+      "ms": 112.8,
+      "n_rows": 0
+    },
+    {
+      "step": 3,
+      "tool": "holder_fraud_history",
+      "params": {
+        "holder_keys": "[13729|191.0|-469,13729|205.0|-448,13729|264.0|-375,13729|264.0|137,13729|264.0|142,...]",
+        "before": "2016-11-22 02:30:00"
+      },
+      "ms": 87.2,
+      "n_rows": 0
+    },
+    {
+      "step": 4,
+      "tool": "amount_peers",
+      "params": {
+        "product_cd": "C",
+        "amt": "482.12",
+        "t0": "2016-11-21 20:30:00",
+        "days": "7",
+        "tol": "0.01",
+        "email": "gmail.com",
+        "email_field": "P_emaildomain"
+      },
+      "ms": 316.3,
+      "n_rows": 4
+    },
+    {
+      "step": 4,
+      "tool": "band_bursts",
+      "params": {
+        "amt_lo": "440.0",
+        "amt_hi": "500.0",
+        "t0": "2016-11-21 20:30:00",
+        "days": "21"
+      },
+      "ms": 234.7,
+      "n_rows": 16
+    },
+    {
+      "step": 10,
+      "tool": "vector_search_cases",
+      "params": {
+        "text": "confirmed fraud undocumented: 4 online purchases of $456.96 to $488.04 within 30 minutes, each just under $500; before this burst the card's largest online purchase was $50.01 Customer C07297 disputes transaction 3476682 ($482.12); in the bank's closed cases every customer-reported alert was confirmed fraud The same template (three or more online purchases just under $500 within 40 minutes) appears on 15 other cards within three weeks",
+        "k": "40"
+      },
+      "ms": 339.7,
+      "n_rows": 40
+    },
+    {
+      "step": 10,
+      "tool": "similar_cases",
+      "params": {
+        "pattern": "undocumented",
+        "verdict": "fraud",
+        "product": "C",
+        "channel": "online",
+        "amt": "1906.07",
+        "n": "4",
+        "new_dev": "True",
+        "anon": "False",
+        "k": "3",
+        "exclude": "[]"
+      },
+      "ms": 7.5,
+      "n_rows": 3
+    },
+    {
+      "step": 10,
+      "tool": "vector_search_docs",
+      "params": {
+        "text": "confirmed fraud undocumented: 4 online purchases of $456.96 to $488.04 within 30 minutes, each just under $500; before this burst the card's largest online purchase was $50.01 Customer C07297 disputes transaction 3476682 ($482.12); in the bank's closed cases every customer-reported alert was confirmed fraud The same template (three or more online purchases just under $500 within 40 minutes) appears on 15 other cards within three weeks",
+        "k": "19"
+      },
+      "ms": 160.2,
+      "n_rows": 19
+    },
+    {
+      "step": 10,
+      "tool": "case_memory",
+      "params": {
+        "card_ids": "[C07297-K1]"
+      },
+      "ms": 82.8,
+      "n_rows": 0
+    },
+    {
+      "step": 10,
+      "tool": "similar_investigations",
+      "params": {
+        "text": "confirmed fraud undocumented: 4 online purchases of $456.96 to $488.04 within 30 minutes, each just under $500; before this burst the card's largest online purchase was $50.01 Customer C07297 disputes transaction 3476682 ($482.12); in the bank's closed cases every customer-reported alert was confirmed fraud The same template (three or more online purchases just under $500 within 40 minutes) appears on 15 other cards within three weeks",
+        "k": "3"
+      },
+      "ms": 122.2,
+      "n_rows": 3
+    },
+    {
+      "step": 12,
+      "tool": "write_case",
+      "params": {
+        "case_id": "HHG-006"
+      },
+      "ms": 1432.9,
+      "n_rows": 1
+    }
+  ],
+  "signals": [
+    {
+      "name": "customer_dispute",
+      "group": "customer",
+      "llr": 1.5,
+      "claim": "Customer C07297 disputes transaction 3476682 ($482.12); in the bank's closed cases every customer-reported alert was confirmed fraud",
+      "entity_ids": [
+        "3476682",
+        "C07297"
+      ],
+      "ref": "case_pack:trigger_text",
+      "source": "customer"
+    },
+    {
+      "name": "sub_threshold_burst",
+      "group": "sequence",
+      "llr": 2.6,
+      "claim": "4 online purchases of $456.96 to $488.04 within 30 minutes, each just under $500; before this burst the card's largest online purchase was $50.01",
+      "entity_ids": [
+        "3476602",
+        "3476633",
+        "3476665",
+        "3476682"
+      ],
+      "ref": "query:card_window(card_id=C07297-K1, hours=3)",
+      "source": "graph"
+    },
+    {
+      "name": "online_on_in_person_card",
+      "group": "sequence",
+      "llr": 0.3,
+      "claim": "Online purchase on a card whose history is 97% in person (199 earlier transactions)",
+      "entity_ids": [
+        "3476682"
+      ],
+      "ref": "query:card_history(card_id=C07297-K1)",
+      "source": "graph"
+    },
+    {
+      "name": "device_new_for_account",
+      "group": "device",
+      "llr": -0.19,
+      "claim": "Identity record marks the device (Trident/7.0 | Windows 7 | ie 11.0 for desktop | 1920x1080) as New for this account; 100% of the card's earlier online purchases were also from New devices (in the closed cases a New device is not more common in fraud than in normal traffic for this product)",
+      "entity_ids": [
+        "3476682"
+      ],
+      "ref": "query:card_history(card_id=C07297-K1)",
+      "source": "graph"
+    },
+    {
+      "name": "template_repeats_across_cards",
+      "group": "network",
+      "llr": 1.5,
+      "claim": "The same template (three or more online purchases just under $500 within 40 minutes) appears on 15 other cards within three weeks",
+      "entity_ids": [
+        "C00466-K1",
+        "C01890-K1",
+        "C02265-K1",
+        "C03633-K1",
+        "C04697-K1",
+        "C05423-K1",
+        "C05560-K2",
+        "C05766-K1",
+        "C05851-K1",
+        "C06881-K1"
+      ],
+      "ref": "query:band_bursts(amt_lo=440, amt_hi=500, days=21)",
+      "source": "graph"
+    }
+  ],
+  "sources": {
+    "summary": "llm",
+    "sar": "llm",
+    "pattern_description": "llm"
+  },
+  "assess0": {
+    "p": 0.97,
+    "verdict": "fraud",
+    "fraud_groups": [
+      "sequence",
+      "network",
+      "customer"
+    ],
+    "legit_groups": [],
+    "by_group": {
+      "sequence": 2.6,
+      "device": -0.19,
+      "network": 1.5,
+      "customer": 1.5
+    }
+  },
+  "assess1": {
+    "p": 0.97,
+    "verdict": "fraud",
+    "fraud_groups": [
+      "sequence",
+      "network",
+      "customer"
+    ],
+    "legit_groups": [],
+    "by_group": {
+      "sequence": 2.6,
+      "device": -0.19,
+      "network": 1.5,
+      "customer": 1.5
+    }
+  }
+}

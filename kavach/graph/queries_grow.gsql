@@ -1,0 +1,97 @@
+// Installed queries behind the grown-detector tools (kavach/grow/gtools.py mirrors on the TigerGraph lane).
+// One query per entity type: recipient email (R), purchaser email (P), billing region, account (Holder).
+// Device profiles reuse device_txns / device_popularity from queries.gsql.
+
+CREATE OR REPLACE QUERY entity_txns_r(VERTEX<EmailDomain> e, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
+  S = {e};
+  T = SELECT t FROM S:s -(RECIPIENT_EMAIL_OF>)- Transaction:t WHERE t.ts >= t_from AND t.ts <= t_to ORDER BY t.ts ASC LIMIT 200000;
+  PRINT T;
+}
+
+CREATE OR REPLACE QUERY entity_txns_p(VERTEX<EmailDomain> e, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
+  S = {e};
+  T = SELECT t FROM S:s -(PURCHASER_EMAIL_OF>)- Transaction:t WHERE t.ts >= t_from AND t.ts <= t_to ORDER BY t.ts ASC LIMIT 200000;
+  PRINT T;
+}
+
+CREATE OR REPLACE QUERY entity_txns_region(VERTEX<BillingRegion> r, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
+  S = {r};
+  T = SELECT t FROM S:s -(REGION_OF>)- Transaction:t WHERE t.ts >= t_from AND t.ts <= t_to ORDER BY t.ts ASC LIMIT 200000;
+  PRINT T;
+}
+
+CREATE OR REPLACE QUERY entity_txns_holder(VERTEX<Holder> h, STRING key, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
+  S = {h};
+  C = SELECT c FROM S:s -(HOLDER_CARD>)- Card:c;
+  T = SELECT t FROM C:c -(MADE>)- Transaction:t WHERE t.holder_key == key AND t.ts >= t_from AND t.ts <= t_to
+      ORDER BY t.ts ASC LIMIT 200000;
+  PRINT T;
+}
+
+CREATE OR REPLACE QUERY entity_cards_r(VERTEX<EmailDomain> e) FOR GRAPH Fraud SYNTAX V2 {
+  SetAccum<STRING> @@cards;
+  S = {e};
+  T = SELECT t FROM S:s -(RECIPIENT_EMAIL_OF>)- Transaction:t ACCUM @@cards += t.card_id;
+  PRINT @@cards.size() AS n;
+}
+
+CREATE OR REPLACE QUERY entity_cards_p(VERTEX<EmailDomain> e) FOR GRAPH Fraud SYNTAX V2 {
+  SetAccum<STRING> @@cards;
+  S = {e};
+  T = SELECT t FROM S:s -(PURCHASER_EMAIL_OF>)- Transaction:t ACCUM @@cards += t.card_id;
+  PRINT @@cards.size() AS n;
+}
+
+CREATE OR REPLACE QUERY entity_cards_region(VERTEX<BillingRegion> r) FOR GRAPH Fraud SYNTAX V2 {
+  SetAccum<STRING> @@cards;
+  S = {r};
+  T = SELECT t FROM S:s -(REGION_OF>)- Transaction:t ACCUM @@cards += t.card_id;
+  PRINT @@cards.size() AS n;
+}
+
+CREATE OR REPLACE QUERY entity_cards_holder(VERTEX<Holder> h, STRING key) FOR GRAPH Fraud SYNTAX V2 {
+  SetAccum<STRING> @@cards;
+  S = {h};
+  C = SELECT c FROM S:s -(HOLDER_CARD>)- Card:c;
+  T = SELECT t FROM C:c -(MADE>)- Transaction:t WHERE t.holder_key == key ACCUM @@cards += t.card_id;
+  PRINT @@cards.size() AS n;
+}
+
+CREATE OR REPLACE QUERY entity_daily_cards_r(VERTEX<EmailDomain> e, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
+  SetAccum<STRING> @@pairs;
+  S = {e};
+  T = SELECT t FROM S:s -(RECIPIENT_EMAIL_OF>)- Transaction:t WHERE t.ts >= t_from AND t.ts < t_to
+      ACCUM @@pairs += datetime_format(t.ts, "%Y-%m-%d") + "|" + t.card_id;
+  PRINT @@pairs AS pairs;
+}
+
+CREATE OR REPLACE QUERY entity_daily_cards_p(VERTEX<EmailDomain> e, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
+  SetAccum<STRING> @@pairs;
+  S = {e};
+  T = SELECT t FROM S:s -(PURCHASER_EMAIL_OF>)- Transaction:t WHERE t.ts >= t_from AND t.ts < t_to
+      ACCUM @@pairs += datetime_format(t.ts, "%Y-%m-%d") + "|" + t.card_id;
+  PRINT @@pairs AS pairs;
+}
+
+CREATE OR REPLACE QUERY entity_daily_cards_region(VERTEX<BillingRegion> r, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
+  SetAccum<STRING> @@pairs;
+  S = {r};
+  T = SELECT t FROM S:s -(REGION_OF>)- Transaction:t WHERE t.ts >= t_from AND t.ts < t_to
+      ACCUM @@pairs += datetime_format(t.ts, "%Y-%m-%d") + "|" + t.card_id;
+  PRINT @@pairs AS pairs;
+}
+
+CREATE OR REPLACE QUERY entity_daily_cards_device(VERTEX<DeviceProfile> d, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
+  SetAccum<STRING> @@pairs;
+  S = {d};
+  T = SELECT t FROM S:s -(DEVICE_OF>)- Transaction:t WHERE t.ts >= t_from AND t.ts < t_to
+      ACCUM @@pairs += datetime_format(t.ts, "%Y-%m-%d") + "|" + t.card_id;
+  PRINT @@pairs AS pairs;
+}
+
+CREATE OR REPLACE QUERY txn_date_range() FOR GRAPH Fraud SYNTAX V2 {
+  MinAccum<DATETIME> @@d0;
+  MaxAccum<DATETIME> @@d1;
+  T = SELECT t FROM Transaction:t ACCUM @@d0 += t.ts, @@d1 += t.ts;
+  PRINT @@d0 AS d0, @@d1 AS d1;
+}

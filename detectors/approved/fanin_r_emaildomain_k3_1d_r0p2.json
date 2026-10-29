@@ -1,0 +1,137 @@
+{
+ "name": "fanin_r_emaildomain_k3_1d_r0p2",
+ "title": "Fan-in spike to one recipient",
+ "family": "fanin",
+ "params": {
+  "entity": "R_emaildomain",
+  "min_cards": 3,
+  "days": 1,
+  "baseline_ratio": 0.2
+ },
+ "rule": "the transaction's R_emaildomain was paid by 3 or more cards in 1 day(s), while over the previous 56 days its rate was below 0.2 times that (a fan-in spike)",
+ "description": "The detector fanin_r_emaildomain_k3_1d_r0p2 flags transactions where the same email domain is used by three or more cards in a single day, while the same domain's usage over the prior 56 days is less than 0.2 times that rate, indicating a fan-in spike. In the backtest it hit 8 fraud cases out of 4,675 total fraud cases, with a lift of 18.01 and a precision of 1.0, and it did not flag any cleared cases. The hits were labeled as card-not-present fraud (5 cases) and card-not-present new device fraud (3 cases).",
+ "description_source": "llm",
+ "backtest": {
+  "support": 8,
+  "cleared_hits": 0,
+  "n_fraud_cases": 4675,
+  "n_cleared_cases": 910,
+  "population_hits": 9,
+  "population_sample": 100000,
+  "population_rate": 9e-05,
+  "lift": 18.01,
+  "precision": 1.0,
+  "fraud_case_ids": [
+   "CC-3414",
+   "CC-3427",
+   "CC-4848",
+   "CC-4886",
+   "CC-4917",
+   "CC-5485",
+   "CC-5506",
+   "CC-5518"
+  ],
+  "cleared_case_ids": [],
+  "example_txn_ids": [
+   "3262008",
+   "3261965",
+   "3365712",
+   "3367719",
+   "3367653",
+   "3411626",
+   "3411664",
+   "3411627"
+  ],
+  "patterns": {
+   "card_not_present_fraud": 5,
+   "card_not_present_new_device": 3
+  },
+  "rank": 23,
+  "lane": "rare",
+  "p_adj": 6.497888756778361e-06,
+  "status": "novel",
+  "rediscovers": "",
+  "forward": {
+   "month_txns": 60196,
+   "fired_txns": 23,
+   "fired_cards": 15,
+   "top_cards": {
+    "C05610-K1": 3,
+    "C01507-K1": 2,
+    "C01357-K1": 2,
+    "C03060-K1": 2,
+    "C11743-K2": 2,
+    "C01727-K2": 2,
+    "C00534-K2": 2,
+    "C02167-K2": 1,
+    "C07612-K1": 1,
+    "C03708-K2": 1
+   },
+   "entity_values": {
+    "sc.rr.com": 12,
+    "optonline.net": 3
+   },
+   "pack_flagged_txn_hits": [
+    "HHF-006"
+   ],
+   "pack_card_hits": [
+    "HHF-006"
+   ]
+  }
+ },
+ "proposed_at": "2026-10-29T12:03:20Z",
+ "dataset_version": {
+  "index": "kavach_r2.duckdb",
+  "version": "eb6caf5672c6",
+  "built_at": "2026-10-29 14:00:39",
+  "files": {
+   "case_pack.csv": {
+    "bytes": 3548,
+    "sha256": "a6d1764a51a9e7d3",
+    "rows": 20
+   },
+   "case_pack_final.csv": {
+    "bytes": 3735,
+    "sha256": "f75456b31257af29",
+    "rows": 18
+   },
+   "closed_cases_history.csv": {
+    "bytes": 2714120,
+    "sha256": "d95c8416b22deb00",
+    "rows": 5585
+   },
+   "identity.csv": {
+    "bytes": 26716154,
+    "sha256": "4db18fdff5b20259",
+    "rows": 144432
+   },
+   "identity_2017q1.csv": {
+    "bytes": 2981977,
+    "sha256": "aed12a836087e3d0",
+    "rows": 15893
+   },
+   "transactions.csv": {
+    "bytes": 707936515,
+    "sha256": "6e4d3f902fc7b4ec",
+    "rows": 590742
+   },
+   "transactions_2017q1.csv": {
+    "bytes": 70087600,
+    "sha256": "23768562e19816f3",
+    "rows": 60196
+   }
+  }
+ },
+ "status": "approved",
+ "approval": {
+  "id": "54983eaa-faa5-4569-b6ce-e6602d25072f",
+  "role": "L2",
+  "route": "L2",
+  "ts": "2026-10-29T12:30:09+00:00",
+  "approver": "93781ebf541f",
+  "hash": "90591611a492130145e9a04705bd6236461319e911c590f35dd0fae9bd51f682",
+  "note": "Reviewed backtest: 8 fraud cases, 0 cleared customers, lift 18",
+  "spec_sha": "be99f93971e013bc5d2f81cb56c07a37391635537c9fb9639b5f652e86af380a"
+ },
+ "spec_sha": "be99f93971e013bc5d2f81cb56c07a37391635537c9fb9639b5f652e86af380a"
+}
