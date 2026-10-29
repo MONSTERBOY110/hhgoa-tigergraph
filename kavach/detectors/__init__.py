@@ -31,11 +31,11 @@ class Findings:
 
 
 def run_all(ctx) -> tuple[list[Signal], Findings]:
-    from kavach.detectors import history, network, onecard
+    from kavach.detectors import history, network, onecard, typologies
 
     fnd = Findings()
     sigs: list[Signal] = []
-    for mod in (onecard, network, history):
+    for mod in (onecard, network, history, typologies):
         sigs += mod.detect(ctx, fnd)
     # detectors the agent discovered itself (kavach.grow), loaded only after an L2 approval; KAVACH_GROWN=0 disables them
     from kavach.grow import registry
@@ -44,6 +44,11 @@ def run_all(ctx) -> tuple[list[Signal], Findings]:
         fnd.notes.setdefault("grown_detectors", []).append(s.name)
     _grown_rings(ctx, fnd, grown, registry)
     sigs += grown
+    if set(fnd.episode) & PATTERN_EPISODES:
+        # a ladder starts small, micro charges sit inside the normal range and a scripted burst copies the cardholder's habits
+        # by design: the pattern itself explains the fit, so the fit is not an alibi for the transactions it explains
+        sigs = [s for s in sigs if s.name not in ("amount_seen_before", "amount_within_max", "hour_familiar", "profile_fit",
+                                                  "product_familiar")]
     if fnd.connected_devices or fnd.coordinated_undocumented or fnd.notes.get("related_cards"):
         # a ring reuses amounts and habits that fit its victims; a matching profile is part of the method, not an alibi
         sigs = [s for s in sigs if s.name not in ("amount_seen_before", "account_continuity", "profile_fit", "product_familiar",
@@ -52,6 +57,7 @@ def run_all(ctx) -> tuple[list[Signal], Findings]:
 
 
 CROSS_CARD_FAMILIES = ("fanin", "shared_entity", "new_device_proxy")
+PATTERN_EPISODES = {"amount_ladder", "micro_charges", "proxy_new_burst", "card_testing", "testing_ladder", "sub_threshold_burst"}
 ENTITY_LABEL = {"R_emaildomain": "recipient email domain", "P_emaildomain": "purchaser email domain", "device_key": "device profile",
                 "addr1": "billing region", "holder_key": "account"}
 

@@ -17,9 +17,10 @@ import pandas as pd
 from kavach import episode_model as em
 
 # which detector's episode wins when several fired, most specific first
-PRIORITY = ("sub_threshold_burst", "card_testing", "testing_ladder", "device_ring", "grown_ring", "holder_prior_fraud",
+PRIORITY = ("sub_threshold_burst", "card_testing", "testing_ladder", "device_ring", "grown_ring", "proxy_new_burst", "amount_ladder",
+            "micro_charges", "holder_prior_fraud",
             "duplicate_amount_burst", "sibling_high_score")
-SELF_DELIMITING = ("sub_threshold_burst", "device_ring", "grown_ring")
+SELF_DELIMITING = ("sub_threshold_burst", "device_ring", "grown_ring", "proxy_new_burst", "amount_ladder", "micro_charges")
 JANUARY = em.JANUARY
 
 

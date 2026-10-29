@@ -187,3 +187,11 @@ def entity_shares(entity_field: str, values, t0, days: float) -> pd.DataFrame:
 
 # grown-detector tools (S6), resolvable through ToolRegistry's duckq_ext fallback for attestation re-runs
 from kavach.grow.gtools import grow_date_range, grow_entity_daily_cards, grow_entity_popularity, grow_entity_txns  # noqa: E402,F401
+
+
+def small_online_txns(t_from, t_to, max_amt: float = 6.0) -> pd.DataFrame:
+    """Every online transaction under max_amt on any card in [t_from, t_to] (input of the cross-customer micro-charge
+    check). TigerGraph mirror: TgTools.small_online_txns over the installed band_txns query."""
+    return q("""select TransactionID, card_id, ts, TransactionAmt amt from txn
+                where channel = 'online' and TransactionAmt < ? and ts between ? and ? order by ts, TransactionID""",
+             float(max_amt), _ts(t_from), _ts(t_to))

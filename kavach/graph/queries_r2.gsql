@@ -1,157 +1,154 @@
-// Round 2 installed queries for the typology tools (S2). DRAFTS: the lead installs them on the TG-00 workspace.
-// Each mirrors a function of kavach/duckq_ext.py; the TgTools methods (kavach/graph/client.py) map the duck signatures onto
-// these queries and finish small computations client side, so both lanes return the same frame columns:
+// Round 2 installed queries behind the typology tools (S2, kavach/detectors/typologies.py).
+// Each mirrors a function of kavach/duckq_ext.py (or kavach/duckq.amount_peers without an email); the TgTools methods
+// (kavach/graph/client.py) map the duck signatures onto these queries and finish small computations client side, so both
+// lanes return the same frame columns and values:
 //
 //   entity_neighbors(entity_field, value, t_from, t_to)
-//       R_emaildomain    -> entity_neighbors_r(e, t_from, t_to)
-//       P_emaildomain    -> entity_neighbors_p(e, t_from, t_to)
-//       addr1            -> entity_neighbors_region(r, t_from, t_to)                 (in-person rows only)
-//       product_band     -> entity_neighbors_band(product, lo, hi, t_from, t_to)     ("C|350-500" -> "C", 350, 500; "C|2500+" -> hi 1e12)
-//       access_signature -> entity_neighbors_sig(product, proxy, id15, devtype, t_from, t_to)  ("C|IP_PROXY:ANONYMOUS|New|mobile")
-//       holder_key       -> entity_neighbors_holder(h, t_from, t_to)
-//     client: add column `entity` = value, sort by (ts, TransactionID)
-//   card_atypical_window(card_id | [card_id], t_from, t_to) -> card_atypical_window(cards, t_from, t_to)
-//     client: product_unseen = prior_same_product == 0 and prior_n >= 5; amt_above_prior_max = prior_n >= 5 and amt > prior_max;
-//             amt_above_product_max = prior_same_product >= 3 and amt > prior_max_product; device_new = id_15 == "New";
-//             proxy_unseen = proxy_type != "" and prior_proxy == 0 and prior_n >= 5; hours_since_prev from @prev_ts
-//   entity_shares(entity_field, values, t0, days)          -> entity_shares_<field>(values, t_from, t_to) + active_cards(t_from, t_to)
-//   entity_baseline(entity_field, value, t0, days)         -> entity_baseline_<field>(value, b0, w0, t0, bucket_s) + active_cards(w0, t0)
-//     client: cards_window, active_window, share_window, mean over complete buckets (bucket start >= data start), baseline_buckets
-// Parity: tests/test_parity.py should compare one HHF case per detector on both lanes (KAVACH_PARITY=1).
+//       R_emaildomain    -> entity_neighbors_r({value}, t_from, t_to)        (EmailDomain vertex, RECIPIENT_EMAIL_OF)
+//       P_emaildomain    -> entity_neighbors_p({value}, t_from, t_to)        (EmailDomain vertex, PURCHASER_EMAIL_OF)
+//       addr1            -> entity_neighbors_region({value}, t_from, t_to)   (BillingRegion vertex, in-person rows only)
+//       product_band, access_signature, holder_key -> entity_neighbors_attr(field, s1..s4, lo, hi, t_from, t_to)
+//     client: column `entity` = value, sort by (ts, TransactionID), duck column order
+//   card_atypical_window(card_id | [card_id], t_from, t_to) -> card_atypical_window({cards}, t_from, t_to)
+//     server: per window row, aggregates over the SAME card's earlier rows (ts, then TransactionID)
+//     client: the flags (product_unseen, amt_above_prior_max, amt_above_product_max, device_new, proxy_unseen, atypical)
+//   entity_shares(entity_field, values, t0, days)   -> entity_shares_any(field, {values}, {int values}, t0 - days, t0)
+//   entity_baseline(entity_field, value, t0, days)  -> entity_baseline_any(field, s1..s4, ival, lo, hi, b0, w0, t0, bucket_s)
+//     client: share, mean over complete buckets (bucket start >= first transaction, txn_date_range), baseline_buckets
+//   amount_peers(product_cd, amt, t0, days, tol) with no email -> amount_peers_any(product, lo, hi, t_from, t_to)
+//
+// Ids come as SET<STRING> (converted with to_vertex_set inside the query; an unknown id matches nothing instead of failing
+// the call). Null strings are loaded as "" and null addr1 as 0 (no real addr1 is 0), so `t.proxy_type != ""` is the
+// graph form of `id_23 is not null`. The product band labels below must match kavach.duckq_ext.BAND_EDGES
+// (tests/test_tg_mirrors.py checks it).
 
-CREATE OR REPLACE QUERY entity_neighbors_r(VERTEX<EmailDomain> e, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
-  S = {e};
-  T = SELECT t FROM S:s -(RECIPIENT_EMAIL_OF>)- Transaction:t WHERE t.ts >= t_from AND t.ts <= t_to ORDER BY t.ts ASC LIMIT 200000;
+CREATE OR REPLACE QUERY entity_neighbors_r(SET<STRING> vals, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
+  S = to_vertex_set(vals, "EmailDomain");
+  T = SELECT t FROM S:s -(RECIPIENT_EMAIL_OF>)- Transaction:t WHERE t.ts >= t_from AND t.ts <= t_to;
   PRINT T;
 }
 
-CREATE OR REPLACE QUERY entity_neighbors_p(VERTEX<EmailDomain> e, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
-  S = {e};
-  T = SELECT t FROM S:s -(PURCHASER_EMAIL_OF>)- Transaction:t WHERE t.ts >= t_from AND t.ts <= t_to ORDER BY t.ts ASC LIMIT 200000;
+CREATE OR REPLACE QUERY entity_neighbors_p(SET<STRING> vals, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
+  S = to_vertex_set(vals, "EmailDomain");
+  T = SELECT t FROM S:s -(PURCHASER_EMAIL_OF>)- Transaction:t WHERE t.ts >= t_from AND t.ts <= t_to;
   PRINT T;
 }
 
-CREATE OR REPLACE QUERY entity_neighbors_region(VERTEX<BillingRegion> r, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
+CREATE OR REPLACE QUERY entity_neighbors_region(SET<STRING> vals, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
   // a billing region identifies a place of purchase only for card-present rows
-  S = {r};
-  T = SELECT t FROM S:s -(REGION_OF>)- Transaction:t
-      WHERE t.channel == "in_person" AND t.ts >= t_from AND t.ts <= t_to ORDER BY t.ts ASC LIMIT 200000;
+  S = to_vertex_set(vals, "BillingRegion");
+  T = SELECT t FROM S:s -(REGION_OF>)- Transaction:t WHERE t.channel == "in_person" AND t.ts >= t_from AND t.ts <= t_to;
   PRINT T;
 }
 
-CREATE OR REPLACE QUERY entity_neighbors_band(STRING product, DOUBLE lo, DOUBLE hi, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
-  // (ProductCD, amount band): lo <= amt < hi, same product code
+CREATE OR REPLACE QUERY entity_neighbors_attr(STRING field, STRING s1, STRING s2, STRING s3, STRING s4, DOUBLE lo, DOUBLE hi,
+                                              DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
+  // entities that are transaction attributes, not vertices:
+  //   product_band      s1 = product code, lo <= amt < hi
+  //   access_signature  s1 = product code, s2 = proxy type, s3 = id_15, s4 = device type (proxied rows only)
+  //   holder_key        s1 = account key
   T = SELECT t FROM Transaction:t
-      WHERE t.product_cd == product AND t.amt >= lo AND t.amt < hi AND t.ts >= t_from AND t.ts <= t_to ORDER BY t.ts ASC LIMIT 200000;
+      WHERE t.ts >= t_from AND t.ts <= t_to AND (
+            (field == "product_band" AND t.product_cd == s1 AND t.amt >= lo AND t.amt < hi)
+         OR (field == "access_signature" AND t.proxy_type != "" AND t.product_cd == s1 AND t.proxy_type == s2 AND t.id_15 == s3
+             AND t.device_type == s4)
+         OR (field == "holder_key" AND t.holder_key == s1));
   PRINT T;
 }
 
-CREATE OR REPLACE QUERY entity_neighbors_sig(STRING product, STRING proxy, STRING id15, STRING devtype, DATETIME t_from, DATETIME t_to)
-FOR GRAPH Fraud SYNTAX V2 {
-  // anonymised access signature product|proxy type|id_15|device type; only proxied rows carry one
-  T = SELECT t FROM Transaction:t
-      WHERE t.proxy_type != "" AND t.product_cd == product AND t.proxy_type == proxy AND t.id_15 == id15 AND t.device_type == devtype
-        AND t.ts >= t_from AND t.ts <= t_to ORDER BY t.ts ASC LIMIT 200000;
-  PRINT T;
-}
-
-CREATE OR REPLACE QUERY entity_neighbors_holder(VERTEX<Holder> h, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
-  S = {h};
-  C = SELECT c FROM S:s -(HOLDER_CARD>)- Card:c;
-  T = SELECT t FROM C:c -(MADE>)- Transaction:t
-      WHERE t.holder_key == h.id AND t.ts >= t_from AND t.ts <= t_to ORDER BY t.ts ASC LIMIT 200000;
-  PRINT T;
-}
-
-CREATE OR REPLACE QUERY card_atypical_window(SET<VERTEX<Card>> cards, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
-  // window transactions of the cards, each with aggregates over the SAME card's earlier transactions; flags are derived client side
-  SumAccum<INT> @prior_n; SumAccum<INT> @prior_same_product; SumAccum<INT> @prior_proxy;
-  MaxAccum<DOUBLE> @prior_max; MaxAccum<DOUBLE> @prior_max_product; MaxAccum<DATETIME> @prev_ts;
-  C = cards;
+CREATE OR REPLACE QUERY card_atypical_window(SET<STRING> card_ids, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
+  // the cards' transactions in the window, each with aggregates over the SAME card's earlier transactions
+  // (earlier = smaller ts, or the same ts and a smaller TransactionID); the flags are derived client side
+  SumAccum<INT> @prior_n;
+  SumAccum<INT> @prior_same_product;
+  SumAccum<INT> @prior_proxy;
+  MaxAccum<DOUBLE> @prior_max;
+  MaxAccum<DOUBLE> @prior_max_product;
+  MaxAccum<DATETIME> @prev_ts;
+  C = to_vertex_set(card_ids, "Card");
   W = SELECT t FROM C:c -(MADE>)- Transaction:t WHERE t.ts >= t_from AND t.ts <= t_to;
   X = SELECT e FROM W:w -(MADE_BY>)- Card:c -(MADE>)- Transaction:e
-      WHERE e.ts < w.ts OR (e.ts == w.ts AND e.id < w.id)
+      WHERE e.ts < w.ts OR (e.ts == w.ts AND str_to_int(e.id) < str_to_int(w.id))
       ACCUM w.@prior_n += 1,
             w.@prior_max += e.amt,
             w.@prev_ts += e.ts,
             IF e.product_cd == w.product_cd THEN w.@prior_same_product += 1, w.@prior_max_product += e.amt END,
             IF e.proxy_type != "" THEN w.@prior_proxy += 1 END;
-  PRINT W[W.id, W.card_id, W.ts, W.amt, W.product_cd, W.channel, W.addr1, W.p_email, W.r_email, W.device_key, W.id_15, W.proxy_type,
-          W.device_type, W.risk_score, W.holder_key, W.@prior_n, W.@prior_same_product, W.@prior_proxy, W.@prior_max,
-          W.@prior_max_product, W.@prev_ts];
+  PRINT W;
 }
 
-CREATE OR REPLACE QUERY active_cards(DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
-  // distinct cards with any transaction in the window (the denominator of every share)
-  SumAccum<INT> @@n;
-  T = SELECT t FROM Transaction:t WHERE t.ts >= t_from AND t.ts <= t_to;
-  C = SELECT c FROM T:t -(MADE_BY>)- Card:c POST-ACCUM @@n += 1;
-  PRINT @@n AS active;
-}
-
-CREATE OR REPLACE QUERY entity_shares_r(SET<VERTEX<EmailDomain>> values, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
-  // distinct cards per recipient domain in the window (P_emaildomain: same query over PURCHASER_EMAIL_OF, entity_shares_p)
+CREATE OR REPLACE QUERY entity_shares_any(STRING field, SET<STRING> vals, SET<INT> ivals, DATETIME t_from, DATETIME t_to)
+FOR GRAPH Fraud SYNTAX V2 {
+  // distinct cards per requested entity value in the window, and the distinct cards active in the window
+  SetAccum<STRING> @@active;
   MapAccum<STRING, SetAccum<STRING>> @@cards;
-  S = values;
-  T = SELECT t FROM S:s -(RECIPIENT_EMAIL_OF>)- Transaction:t WHERE t.ts >= t_from AND t.ts <= t_to ACCUM @@cards += (s.id -> t.card_id);
-  PRINT @@cards;
-}
-
-CREATE OR REPLACE QUERY entity_shares_p(SET<VERTEX<EmailDomain>> values, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
-  MapAccum<STRING, SetAccum<STRING>> @@cards;
-  S = values;
-  T = SELECT t FROM S:s -(PURCHASER_EMAIL_OF>)- Transaction:t WHERE t.ts >= t_from AND t.ts <= t_to ACCUM @@cards += (s.id -> t.card_id);
-  PRINT @@cards;
-}
-
-CREATE OR REPLACE QUERY entity_shares_region(SET<VERTEX<BillingRegion>> values, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
-  MapAccum<STRING, SetAccum<STRING>> @@cards;
-  S = values;
-  T = SELECT t FROM S:s -(REGION_OF>)- Transaction:t WHERE t.channel == "in_person" AND t.ts >= t_from AND t.ts <= t_to
-      ACCUM @@cards += (s.id -> t.card_id);
-  PRINT @@cards;
-}
-
-CREATE OR REPLACE QUERY entity_shares_attr(DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
-  // product_band, access_signature and holder_key are transaction attributes, not vertices: one scan of the window returns
-  // the distinct cards per band, per signature and per holder key; the client keeps the requested values
-  MapAccum<STRING, SetAccum<STRING>> @@band; MapAccum<STRING, SetAccum<STRING>> @@sig; MapAccum<STRING, SetAccum<STRING>> @@holder;
+  MapAccum<INT, SetAccum<STRING>> @@icards;
+  MapAccum<STRING, INT> @@n;
+  MapAccum<INT, INT> @@ni;
   T = SELECT t FROM Transaction:t WHERE t.ts >= t_from AND t.ts <= t_to
-      ACCUM STRING b = (CASE WHEN t.amt < 5 THEN "0-5" WHEN t.amt < 10 THEN "5-10" WHEN t.amt < 20 THEN "10-20" WHEN t.amt < 50 THEN "20-50"
-                             WHEN t.amt < 100 THEN "50-100" WHEN t.amt < 200 THEN "100-200" WHEN t.amt < 350 THEN "200-350"
-                             WHEN t.amt < 500 THEN "350-500" WHEN t.amt < 750 THEN "500-750" WHEN t.amt < 1000 THEN "750-1000"
-                             WHEN t.amt < 1500 THEN "1000-1500" WHEN t.amt < 2500 THEN "1500-2500" ELSE "2500+" END),
-            @@band += (t.product_cd + "|" + b -> t.card_id),
-            IF t.proxy_type != "" THEN @@sig += (t.product_cd + "|" + t.proxy_type + "|" + t.id_15 + "|" + t.device_type -> t.card_id) END,
-            IF t.holder_key != "" THEN @@holder += (t.holder_key -> t.card_id) END;
-  PRINT @@band, @@sig, @@holder;
+      ACCUM @@active += t.card_id,
+            IF field == "R_emaildomain" AND t.r_email IN vals THEN @@cards += (t.r_email -> t.card_id) END,
+            IF field == "P_emaildomain" AND t.p_email IN vals THEN @@cards += (t.p_email -> t.card_id) END,
+            IF field == "addr1" AND t.channel == "in_person" AND t.addr1 IN ivals THEN @@icards += (t.addr1 -> t.card_id) END,
+            IF field == "holder_key" AND t.holder_key IN vals THEN @@cards += (t.holder_key -> t.card_id) END,
+            IF field == "access_signature" AND t.proxy_type != "" THEN
+              @@cards += (t.product_cd + "|" + t.proxy_type + "|" + t.id_15 + "|" + t.device_type -> t.card_id)
+            END,
+            IF field == "product_band" THEN
+              IF t.amt < 5 THEN @@cards += (t.product_cd + "|0-5" -> t.card_id)
+              ELSE IF t.amt < 10 THEN @@cards += (t.product_cd + "|5-10" -> t.card_id)
+              ELSE IF t.amt < 20 THEN @@cards += (t.product_cd + "|10-20" -> t.card_id)
+              ELSE IF t.amt < 50 THEN @@cards += (t.product_cd + "|20-50" -> t.card_id)
+              ELSE IF t.amt < 100 THEN @@cards += (t.product_cd + "|50-100" -> t.card_id)
+              ELSE IF t.amt < 200 THEN @@cards += (t.product_cd + "|100-200" -> t.card_id)
+              ELSE IF t.amt < 350 THEN @@cards += (t.product_cd + "|200-350" -> t.card_id)
+              ELSE IF t.amt < 500 THEN @@cards += (t.product_cd + "|350-500" -> t.card_id)
+              ELSE IF t.amt < 750 THEN @@cards += (t.product_cd + "|500-750" -> t.card_id)
+              ELSE IF t.amt < 1000 THEN @@cards += (t.product_cd + "|750-1000" -> t.card_id)
+              ELSE IF t.amt < 1500 THEN @@cards += (t.product_cd + "|1000-1500" -> t.card_id)
+              ELSE IF t.amt < 2500 THEN @@cards += (t.product_cd + "|1500-2500" -> t.card_id)
+              ELSE @@cards += (t.product_cd + "|2500+" -> t.card_id)
+              END
+            END;
+  FOREACH (k, v) IN @@cards DO
+    IF k IN vals THEN @@n += (k -> v.size()); END;
+  END;
+  FOREACH (k, v) IN @@icards DO
+    @@ni += (k -> v.size());
+  END;
+  PRINT @@active.size() AS active, @@n AS n, @@ni AS ni;
 }
 
-CREATE OR REPLACE QUERY entity_baseline_r(VERTEX<EmailDomain> e, DATETIME b0, DATETIME w0, DATETIME t0, INT bucket_s) FOR GRAPH Fraud SYNTAX V2 {
-  // cards paying the recipient domain in the window [w0, t0] and per bucket of bucket_s seconds in [b0, w0)
-  // (entity_baseline_p over PURCHASER_EMAIL_OF and entity_baseline_region over REGION_OF are the same shape)
-  SetAccum<STRING> @@window; MapAccum<INT, SetAccum<STRING>> @@buckets;
-  S = {e};
-  T = SELECT t FROM S:s -(RECIPIENT_EMAIL_OF>)- Transaction:t WHERE t.ts >= b0 AND t.ts <= t0
+CREATE OR REPLACE QUERY entity_baseline_any(STRING field, STRING s1, STRING s2, STRING s3, STRING s4, INT ival, DOUBLE lo, DOUBLE hi,
+                                            DATETIME b0, DATETIME w0, DATETIME t0, DOUBLE bucket_s) FOR GRAPH Fraud SYNTAX V2 {
+  // cards touching one entity value in the window [w0, t0] and per bucket of bucket_s seconds in [b0, w0),
+  // and the distinct cards active in [w0, t0]
+  SetAccum<STRING> @@active;
+  SetAccum<STRING> @@window;
+  MapAccum<INT, SetAccum<STRING>> @@buckets;
+  MapAccum<INT, INT> @@per;
+  A = SELECT t FROM Transaction:t WHERE t.ts >= w0 AND t.ts <= t0 ACCUM @@active += t.card_id;
+  M = SELECT t FROM Transaction:t
+      WHERE t.ts >= b0 AND t.ts <= t0 AND (
+            (field == "R_emaildomain" AND t.r_email == s1)
+         OR (field == "P_emaildomain" AND t.p_email == s1)
+         OR (field == "addr1" AND t.channel == "in_person" AND t.addr1 == ival)
+         OR (field == "product_band" AND t.product_cd == s1 AND t.amt >= lo AND t.amt < hi)
+         OR (field == "access_signature" AND t.proxy_type != "" AND t.product_cd == s1 AND t.proxy_type == s2 AND t.id_15 == s3
+             AND t.device_type == s4)
+         OR (field == "holder_key" AND t.holder_key == s1))
       ACCUM IF t.ts >= w0 THEN @@window += t.card_id
-            ELSE @@buckets += ((datetime_to_epoch(t.ts) - datetime_to_epoch(b0)) / bucket_s -> t.card_id) END;
-  PRINT @@window.size() AS cards_window, @@buckets;
-}
-
-CREATE OR REPLACE QUERY entity_baseline_p(VERTEX<EmailDomain> e, DATETIME b0, DATETIME w0, DATETIME t0, INT bucket_s) FOR GRAPH Fraud SYNTAX V2 {
-  SetAccum<STRING> @@window; MapAccum<INT, SetAccum<STRING>> @@buckets;
-  S = {e};
-  T = SELECT t FROM S:s -(PURCHASER_EMAIL_OF>)- Transaction:t WHERE t.ts >= b0 AND t.ts <= t0
-      ACCUM IF t.ts >= w0 THEN @@window += t.card_id
-            ELSE @@buckets += ((datetime_to_epoch(t.ts) - datetime_to_epoch(b0)) / bucket_s -> t.card_id) END;
-  PRINT @@window.size() AS cards_window, @@buckets;
+            ELSE @@buckets += (float_to_int((datetime_to_epoch(t.ts) - datetime_to_epoch(b0)) / bucket_s) -> t.card_id)
+            END;
+  FOREACH (k, v) IN @@buckets DO
+    @@per += (k -> v.size());
+  END;
+  PRINT @@window.size() AS cards_window, @@active.size() AS active_window, @@per AS per;
 }
 
 CREATE OR REPLACE QUERY amount_peers_any(STRING product, DOUBLE lo, DOUBLE hi, DATETIME t_from, DATETIME t_to) FOR GRAPH Fraud SYNTAX V2 {
-  // amount_peers without an email anchor (micro_charges_peers and amount_ladder_ring: the same amount on any card). TgTools.amount_peers
-  // currently raises when email is None; route that case here instead, or the case fails closed on the graph lane.
+  // amount_peers without an email anchor (micro_charges_peers, amount_ladder_ring): the same amount on any card
   T = SELECT t FROM Transaction:t
-      WHERE t.product_cd == product AND t.channel == "online" AND t.amt >= lo AND t.amt <= hi AND t.ts >= t_from AND t.ts <= t_to
-      ORDER BY t.ts ASC LIMIT 200000;
+      WHERE t.product_cd == product AND t.channel == "online" AND t.amt >= lo AND t.amt <= hi AND t.ts >= t_from AND t.ts <= t_to;
   PRINT T;
 }

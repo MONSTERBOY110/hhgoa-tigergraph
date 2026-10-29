@@ -41,7 +41,7 @@ DEFAULTS = {
     "proxy_new_burst": {"min_n": 2, "min_amt": 200.0, "hours": 72, "require_unseen": False},
     "proxy_new_burst_ring": {"min_n": 2, "min_amt": 200.0, "hours": 72, "require_unseen": False, "min_other": 3, "days": 14},
     "amount_ladder": {"min_n": 4, "min_steps": 3, "ratio": 1.5, "min_max": 1000.0, "days": 14},
-    "amount_ladder_ring": {"min_n": 4, "min_steps": 3, "ratio": 1.5, "min_max": 1000.0, "days": 14, "min_other": 3, "ring_days": 14},
+    "amount_ladder_ring": {"min_n": 4, "min_steps": 3, "ratio": 1.5, "min_max": 1000.0, "days": 14, "min_other": 2, "ring_days": 14},
 }
 
 
@@ -90,7 +90,7 @@ def load_backtests(directory=None) -> dict:
                     params[k] = tuple(params[k])
             out[n] = {"params": params, "status": chosen.get("status", "weak"), "lift": chosen.get("lift"),
                       "support": chosen.get("support"), "cleared_hits": chosen.get("cleared_hits"),
-                      "llr": chosen.get("llr", lift_to_llr(chosen))}
+                      "pop_hits": chosen.get("pop_hits"), "llr": chosen.get("llr", lift_to_llr(chosen))}
     return out
 
 
@@ -209,7 +209,10 @@ def micro_rule(facts, anchor, p) -> dict | None:
         return None
     best = micro.iloc[i:j]
     s0, e0 = best.ts.iloc[0], best.ts.iloc[0] + pd.Timedelta(days=p["days"])
-    devs = {d for d in best.device_key if _ok(d) and str(d).replace("|", "").strip()}
+    # a generic profile (family name such as "rv:11.0" or "Windows" with no screen, or a placeholder) is no device identity:
+    # the cardholder's own later purchase on the same browser family must not veto the rule (network.generic_device)
+    from kavach.detectors.network import generic_device
+    devs = {d for d in best.device_key if _ok(d) and str(d).replace("|", "").strip() and not generic_device(d)}
     if devs:
         h = facts["h"]
         if len(h[(h.ts >= s0) & (h.ts <= e0) & h.device_key.isin(devs) & (h.amt >= p["big_amt"])]):
@@ -668,9 +671,65 @@ def run_micro(ctx, fnd, bt) -> list[Signal]:
     claim = (f"{hit['n']} online charges of ${hit['amt_min']:,.2f} to ${hit['amt_max']:,.2f} within {hit['span_days']:.1f} days on card "
              f"{ctx.card_id}, each under ${p['max_amt']:,.0f}, with no larger purchase after them and only {hit['prior_micro_90d']} such charge(s) "
              f"in the 90 days before: slow card probing rather than the one-hour R5 test ({_bt_note(bt)})")
+    fnd.episode["micro_charges"] = [int(x) for x in hit["ids"]]
     fnd.notes.setdefault("typologies", []).append({"name": "micro_charges", **hit, "status": bt["status"], "llr": bt["llr"]})
-    return [Signal("micro_charges", "sequence", bt["llr"], claim, hit["ids"], T.ref("card_history", card_id=ctx.card_id),
+    sigs = [Signal("micro_charges", "sequence", bt["llr"], claim, hit["ids"], T.ref("card_history", card_id=ctx.card_id),
                    how={"tool": "card_history", "params": {"card_id": ctx.card_id}})]
+    return sigs + _micro_ring(ctx, fnd)
+
+
+MICRO_RING = {"max_amt": 6.0, "min_n": 5, "days": 30, "habit_days": 90, "habit_max": 2, "min_other": 2, "windows": 3, "spike": 3.0}
+
+
+def micro_shape_cards(small: pd.DataFrame, w0, w1, p=MICRO_RING) -> list[str]:
+    """Cards with >= min_n online charges under max_amt in [w0, w1] and at most habit_max such charges in the habit_days
+    before w0 (no micro-purchase habit). `small` holds every small online transaction from w0 - habit_days to w1."""
+    if small is None or not len(small):
+        return []
+    cur = small[(small.ts >= w0) & (small.ts <= w1)].groupby("card_id").size()
+    cur = cur[cur >= p["min_n"]]
+    if not len(cur):
+        return []
+    hab = small[(small.ts >= w0 - pd.Timedelta(days=p["habit_days"])) & (small.ts < w0)].groupby("card_id").size()
+    return sorted(c for c in cur.index if int(hab.get(c, 0)) <= p["habit_max"])
+
+
+def micro_ring_rule(small: pd.DataFrame, card_id: str, t_end, p=MICRO_RING) -> dict | None:
+    """The slow micro-charge shape repeated across customers: >= min_other OTHER no-habit cards show it in the days up to
+    the alert, at >= spike times the average of the previous `windows` windows (a burst across customers, not background)."""
+    t_end = pd.Timestamp(t_end)
+    w = pd.Timedelta(days=p["days"])
+    now = micro_shape_cards(small, t_end - w, t_end, p)
+    others = [c for c in now if c != card_id]
+    base = [len(micro_shape_cards(small, t_end - (k + 1) * w, t_end - k * w, p)) for k in range(1, p["windows"] + 1)]
+    avg = sum(base) / len(base)
+    if len(others) < p["min_other"] or len(now) < p["spike"] * max(avg, 1.0):
+        return None
+    ids = [_tid(x) for x in small[small.card_id.isin(others) & (small.ts >= t_end - w) & (small.ts <= t_end)].TransactionID]
+    return {"cards": others, "n_cards": len(others), "n_now": len(now), "baseline": base, "baseline_avg": round(avg, 2), "ids": ids}
+
+
+def _micro_ring(ctx, fnd) -> list[Signal]:
+    p, T = MICRO_RING, ctx.tools
+    t_end = pd.Timestamp(getattr(ctx, "opened", None) or ctx.t0)   # up to the alert, never later
+    t_from = t_end - pd.Timedelta(days=p["days"] * (p["windows"] + 1) + p["habit_days"])
+    params = {"t_from": str(t_from), "t_to": str(t_end), "max_amt": p["max_amt"]}
+    small = T.call("small_online_txns", **params)
+    hit = micro_ring_rule(small, ctx.card_id, t_end, p)
+    if not hit:
+        return []
+    bt = {"status": "weak", "llr": 0.0, "pop_hits": 0, "support": 0}
+    llr, note = _ring_llr(bt, hit["n_cards"])
+    element = (f"the same slow micro-charge shape (5 or more online charges under ${p['max_amt']:,.0f} in {p['days']} days on a card "
+               "with no micro-charge habit)")
+    claim = (f"The slow micro-charge shape appears on {hit['n_cards']} other customers' cards with no micro-charge habit in the "
+             f"{p['days']} days to {t_end:%Y-%m-%d} ({hit['n_now']} cards in all) against {hit['baseline_avg']} per {p['days']} days over "
+             f"the previous {p['windows']} windows ({', '.join(str(x) for x in hit['baseline'])}): charges too small to trip any "
+             f"threshold, repeated across customers ({note}; the same rule scanned weekly over October to December never fires)")
+    _mark_coordinated(fnd, "micro_charges", llr, hit["cards"], "same slow micro-charge shape in the same window", element)
+    fnd.notes.setdefault("typologies", []).append({"name": "micro_charges_ring", **{k: v for k, v in hit.items() if k != "ids"}})
+    return [Signal("micro_charges_ring", "network", llr, claim, hit["cards"][:10] + hit["ids"][:10],
+                   T.ref("small_online_txns", **params), how={"tool": "small_online_txns", "params": params})]
 
 
 def run_micro_peers(ctx, fnd, bt) -> list[Signal]:
@@ -757,6 +816,22 @@ def run_proxy_burst(ctx, fnd, bt) -> list[Signal]:
                    how={"tool": "card_history", "params": {"card_id": ctx.card_id}})]
 
 
+RING_LLR = 1.5   # stated weight, same as the Round 1 template-ring weight (network.py fixed_amount_ring / template repeats)
+
+
+def _ring_llr(bt: dict, n_cards: int) -> tuple[float, str]:
+    """Weight of a cross-card template. A validated backtest gives its own LLR. A template that the labelled months never
+    show on 3 or more cards (0 population hits and 0 confirmed-fraud hits: no example to fit a ratio on) but that now
+    repeats on 3 or more customers' cards (the case card and at least 2 others) is coordination by construction, so it carries a
+    stated weight, said in the claim."""
+    if bt["status"] == "validated":
+        return bt["llr"], _bt_note(bt)
+    if n_cards >= 2 and not (bt.get("pop_hits") or 0) and not (bt.get("support") or 0):   # the case card plus 2 others: 3 customers
+        return max(bt["llr"], RING_LLR), (f"no labelled example: the closed months show this template on 3 or more cards 0 times "
+                                          f"(0 of the reference transactions), so a stated coordination weight of {RING_LLR} is used")
+    return bt["llr"], _bt_note(bt)
+
+
 def _mark_coordinated(fnd, kind, llr, cards, reason, element):
     """Cross-card template: coordinated abuse across customers (R9). The other template cards become connected cards."""
     fnd.coordinated_undocumented = True
@@ -782,14 +857,15 @@ def run_proxy_ring(ctx, fnd, bt) -> list[Signal]:
               "t_to": str(t_end + pd.Timedelta(days=p["days"]))}
     element = (f"a repeated template of product {hit['product']} purchases of ${p['min_amt']:,.0f} or more in bursts from devices "
                "marked New behind an anonymous proxy, with no shared device")
+    llr, note = _ring_llr(bt, hit["n_cards"])
     claim = (f"The same template (product {hit['product']}, New device behind an anonymous proxy, ${p['min_amt']:,.0f} or more, "
              f"{p['min_n']} or more within {p['hours']} hours) appears on {hit['n_cards']} other cards within {p['days']} days, none "
-             f"sharing a device with this card: coordinated abuse across customers ({_bt_note(bt)})")
+             f"sharing a device with this card: coordinated abuse across customers ({note})")
     fnd.episode["proxy_new_burst"] = [int(x) for x in hit["ids"]]
-    _mark_coordinated(fnd, "proxy_new_burst", bt["llr"], hit["cards"], "same New-device anonymous-proxy purchase template", element)
+    _mark_coordinated(fnd, "proxy_new_burst", llr, hit["cards"], "same New-device anonymous-proxy purchase template", element)
     fnd.notes.setdefault("typologies", []).append({"name": "proxy_new_burst_ring", **{k: v for k, v in hit.items() if k != "ring_ids"},
                                                    "status": bt["status"], "llr": bt["llr"]})
-    return [Signal("proxy_new_burst_ring", "network", bt["llr"], claim, hit["cards"][:10] + hit["ids"] + hit["ring_ids"][:10],
+    return [Signal("proxy_new_burst_ring", "network", llr, claim, hit["cards"][:10] + hit["ids"] + hit["ring_ids"][:10],
                    T.ref("entity_neighbors", **params), how={"tool": "entity_neighbors", "params": params})]
 
 
@@ -820,13 +896,14 @@ def run_ladder_ring(ctx, fnd, bt) -> list[Signal]:
     params = {"product_cd": hit["product"], "amt": hit["cap"], "t0": str(a["ts"]), "days": p["ring_days"], "tol": 0.001}
     cited = [_tid(x) for x in peers[peers.card_id.isin(hit["cards"] + [ctx.card_id])].TransactionID]
     element = f"a repeated amount ladder capped at ${hit['cap']:,.2f} (product {hit['product']})"
+    llr, note = _ring_llr(bt, hit["n_cards"])
     claim = (f"The same ladder capped at ${hit['cap']:,.2f} appears on {hit['n_cards']} other cards within {p['ring_days']} days: "
-             f"coordinated cash-out across customers ({_bt_note(bt)})")
+             f"coordinated cash-out across customers ({note})")
     fnd.episode["amount_ladder"] = [int(x) for x in hit["ids"]]
-    _mark_coordinated(fnd, "amount_ladder", bt["llr"], hit["cards"], f"same amount ladder capped at ${hit['cap']:,.2f}", element)
+    _mark_coordinated(fnd, "amount_ladder", llr, hit["cards"], f"same amount ladder capped at ${hit['cap']:,.2f}", element)
     fnd.notes.setdefault("typologies", []).append({"name": "amount_ladder_ring", **{k: v for k, v in hit.items() if k != "ring_ids"},
                                                    "status": bt["status"], "llr": bt["llr"]})
-    return [Signal("amount_ladder_ring", "network", bt["llr"], claim, hit["cards"][:10] + cited[:20],
+    return [Signal("amount_ladder_ring", "network", llr, claim, hit["cards"][:10] + cited[:20],
                    T.ref("amount_peers", **params), how={"tool": "amount_peers", "params": params})]
 
 
