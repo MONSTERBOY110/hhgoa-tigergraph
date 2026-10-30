@@ -91,7 +91,7 @@ One page on dependencies, data egress and failure behaviour: [resilience stateme
 | 10 | Break the agent | `kavach/intake.py` | [attacks](round2/attacks.md) |
 | 11 | Data quality detective | `kavach/dq.py` | `python -m kavach dq`, [report](round2/data-quality.md) |
 | 12 | Schema drift survival | `kavach/drift.py` | `python -m kavach drift detect`, [report](round2/drift-report.md) |
-| 13 | Someone else's schema | `kavach/mapper.py` | [mapping](round2/schema-mapping.md) |
+| 13 | Someone else's schema | `kavach/mapper.py` (tables), `kavach/schema_map.py` (GSQL graph schemas) | `python -m kavach.schema_map round2/*.gsql --score` (the mentors' three banks: 81 of 82 targets right), [mapping](round2/schema-mapping.md) |
 | 14 | Case management | `kavach/casefile.py` | `python -m kavach case <case>` |
 
 ## Honest limitations

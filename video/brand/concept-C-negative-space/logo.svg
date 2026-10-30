@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 140" width="120" height="140" role="img" aria-labelledby="t">
+  <title id="t">Kavach</title>
+  <!-- The shield: the launch video's path and its 8-unit round-joined stroke, filled in ink. -->
+  <path d="M60 6 L112 26 V64 C112 98 88 120 60 134 C32 120 8 98 8 64 V26 Z"
+        fill="#141A21" stroke="#141A21" stroke-width="8" stroke-linejoin="round"/>
+  <!-- The ring: three linked nodes cut out in paper. Its corners are the shield's own
+       shoulders and point, scaled about 0.55 toward the centre, so the hole repeats the shield. -->
+  <g fill="#EEF0F3">
+    <path d="M32 42 H88 L60 102 Z" fill="none" stroke="#EEF0F3" stroke-width="10" stroke-linejoin="round"/>
+    <circle cx="32" cy="42" r="12"/>
+    <circle cx="88" cy="42" r="12"/>
+    <circle cx="60" cy="102" r="12"/>
+  </g>
+</svg>

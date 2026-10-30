@@ -79,6 +79,13 @@
       height: 4px;
       background: var(--color-ink, #141a21);
     }
+    #root .handle {
+      top: 918px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 36px;
+      letter-spacing: 0.06em;
+      color: var(--color-ink, #141a21);
+    }
     #root .hh {
       top: 860px;
       font-family: "IBM Plex Mono", monospace;
@@ -102,6 +109,9 @@
     </div>
     <div id="mg5-hh" class="clip" data-start="2.0" data-duration="2.5">
       <div class="centre hh">Hacker House Goa 2026</div>
+    </div>
+    <div id="mg5-x" class="clip" data-start="2.25" data-duration="2.25">
+      <div class="centre handle">@kavachhhgoa</div>
     </div>
   </div>
   <script>
@@ -134,6 +144,12 @@
       { opacity: 0, filter: "blur(6px)" },
       { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power3.out" },
       2.0,
+    );
+    tl.fromTo(
+      "#mg5-x .handle",
+      { opacity: 0, filter: "blur(6px)" },
+      { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power3.out" },
+      2.25,
     );
     window.__timelines["mg5"] = tl;
   </script>

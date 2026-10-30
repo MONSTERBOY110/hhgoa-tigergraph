@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kavach header</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; }
+  body { width: 1500px; height: 500px; overflow: hidden; background: #EEF0F3; }
+  svg { display: block; }
+  /* the lockup stays hidden until the script has measured the fonts and placed it */
+  #lockup { visibility: hidden; }
+</style>
+</head>
+<body>
+<!-- X header, 1500 x 500. Paper ground, ink lockup on the right of centre, one accent (the TigerGraph line).
+     X covers about x 0 to 450, y 300 to 500 with the avatar, so nothing is set there. -->
+<svg id="art" width="1500" height="500" viewBox="0 0 1500 500" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1500" height="500" fill="#EEF0F3"/>
+
+  <!-- A faint graph on a triangular lattice (96 px pitch, rows 83 px apart), left of the lockup. Every edge
+       ends on a node or runs off the canvas; the avatar sits over its foot. One two-and-one ring repeats the mark. -->
+  <g id="graph" stroke="#D9DDE3" stroke-width="2.5" fill="#D9DDE3" stroke-linecap="round">
+    <path fill="none" d="
+      M-24 123 H264
+      M72 -43 L120 40 L168 123
+      M168 123 L216 206 L264 123
+      M216 206 H312 L264 123
+      M312 206 L360 123 L408 40 L456 -43
+      M216 206 L168 289 L120 372 L24 538
+      M312 206 L360 289 H456"/>
+    <circle cx="72" cy="123" r="7"/>
+    <circle cx="168" cy="123" r="7"/>
+    <circle cx="264" cy="123" r="7"/>
+    <circle cx="120" cy="40" r="7"/>
+    <circle cx="216" cy="206" r="7"/>
+    <circle cx="312" cy="206" r="7"/>
+    <circle cx="360" cy="123" r="7"/>
+    <circle cx="408" cy="40" r="7"/>
+    <circle cx="168" cy="289" r="7"/>
+    <circle cx="120" cy="372" r="7"/>
+    <circle cx="360" cy="289" r="7"/>
+    <circle cx="456" cy="289" r="7"/>
+  </g>
+
+  <g id="lockup">
+    <text id="word" font-family="Oswald" font-weight="700" font-size="196" letter-spacing="2" fill="#141A21">KAVACH</text>
+    <g id="mark">
+      <path d="M60 6 L112 26 V64 C112 98 88 120 60 134 C32 120 8 98 8 64 V26 Z"
+            fill="#141A21" stroke="#141A21" stroke-width="8" stroke-linejoin="round"/>
+      <g fill="#EEF0F3">
+        <path d="M32 42 H88 L60 102 Z" fill="none" stroke="#EEF0F3" stroke-width="10" stroke-linejoin="round"/>
+        <circle cx="32" cy="42" r="12"/>
+        <circle cx="88" cy="42" r="12"/>
+        <circle cx="60" cy="102" r="12"/>
+      </g>
+    </g>
+    <text id="tag" font-family="Oswald" font-weight="500" font-size="42" fill="#141A21">AN AI FRAUD INVESTIGATOR A BANK CAN RUN</text>
+    <text id="built" font-family="IBM Plex Mono" font-weight="500" font-size="30" fill="#C2491A">BUILT ON TIGERGRAPH</text>
+  </g>
+</svg>
+<script>
+  // Place the lockup from measured glyph ink, so the left edges and the widths line up exactly.
+  const CENTRE_X = 975;      // centre of the free area right of the avatar (450 to 1500)
+  const CENTRE_Y = 250;
+  const GAP_MARK = 34;       // H ink to shield silhouette
+  const GAP_TAG = 40;        // KAVACH baseline to tagline cap top
+  const GAP_BUILT = 30;      // tagline baseline to label cap top
+  const BUILT_TRACK = 0.16;  // em
+  const ctx = document.createElement('canvas').getContext('2d');
+  function ink(font, text, ls) {
+    ctx.font = font; ctx.letterSpacing = (ls || 0) + 'px';
+    const m = ctx.measureText(text);
+    return { left: m.actualBoundingBoxLeft, right: m.actualBoundingBoxRight, w: m.actualBoundingBoxLeft + m.actualBoundingBoxRight };
+  }
+  function cap(font) { ctx.font = font; ctx.letterSpacing = '0px'; return ctx.measureText('H').actualBoundingBoxAscent; }
+  document.fonts.load('700 196px Oswald').then(() => Promise.all([
+    document.fonts.load('500 42px Oswald'), document.fonts.load("500 30px 'IBM Plex Mono'")
+  ])).then(() => {
+    const word = document.getElementById('word'), tag = document.getElementById('tag'), built = document.getElementById('built');
+    const fW = "700 196px Oswald", fT = "500 42px Oswald", fB = "500 30px 'IBM Plex Mono'";
+    const capW = cap(fW), capT = cap(fT), capB = cap(fB);
+    const w = ink(fW, 'KAVACH', 2);
+    const s = (capW * 1.05) / 136;             // shield silhouette is 136 units tall
+    const silW = 112 * s;
+    const lockW = w.w + GAP_MARK + silW;
+    // tagline tracked so its ink runs exactly the width of the lockup
+    const t0 = ink(fT, tag.textContent, 0);
+    const n = tag.textContent.length;
+    const lsT = (lockW - t0.w) / (n - 1);
+    const t = ink(fT, tag.textContent, lsT);
+    const lsB = 30 * BUILT_TRACK;
+    const b = ink(fB, built.textContent, lsB);
+    const blockH = capW + GAP_TAG + capT + GAP_BUILT + capB;
+    const x0 = Math.round(CENTRE_X - lockW / 2);
+    const top = Math.round(CENTRE_Y - blockH / 2);
+    word.setAttribute('x', x0 + w.left);
+    word.setAttribute('y', top + capW);
+    const silLeft = x0 + w.w + GAP_MARK;
+    const markY = top + capW / 2 - 70 * s;    // silhouette centred on the cap band
+    document.getElementById('mark').setAttribute('transform', `translate(${silLeft - 4 * s} ${markY}) scale(${s})`);
+    tag.setAttribute('letter-spacing', lsT.toFixed(3));
+    tag.setAttribute('x', x0 + t.left);
+    const tagBase = top + capW + GAP_TAG + capT;
+    tag.setAttribute('y', tagBase);
+    built.setAttribute('letter-spacing', lsB.toFixed(3));
+    built.setAttribute('x', x0 + b.left);
+    built.setAttribute('y', tagBase + GAP_BUILT + capB);
+    document.getElementById('lockup').style.visibility = 'visible';
+    document.title = JSON.stringify({ x0, top, capW: +capW.toFixed(1), lockW: +lockW.toFixed(1), right: +(x0 + lockW).toFixed(1),
+      lsT: +lsT.toFixed(2), tagW: +t.w.toFixed(1), builtW: +b.w.toFixed(1), bottom: +(tagBase + GAP_BUILT + capB).toFixed(1) });
+  });
+</script>
+</body>
+</html>

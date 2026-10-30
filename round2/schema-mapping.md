@@ -99,3 +99,42 @@ One case per trigger type (analyst request with a 14-card ring, customer report 
 * A value the sample never saw cannot be recoded by a learned map; `apply` stops on it rather than writing it.
 * `make_variant` exercises the reshapes listed above; a variant with a reshape we did not anticipate (for example amounts in another currency, or one row per card instead of per transaction) shows up as unresolved needed columns, and the mapping is not usable until a person extends it.
 * `data/variant/` (2.0 GB with the canonical copy and the 409 MB index) is generated and not committed (`data/` is ignored). Delete it when done.
+
+## The mentors' graph schemas (GSQL, 30 Oct)
+
+The mentors gave us three other banks' TigerGraph schemas as GSQL DDL, each with its expected mapping written in comments: `round2/bank1_iso20022_payments.gsql` (ISO 20022 payment messages), `round2/bank2_bian_service_domains.gsql` (BIAN service domains) and `round2/bank3_core_banking_t24.gsql` (a T24 style core banking system). `kavach/schema_map.py` maps each one onto the canonical fraud-graph model: 10 vertex types (Person, Account, Transaction, Beneficiary, Device, IPAddress, LoginEvent, Card, Merchant, InvestigationCase), 13 edge types (OWNS, INITIATED, PAYS_TO_ACCOUNT, PAYS and the rest) and 12 attributes.
+
+```
+python -m kavach.schema_map round2/*.gsql --score                        # each bank's mapping, then its score against the key
+python -m kavach.schema_map round2/bank3_core_banking_t24.gsql --refresh   # ask the model again instead of using the cached proposal
+```
+
+1. **Parse.** Only the DDL is read. Every comment is dropped first, so the answer key never reaches the model or the mapping.
+2. **Propose.** The model (`gemini-3.8-flash`, temperature 0, JSON only) proposes exact, approximate or unmapped for every canonical item, with the foreign vertex, edge path or attribute and an optional condition (a role or flag filter). The proposal is cached by the sha256 of the schema, the canonical model, the prompt version and the model, so a re-run is identical and costs nothing.
+3. **Validate (code; the model is not trusted).** Every name must exist. An edge path is walked hop by hop in the declared direction (a `reverse_` hop must be a declared reverse edge or an undirected edge). A condition must name an attribute or an edge of that vertex, else the item drops to approximate with a note. An edge between approximately mapped vertices is approximate at most. Amounts must be numeric and dates DATETIME (a date string is approximate at best). Anything that fails is rejected to unmapped with the reason.
+4. **Score.** The expected-mapping block is read only at this step and compared item by item: the target (which foreign element) and the kind (exact, approximate, unmapped) separately.
+
+| bank | items | target right | kind right | both right |
+|---|---|---|---|---|
+| ISO 20022 payments | 25 | 25 | 19 | 19 |
+| BIAN service domains | 32 | 32 | 30 | 30 |
+| T24 core banking | 25 | 24 | 24 | 23 |
+| **total** | **82** | **81** | **73** | **72** |
+
+Log: `logs/schema_map_final.log`. Tests: `tests/test_schema_map.py` (5, no model call).
+
+Every miss:
+
+* **Wrong target (1).** T24 `Account.status` maps to `ACCOUNT.RECORD_STATUS`; the key wants the `POSTING_RESTRICT` code.
+* **Right element, wrong kind (9).**
+  * In ISO 20022 and BIAN, the payee is the shared party type filtered by a role. The key calls Beneficiary and PAYS approximate; we call them exact (4 items).
+  * In ISO 20022, the timestamp, the channel and the national id hash each need a second field or a scheme filter. The key calls them approximate; we call them exact (3 items).
+  * In ISO 20022, the creditor agent's BIC is approximate for us and exact in the key (1 item).
+  * In T24, the login event is `PROTOCOL` for us too, but without the `APPLICATION = "SIGN.ON"` filter, so it stays approximate where the key says exact (1 item).
+
+We did not tune to these three keys. A prompt that spelled out the key's payee convention scored worse, 68 of 82 both right (`logs/schema_map_v3.log`), so the earlier prompt stays. `gemini-3.1-pro-preview` with the same prompt scored 71 (`logs/schema_map_pro.log`).
+
+Limits:
+
+* A model key (`LLM_API_KEY`) is needed. Without one the mapper stops with "no LLM configured" rather than guessing. The cached proposals live in `data/schema_map/` (not committed), so a fresh clone asks the model once per schema.
+* It maps the schema, not the data: no loading job or query is generated for the other bank's graph.

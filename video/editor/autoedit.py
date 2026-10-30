@@ -31,6 +31,15 @@ PROJECT = VIDEO / "launch-final"
 INSERTS = [("mg1", VIDEO / "out" / "mg1_problem.mp4"), ("mg2", VIDEO / "out" / "mg2_three_failures.mp4"),
            ("mg3", VIDEO / "out" / "mg3_pipeline.mp4"), ("mg4", VIDEO / "out" / "mg4_proof.mp4"),
            ("mg5", VIDEO / "out" / "mg5_end_card.mp4")]
+AS_SAID = [   # what was actually said in the 30 Oct takes (Whisper small.en and large-v3 cross-checked; Kavach spelled)
+    "Every bank has a queue of fraud alerts, and every alert lands on one single person who has minutes to decide.",
+    "Rules miss new patterns, and black-box AI can't be trusted to block someone's card.",
+    "So we built Kavach. It gathers evidence from the bank's graph, decides by the bank's own policy, and writes up the "
+    "case.",
+    "Every claim can be re-run. Every block needs a human. If anything breaks, it stops instead of guessing.",
+    "And it learns. It proposed a new detector, a bank manager approved it, and it flagged a new fraud ring nobody has "
+    "labeled.",
+]
 SCRIPTS = [   # per shot: the current line first, then the earlier longer version (either may have been filmed)
     ["Banks drown in fraud alerts. And every alert lands on a person with minutes to decide.",
      "Every bank has a queue of fraud alerts. And every alert lands on a person who has minutes to decide."],
@@ -49,6 +58,8 @@ SCRIPTS = [   # per shot: the current line first, then the earlier longer versio
      "And it learns. It mined five thousand closed cases, proposed a new detector, and waited for a manager to approve "
      "it. That detector caught a ring nobody had labeled."],
 ]
+for _k, _line in enumerate(AS_SAID):            # the as-said text wins when it matches; captions then follow it exactly
+    SCRIPTS[_k].insert(0, _line)
 INSERT_MIN = {"mg1": 4.8, "mg2": 5.2, "mg3": 6.4, "mg4": 6.9, "mg5": 4.2}   # shortest safe tail trims (all text landed and read)
 TARGET_TOTAL = 66.0
 KEYWORDS = {"kavach", "graph", "graph's", "policy", "re-run", "human", "learns", "detector", "ring", "minutes",
@@ -175,7 +186,7 @@ def caption_words(words: list[dict], i: int, j: int, line: str, offset: float) -
     target = [norm_words(t)[0] if norm_words(t) else "" for t in target_raw]
     toks = [norm_words(w["text"])[0] if norm_words(w["text"]) else "" for w in took]
     sm = difflib.SequenceMatcher(None, toks, target, autojunk=False)
-    if sm.ratio() < 0.8:
+    if sm.ratio() < (0.6 if line in AS_SAID else 0.8):     # an as-said text is trusted over small mishearings
         out = []
         for w in took:
             t = w["text"]
@@ -201,22 +212,52 @@ def caption_words(words: list[dict], i: int, j: int, line: str, offset: float) -
 
 
 # ---------- media ----------
-def encode_face(src: Path, info: dict, t_in: float, t_out: float, dst: Path) -> None:
+# Studio voice: rumble and hiss out, gentle tracked de-noise, less box (250 Hz), more presence (3.6 kHz) and air,
+# de-essing after the presence lift, then even dynamics, then loudness to the voice target.
+VOCAL_CHAIN = ("highpass=f=75,lowpass=f=16000,afftdn=nr=10:nf=-50:tn=1,"
+               "equalizer=f=250:t=q:w=1.1:g=-2.5,equalizer=f=3600:t=q:w=1.3:g=2.2,highshelf=f=9500:g=1.8,"
+               "deesser=i=0.35:m=0.5:f=0.55:s=o,"
+               "acompressor=threshold=-20dB:ratio=3:attack=6:release=110:knee=4:makeup=3")
+GRADE = "eq=contrast=1.04:saturation=1.07"
+PUNCH = 1.12          # punch-in scale for the jump cut at a sentence break
+
+
+def punch_time(words: list[dict], dur: float) -> float | None:
+    """A cut point at a phrase break near the middle of the take (just before the next phrase starts)."""
+    best = None
+    for k, w in enumerate(words[:-1]):
+        if not re.search(r"[.,;:!?]$", w["text"]):
+            continue
+        t = max(w["end"] + 0.02, words[k + 1]["start"] - 0.06)
+        if 0.25 <= t / dur <= 0.8 and (best is None or abs(t / dur - 0.5) < abs(best / dur - 0.5)):
+            best = t
+    return best
+
+
+def encode_face(src: Path, info: dict, t_in: float, t_out: float, dst: Path, cut: float | None = None,
+                tight_first: bool = False) -> None:
     if info["w"] >= info["h"]:
-        vf = f"scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,fps={FPS},format=yuv420p"
-        fc = ["-vf", vf]
+        base = f"[0:v]scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,fps={FPS},{GRADE},format=yuv420p"
     else:
-        fc = ["-filter_complex",
-              f"[0:v]scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,boxblur=28:4,"
-              f"eq=brightness=-0.06[bg];[0:v]scale=-2:1080[fg];[bg][fg]overlay=(W-w)/2:0,fps={FPS},format=yuv420p[v]",
-              "-map", "[v]", "-map", "0:a?"]
-    af = f"highpass=f=80,loudnorm=I={VOICE_LUFS}:TP=-1.5:LRA=11,aresample=48000"
-    cmd = ["ffmpeg", "-v", "error", "-y", "-i", str(src), "-ss", f"{t_in:.3f}", "-to", f"{t_out:.3f}", *fc,
-           "-af", af, "-ac", "2", "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-c:a", "aac", "-b:a", "192k",
+        base = (f"[0:v]split=2[s0][s1];[s0]scale=1920:1080:force_original_aspect_ratio=increase,crop=1920:1080,"
+                f"boxblur=28:4,eq=brightness=-0.06[bg];[s1]scale=-2:1080[fg];[bg][fg]overlay=(W-w)/2:0,fps={FPS},"
+                f"{GRADE},format=yuv420p")
+    cw, ch = int(1920 / PUNCH) // 2 * 2, int(1080 / PUNCH) // 2 * 2
+    tight = f",crop={cw}:{ch}:{(1920 - cw) // 2}:{int((1080 - ch) * 0.3)},scale=1920:1080,setsar=1"
+    if cut:
+        graph = (f"{base},split=2[p][q];[p]trim=end={cut:.3f},setpts=PTS-STARTPTS{tight if tight_first else ''}[a];"
+                 f"[q]trim=start={cut:.3f},setpts=PTS-STARTPTS{'' if tight_first else tight}[b];"
+                 f"[a][b]concat=n=2:v=1:a=0[v]")
+    else:
+        graph = f"{base}[v]"
+    af = f"{VOCAL_CHAIN},loudnorm=I={VOICE_LUFS}:TP=-1.5:LRA=9,aresample=48000"
+    cmd = ["ffmpeg", "-v", "error", "-y", "-ss", f"{t_in:.3f}", "-to", f"{t_out:.3f}", "-i", str(src),
+           "-filter_complex", graph, "-map", "[v]", "-map", "0:a?", "-af", af, "-ac", "2",
+           "-c:v", "libx264", "-preset", "medium", "-crf", "17", "-c:a", "aac", "-b:a", "192k",
            "-movflags", "+faststart", str(dst)]
     p = run(cmd)
     if p.returncode != 0:
-        raise SystemExit(f"encoding {src.name} failed: {p.stderr[-500:]}")
+        raise SystemExit(f"encoding {src.name} failed: {p.stderr[-700:]}")
 
 
 def duration(path: Path) -> float:
@@ -299,7 +340,31 @@ def captions_html(groups: list[tuple[float, float, list[dict]]], total: float) -
 """
 
 
-def index_html(timeline: list[dict], total: float, face_windows: list[tuple[float, float]]) -> str:
+SFX_DIR = Path.home() / ".claude" / "skills" / "media-use" / "audio" / "assets" / "sfx"   # Pixabay licence, bundled
+# (file, seconds from file start to its peak, gain): the peak lands one frame after the picture event it belongs to
+SFX = {"whoosh": ("whoosh.mp3", 0.16, 0.16), "impact": ("impact-bass-1.mp3", 0.48, 0.12)}
+
+
+def sfx_events(timeline: list[dict]) -> list[dict]:
+    """A soft whoosh on three cuts into the graphics, and one low hit when each Kavach shield stamps in."""
+    start = {c["id"]: c["start"] for c in timeline}
+    ev = []
+    for mid in ("mg1", "mg3", "mg5"):
+        if mid in start:
+            ev.append({"kind": "whoosh", "at": start[mid]})
+    if "mg2" in start:
+        ev.append({"kind": "impact", "at": start["mg2"] + 3.62})       # KAVACH shield stamp and ring in mg2
+    if "mg5" in start:
+        ev.append({"kind": "impact", "at": start["mg5"] + 0.88})       # end-card shield stamp
+    out = []
+    for n, e in enumerate(ev, start=1):
+        f, peak, gain = SFX[e["kind"]]
+        out.append({"id": f"sfx{n}", "file": f, "start": round(max(0.0, e["at"] + 1 / FPS - peak), 3), "gain": gain})
+    return out
+
+
+def index_html(timeline: list[dict], total: float, face_windows: list[tuple[float, float]],
+               sfx: list[dict] | None = None) -> str:
     pts = [{"t": 0.0, "v": MUSIC_LOW}]
     for fs, fe in face_windows:
         if fs > 0.5:
@@ -330,6 +395,7 @@ def index_html(timeline: list[dict], total: float, face_windows: list[tuple[floa
 {chr(10).join(clips)}
       <div id="captions" data-composition-id="captions" data-composition-src="compositions/captions.html" data-start="0" data-duration="{total:.3f}" data-track-index="5" data-track-kind="captions" data-width="1920" data-height="1080" style="z-index:50"></div>
       <audio id="music" src="assets/bgm.wav" data-start="0" data-duration="{total:.3f}" data-track-index="8" data-volume="1" data-fade-in="0.3" data-fade-out="1.8" data-automation="{lane}"></audio>
+{chr(10).join(f'      <audio id="{s["id"]}" src="assets/sfx/{s["file"]}" data-start="{s["start"]:.3f}" data-track-index="9" data-volume="{s["gain"]}"></audio>' for s in (sfx or []))}
     </div>
     <script>
       window.__timelines = window.__timelines || {{}};
@@ -386,7 +452,8 @@ def main() -> int:
             t_out = min(infos[c]["dur"], words[j]["end"] + 0.45)
             cw, src = caption_words(words, i, j, line, t_in)
         dst = PROJECT / "assets" / f"face{k + 1}.mp4"
-        encode_face(clips[c], infos[c], t_in, t_out, dst)
+        cut = punch_time(cw, t_out - t_in) if cw else None
+        encode_face(clips[c], infos[c], t_in, t_out, dst, cut=cut, tight_first=(k % 2 == 1))
         d = duration(dst)
         faces.append({"line": k, "id": f"face{k + 1}", "dur": d, "words": cw})
         rec = {"file": clips[c].name, "line": k + 1, "similarity": round(sim, 2), "take": [round(t_in, 2), round(t_out, 2)],
@@ -438,7 +505,12 @@ def main() -> int:
 
     loudnorm_two_pass(Path(a.music), PROJECT / "assets" / "bgm.wav", -16, ["-t", f"{total + 0.5:.2f}", "-ac", "2"])
     (PROJECT / "compositions" / "captions.html").write_text(captions_html(groups, total), encoding="utf-8")
-    (PROJECT / "index.html").write_text(index_html(timeline, total, face_windows), encoding="utf-8")
+    sfx = sfx_events(timeline)
+    (PROJECT / "assets" / "sfx").mkdir(parents=True, exist_ok=True)
+    for s in sfx:
+        shutil.copyfile(SFX_DIR / s["file"], PROJECT / "assets" / "sfx" / s["file"])
+    report["sfx"] = sfx
+    (PROJECT / "index.html").write_text(index_html(timeline, total, face_windows, sfx), encoding="utf-8")
     report.update({"total_seconds": total, "caption_groups": len(groups), "music": Path(a.music).name,
                    "timeline": [{k: (round(v, 2) if isinstance(v, float) else v) for k, v in c.items()} for c in timeline]})
     print(f"timeline: {total:.1f} s, {len(groups)} caption groups, music {Path(a.music).name}", flush=True)

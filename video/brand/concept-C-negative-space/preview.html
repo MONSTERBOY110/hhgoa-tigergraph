@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Kavach avatar at 48 px</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; }
+  body { width: 800px; height: 280px; overflow: hidden; display: flex; font-family: "Segoe UI", system-ui, sans-serif; }
+  .pane { width: 400px; height: 280px; box-sizing: border-box; padding: 26px 28px; }
+  .light { background: #FFFFFF; color: #0F1419; }
+  .dark { background: #000000; color: #E7E9EA; }
+  .label { font-family: "IBM Plex Mono", monospace; font-weight: 500; font-size: 11px; letter-spacing: 0.12em;
+           text-transform: uppercase; margin: 0 0 14px; }
+  .light .label { color: #6B7684; } .dark .label { color: #9AA5B3; }
+  .post { display: flex; gap: 12px; align-items: flex-start; }
+  .av { display: block; border-radius: 50%; flex: none; }
+  .who { font-size: 15px; line-height: 20px; }
+  .who b { font-weight: 700; }
+  .light .who span { color: #536471; } .dark .who span { color: #71767B; }
+  .txt { font-size: 15px; line-height: 20px; margin-top: 2px; }
+  .sizes { display: flex; gap: 22px; align-items: flex-end; margin-top: 30px; }
+  .sizes figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .sizes figcaption { font-family: "IBM Plex Mono", monospace; font-weight: 500; font-size: 11px; letter-spacing: 0.08em; }
+  .light figcaption { color: #6B7684; } .dark figcaption { color: #9AA5B3; }
+</style>
+</head>
+<body>
+  <section class="pane light">
+    <p class="label">X light, 48 px</p>
+    <div class="post">
+      <img class="av" src="avatar-400.png" width="48" height="48" alt="">
+      <div>
+        <div class="who"><b>Kavach</b> <span>@kavachhhgoa</span></div>
+        <div class="txt">Every claim it makes can be re-run.</div>
+      </div>
+    </div>
+    <div class="sizes">
+      <figure><img class="av" src="avatar-400.png" width="48" height="48" alt=""><figcaption>48</figcaption></figure>
+      <figure><img class="av" src="avatar-400.png" width="40" height="40" alt=""><figcaption>40</figcaption></figure>
+      <figure><img class="av" src="avatar-400.png" width="32" height="32" alt=""><figcaption>32</figcaption></figure>
+      <figure><img class="av" src="avatar-400.png" width="24" height="24" alt=""><figcaption>24</figcaption></figure>
+    </div>
+  </section>
+  <section class="pane dark">
+    <p class="label">X dark, 48 px</p>
+    <div class="post">
+      <img class="av" src="avatar-400.png" width="48" height="48" alt="">
+      <div>
+        <div class="who"><b>Kavach</b> <span>@kavachhhgoa</span></div>
+        <div class="txt">Every claim it makes can be re-run.</div>
+      </div>
+    </div>
+    <div class="sizes">
+      <figure><img class="av" src="avatar-400.png" width="48" height="48" alt=""><figcaption>48</figcaption></figure>
+      <figure><img class="av" src="avatar-400.png" width="40" height="40" alt=""><figcaption>40</figcaption></figure>
+      <figure><img class="av" src="avatar-400.png" width="32" height="32" alt=""><figcaption>32</figcaption></figure>
+      <figure><img class="av" src="avatar-400.png" width="24" height="24" alt=""><figcaption>24</figcaption></figure>
+    </div>
+  </section>
+</body>
+</html>

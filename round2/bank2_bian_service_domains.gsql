@@ -1,0 +1,121 @@
+# Bank 2: a retail bank whose graph is organised by BIAN (Banking
+# Industry Architecture Network) service domains and their control
+# records.
+#
+# Sources and names (BIAN service domain -> control record used here):
+#   Party Reference Data Directory  -> PartyReferenceDataDirectoryEntry
+#   Customer Relationship Management -> CustomerRelationshipManagementPlan
+#   Current Account                  -> CurrentAccountFacility
+#   Savings Account                  -> SavingsAccountFacility
+#   Issued Device Administration     -> IssuedDeviceAllocation (cards)
+#   Payment Order                    -> PaymentOrderProcedure
+#   Payment Execution                -> PaymentExecutionProcedure
+#   Card Transaction Capture         -> CardTransaction
+#   Merchant Relations               -> MerchantRelationship
+#   Party Authentication             -> PartyAuthenticationAssessment
+#   Channel Activity History         -> ChannelActivityHistoryRecord
+#   Fraud Diagnosis                  -> FraudDiagnosisAssessment
+#   Customer Case Management         -> CustomerCaseProcedure
+# Attribute names follow BIAN's semantic API properties (camelCase,
+# with the control-record prefix). Built for testing schema mapping;
+# BIAN defines service domains, not a graph model.
+#
+# What this schema tests:
+#   - Ownership is two hops through a role: PartyReferenceDataDirectoryEntry
+#     -> CustomerRelationshipManagementPlan -> account facility.
+#   - Two account types (current and savings) for one Account concept.
+#   - Two money-movement stages: PaymentOrderProcedure (the request) and
+#     PaymentExecutionProcedure (the actual movement). Transaction should
+#     be the execution; card payments are a third type, CardTransaction.
+#   - External counterparties are directory entries too
+#     (partyType = "Counterparty").
+#   - Devices and IP addresses hang off the authentication assessment,
+#     which the payment order references; the bank's own cards are
+#     "issued devices", a naming trap for Device.
+#   - Fraud scores (FraudDiagnosisAssessment) are not cases; cases are
+#     CustomerCaseProcedure, which can cite a diagnosis.
+#   - Contact points (phone, email) are shared vertices.
+#
+# Expected mapping (ground truth):
+#   Person                   exact        PartyReferenceDataDirectoryEntry where partyType in (Individual, Organisation)
+#   Account                  exact        CurrentAccountFacility and SavingsAccountFacility
+#   Transaction              exact        PaymentExecutionProcedure; approximate for card payments via CardTransaction
+#   Device                   exact        AccessDevice (not IssuedDeviceAllocation, which is a card)
+#   IPAddress                exact        NetworkAddress
+#   LoginEvent               exact        PartyAuthenticationAssessment
+#   Beneficiary              approximate  PartyReferenceDataDirectoryEntry where partyType = "Counterparty"
+#   Card                     exact        IssuedDeviceAllocation
+#   Merchant                 exact        MerchantRelationship
+#   InvestigationCase        exact        CustomerCaseProcedure
+#   OWNS                     exact        path hasRelationshipPlan -> planCoversFacility
+#   INITIATED                exact        reverse_executionDebitsFacility
+#   PAYS_TO_ACCOUNT          exact        executionCreditsFacility
+#   PAYS                     approximate  executionCreditsCounterparty
+#   FROM_DEVICE              approximate  execution -> executesOrder -> orderAuthenticatedBy -> authenticationUsedDevice
+#   FROM_IP                  approximate  execution -> executesOrder -> orderAuthenticatedBy -> authenticationFromAddress
+#   AT                       exact        cardTransactionAtMerchant
+#   VIA                      exact        cardTransactionUsesDevice
+#   HOLDS                    exact        reverse_issuedDeviceOnFacility
+#   LOGGED_IN                approximate  authenticationForParty -> party -> plan -> facility
+#   LOGIN_FROM_DEVICE        exact        authenticationUsedDevice
+#   LOGIN_FROM_IP            exact        authenticationFromAddress
+#   INVESTIGATED_IN          exact        reverse_caseConcernsFacility
+#   Transaction.amount       exact        paymentExecutionAmount
+#   Transaction.timestamp    exact        paymentExecutionDateTime
+#   Transaction.channel      exact        paymentMechanismType
+#   Account.status           exact        facilityStatus
+#   Account.open_date        exact        facilityStartDate
+#   Account.kyc_score        approximate  PartyReferenceDataDirectoryEntry.partyRiskRating (party-level, a rating not a score)
+#   Person.kyc_verified_at   exact        partyVerificationDate
+#   InvestigationCase.status exact        customerCaseStatus
+#   account_under_investigation  exact    caseConcernsFacility from an open CustomerCaseProcedure
+
+CREATE GRAPH Bank_BIAN ()
+
+USE GRAPH Bank_BIAN
+CREATE SCHEMA_CHANGE JOB setup_bank_bian FOR GRAPH Bank_BIAN {
+  ADD VERTEX PartyReferenceDataDirectoryEntry (PRIMARY_ID partyReference STRING, partyType STRING, partyLegalNameHash STRING, partyDateOfBirth DATETIME, partyIdentificationHash STRING, partyIdentificationType STRING, partyVerificationDate DATETIME, partyRiskRating STRING, partyBankIdentifierCode STRING) WITH primary_id_as_attribute="true";
+  ADD VERTEX ContactPoint (PRIMARY_ID contactPointReference STRING, contactPointType STRING, contactPointValueHash STRING) WITH primary_id_as_attribute="true";
+  ADD VERTEX CustomerRelationshipManagementPlan (PRIMARY_ID customerRelationshipManagementPlanReference STRING, customerRelationshipRole STRING, customerRelationshipStartDate DATETIME, customerRelationshipEndDate DATETIME, customerSegment STRING) WITH primary_id_as_attribute="true";
+  ADD VERTEX CurrentAccountFacility (PRIMARY_ID currentAccountFacilityReference STRING, accountIdentificationIBAN STRING, accountCurrency STRING, facilityStatus STRING, facilityStartDate DATETIME, overdraftLimitAmount DOUBLE) WITH primary_id_as_attribute="true";
+  ADD VERTEX SavingsAccountFacility (PRIMARY_ID savingsAccountFacilityReference STRING, accountIdentificationIBAN STRING, accountCurrency STRING, facilityStatus STRING, facilityStartDate DATETIME, interestRate DOUBLE) WITH primary_id_as_attribute="true";
+  ADD VERTEX IssuedDeviceAllocation (PRIMARY_ID issuedDeviceAllocationReference STRING, issuedDeviceType STRING, cardScheme STRING, maskedPrimaryAccountNumberHash STRING, issuedDeviceStatus STRING, issuedDeviceExpiryDate DATETIME) WITH primary_id_as_attribute="true";
+  ADD VERTEX PaymentOrderProcedure (PRIMARY_ID paymentOrderProcedureReference STRING, paymentOrderType STRING, paymentOrderAmount DOUBLE, paymentOrderCurrency STRING, paymentOrderDateTime DATETIME, paymentOrderStatus STRING, paymentPurpose STRING) WITH primary_id_as_attribute="true";
+  ADD VERTEX PaymentExecutionProcedure (PRIMARY_ID paymentExecutionProcedureReference STRING, paymentMechanismType STRING, paymentExecutionAmount DOUBLE, paymentExecutionCurrency STRING, paymentExecutionDateTime DATETIME, paymentExecutionStatus STRING, clearingSystem STRING) WITH primary_id_as_attribute="true";
+  ADD VERTEX CardTransaction (PRIMARY_ID cardTransactionReference STRING, cardTransactionAmount DOUBLE, cardTransactionCurrency STRING, cardTransactionDateTime DATETIME, cardTransactionType STRING, posEntryMode STRING, authorisationResponseCode STRING) WITH primary_id_as_attribute="true";
+  ADD VERTEX MerchantRelationship (PRIMARY_ID merchantReference STRING, merchantName STRING, merchantCategoryCode STRING, merchantCountry STRING, acquirerReference STRING) WITH primary_id_as_attribute="true";
+  ADD VERTEX PartyAuthenticationAssessment (PRIMARY_ID partyAuthenticationAssessmentReference STRING, authenticationChannel STRING, authenticationMethod STRING, authenticationDateTime DATETIME, authenticationResult STRING) WITH primary_id_as_attribute="true";
+  ADD VERTEX AccessDevice (PRIMARY_ID accessDeviceReference STRING, deviceFingerprint STRING, deviceOperatingSystem STRING, deviceFirstSeenDateTime DATETIME, deviceTrustLevel STRING) WITH primary_id_as_attribute="true";
+  ADD VERTEX NetworkAddress (PRIMARY_ID ipAddress STRING, ipGeolocationCountry STRING, ipAnonymizerType STRING) WITH primary_id_as_attribute="true";
+  ADD VERTEX ChannelActivityHistoryRecord (PRIMARY_ID channelActivityReference STRING, channel STRING, activityType STRING, activityDateTime DATETIME) WITH primary_id_as_attribute="true";
+  ADD VERTEX FraudDiagnosisAssessment (PRIMARY_ID fraudDiagnosisAssessmentReference STRING, fraudDiagnosisType STRING, fraudScore DOUBLE, fraudDiagnosisResult STRING, fraudDiagnosisDateTime DATETIME) WITH primary_id_as_attribute="true";
+  ADD VERTEX CustomerCaseProcedure (PRIMARY_ID customerCaseProcedureReference STRING, customerCaseType STRING, customerCaseStatus STRING, customerCaseOpenDate DATETIME, customerCaseCloseDate DATETIME, customerCasePriority STRING, customerCaseResolution STRING) WITH primary_id_as_attribute="true";
+
+  ADD UNDIRECTED EDGE partyHasContactPoint (FROM PartyReferenceDataDirectoryEntry, TO ContactPoint);
+  ADD DIRECTED EDGE hasRelationshipPlan (FROM PartyReferenceDataDirectoryEntry, TO CustomerRelationshipManagementPlan) WITH REVERSE_EDGE="reverse_hasRelationshipPlan";
+  ADD DIRECTED EDGE planCoversFacility (FROM CustomerRelationshipManagementPlan, TO CurrentAccountFacility | FROM CustomerRelationshipManagementPlan, TO SavingsAccountFacility, facilityRole STRING) WITH REVERSE_EDGE="reverse_planCoversFacility";
+  ADD DIRECTED EDGE issuedDeviceOnFacility (FROM IssuedDeviceAllocation, TO CurrentAccountFacility, issueDate DATETIME) WITH REVERSE_EDGE="reverse_issuedDeviceOnFacility";
+
+  ADD DIRECTED EDGE orderDebitsFacility (FROM PaymentOrderProcedure, TO CurrentAccountFacility | FROM PaymentOrderProcedure, TO SavingsAccountFacility) WITH REVERSE_EDGE="reverse_orderDebitsFacility";
+  ADD DIRECTED EDGE orderAuthenticatedBy (FROM PaymentOrderProcedure, TO PartyAuthenticationAssessment) WITH REVERSE_EDGE="reverse_orderAuthenticatedBy";
+  ADD DIRECTED EDGE executesOrder (FROM PaymentExecutionProcedure, TO PaymentOrderProcedure) WITH REVERSE_EDGE="reverse_executesOrder";
+  ADD DIRECTED EDGE executionDebitsFacility (FROM PaymentExecutionProcedure, TO CurrentAccountFacility | FROM PaymentExecutionProcedure, TO SavingsAccountFacility) WITH REVERSE_EDGE="reverse_executionDebitsFacility";
+  ADD DIRECTED EDGE executionCreditsFacility (FROM PaymentExecutionProcedure, TO CurrentAccountFacility | FROM PaymentExecutionProcedure, TO SavingsAccountFacility) WITH REVERSE_EDGE="reverse_executionCreditsFacility";
+  ADD DIRECTED EDGE executionCreditsCounterparty (FROM PaymentExecutionProcedure, TO PartyReferenceDataDirectoryEntry) WITH REVERSE_EDGE="reverse_executionCreditsCounterparty";
+
+  ADD DIRECTED EDGE cardTransactionUsesDevice (FROM CardTransaction, TO IssuedDeviceAllocation) WITH REVERSE_EDGE="reverse_cardTransactionUsesDevice";
+  ADD DIRECTED EDGE cardTransactionAtMerchant (FROM CardTransaction, TO MerchantRelationship) WITH REVERSE_EDGE="reverse_cardTransactionAtMerchant";
+
+  ADD DIRECTED EDGE authenticationForParty (FROM PartyAuthenticationAssessment, TO PartyReferenceDataDirectoryEntry) WITH REVERSE_EDGE="reverse_authenticationForParty";
+  ADD DIRECTED EDGE authenticationUsedDevice (FROM PartyAuthenticationAssessment, TO AccessDevice) WITH REVERSE_EDGE="reverse_authenticationUsedDevice";
+  ADD DIRECTED EDGE authenticationFromAddress (FROM PartyAuthenticationAssessment, TO NetworkAddress) WITH REVERSE_EDGE="reverse_authenticationFromAddress";
+  ADD DIRECTED EDGE activityForParty (FROM ChannelActivityHistoryRecord, TO PartyReferenceDataDirectoryEntry) WITH REVERSE_EDGE="reverse_activityForParty";
+  ADD DIRECTED EDGE activityOnDevice (FROM ChannelActivityHistoryRecord, TO AccessDevice) WITH REVERSE_EDGE="reverse_activityOnDevice";
+
+  ADD DIRECTED EDGE diagnosisOfExecution (FROM FraudDiagnosisAssessment, TO PaymentExecutionProcedure | FROM FraudDiagnosisAssessment, TO CardTransaction) WITH REVERSE_EDGE="reverse_diagnosisOfExecution";
+  ADD DIRECTED EDGE caseCitesDiagnosis (FROM CustomerCaseProcedure, TO FraudDiagnosisAssessment) WITH REVERSE_EDGE="reverse_caseCitesDiagnosis";
+  ADD DIRECTED EDGE caseConcernsFacility (FROM CustomerCaseProcedure, TO CurrentAccountFacility | FROM CustomerCaseProcedure, TO SavingsAccountFacility, caseSubjectRole STRING) WITH REVERSE_EDGE="reverse_caseConcernsFacility";
+  ADD DIRECTED EDGE caseConcernsParty (FROM CustomerCaseProcedure, TO PartyReferenceDataDirectoryEntry, caseSubjectRole STRING) WITH REVERSE_EDGE="reverse_caseConcernsParty";
+}
+RUN SCHEMA_CHANGE JOB setup_bank_bian
+DROP JOB setup_bank_bian

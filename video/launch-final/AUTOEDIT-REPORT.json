@@ -5,129 +5,176 @@
       "line": 1,
       "similarity": 1.0,
       "take": [
-        12.49,
-        19.55
+        0.0,
+        6.39
       ],
-      "seconds": 7.07,
+      "seconds": 6.45,
       "captions_from": "script",
       "source": "1920x1080"
     },
     {
       "file": "shot2.mp4",
       "line": 2,
-      "similarity": 1.0,
+      "similarity": 0.76,
       "take": [
-        16.15,
-        26.55
+        0.0,
+        5.72
       ],
-      "seconds": 10.4,
+      "seconds": 5.75,
       "captions_from": "script",
-      "source": "1080x1920"
+      "source": "1920x1080"
     },
     {
-      "file": "shot3.mov",
+      "file": "shot3.mp4",
       "line": 3,
-      "similarity": 1.0,
+      "similarity": 0.86,
       "take": [
-        17.93,
-        30.13
+        0.0,
+        6.5
       ],
-      "seconds": 12.2,
+      "seconds": 6.55,
       "captions_from": "script",
-      "source": "3840x2160"
+      "source": "1920x1080"
     },
     {
       "file": "shot4.mp4",
       "line": 4,
-      "similarity": 0.96,
+      "similarity": 0.92,
       "take": [
-        16.35,
-        26.93
+        0.0,
+        6.87
       ],
-      "seconds": 10.6,
+      "seconds": 6.95,
       "captions_from": "script",
       "source": "1920x1080"
     },
     {
       "file": "shot5.mp4",
       "line": 5,
-      "similarity": 0.93,
+      "similarity": 1.0,
       "take": [
-        17.55,
-        29.43
+        0.0,
+        7.89
       ],
-      "seconds": 11.9,
+      "seconds": 7.95,
       "captions_from": "script",
       "source": "1920x1080"
     }
   ],
-  "total_seconds": 79.667,
-  "caption_groups": 33,
+  "sfx": [
+    {
+      "id": "sfx1",
+      "file": "whoosh.mp3",
+      "start": 6.32,
+      "gain": 0.16
+    },
+    {
+      "id": "sfx2",
+      "file": "whoosh.mp3",
+      "start": 29.613,
+      "gain": 0.16
+    },
+    {
+      "id": "sfx3",
+      "file": "whoosh.mp3",
+      "start": 58.506,
+      "gain": 0.16
+    },
+    {
+      "id": "sfx4",
+      "file": "impact-bass-1.mp3",
+      "start": 20.866,
+      "gain": 0.12
+    },
+    {
+      "id": "sfx5",
+      "file": "impact-bass-1.mp3",
+      "start": 59.066,
+      "gain": 0.12
+    }
+  ],
+  "total_seconds": 63.132,
+  "caption_groups": 24,
   "music": "bed_c.wav",
   "timeline": [
     {
       "id": "face1",
       "kind": "face",
       "start": 0.0,
-      "dur": 7.07
+      "dur": 6.45
     },
     {
       "id": "mg1",
       "kind": "insert",
-      "start": 7.07,
-      "dur": 4.8
+      "start": 6.45,
+      "dur": 5.5
     },
     {
       "id": "face2",
       "kind": "face",
-      "start": 11.87,
-      "dur": 10.4
+      "start": 11.95,
+      "dur": 5.75
     },
     {
       "id": "mg2",
       "kind": "insert",
-      "start": 22.27,
-      "dur": 5.2
+      "start": 17.69,
+      "dur": 5.5
     },
     {
       "id": "face3",
       "kind": "face",
-      "start": 27.47,
-      "dur": 12.2
+      "start": 23.19,
+      "dur": 6.55
     },
     {
       "id": "mg3",
       "kind": "insert",
-      "start": 39.67,
-      "dur": 6.4
+      "start": 29.74,
+      "dur": 7.0
     },
     {
       "id": "face4",
       "kind": "face",
-      "start": 46.07,
-      "dur": 10.6
+      "start": 36.74,
+      "dur": 6.95
     },
     {
       "id": "mg4",
       "kind": "insert",
-      "start": 56.67,
-      "dur": 6.9
+      "start": 43.69,
+      "dur": 7.0
     },
     {
       "id": "face5",
       "kind": "face",
-      "start": 63.57,
-      "dur": 11.9
+      "start": 50.69,
+      "dur": 7.95
     },
     {
       "id": "mg5",
       "kind": "insert",
-      "start": 75.47,
-      "dur": 4.2
+      "start": 58.63,
+      "dur": 4.5
     }
   ],
   "check": {
     "ok": true,
     "errors": []
-  }
+  },
+  "output": {
+    "path": "video\\out\\kavach-launch.mp4",
+    "seconds": 63.2,
+    "lufs": -15.1,
+    "lra": 6.9,
+    "peak_dbfs": -1.5
+  },
+  "check_frames": [
+    "D:\\Projects\\hhgoa-tigergraph\\video\\launch-final\\.work\\check_000.7.png",
+    "D:\\Projects\\hhgoa-tigergraph\\video\\launch-final\\.work\\check_005.7.png",
+    "D:\\Projects\\hhgoa-tigergraph\\video\\launch-final\\.work\\check_017.3.png",
+    "D:\\Projects\\hhgoa-tigergraph\\video\\launch-final\\.work\\check_027.6.png",
+    "D:\\Projects\\hhgoa-tigergraph\\video\\launch-final\\.work\\check_039.4.png",
+    "D:\\Projects\\hhgoa-tigergraph\\video\\launch-final\\.work\\check_052.6.png"
+  ]
 }

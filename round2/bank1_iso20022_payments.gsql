@@ -1,0 +1,98 @@
+# Bank 1: a payments bank whose graph is built from ISO 20022 messages.
+#
+# Sources and names:
+#   pacs.008 FIToFICustomerCreditTransfer  -> GrpHdr, CdtTrfTxInf
+#   pacs.004 PaymentReturn                 -> TxInf (returns)
+#   pain.001 CustomerCreditTransferInitiation -> PmtInf (the customer's order)
+#   acmt.007 AccountOpeningRequest          -> CshAcct opening data
+# Element names and abbreviations are ISO 20022's own (Dbtr, Cdtr,
+# DbtrAgt, IntrBkSttlmAmt, PmtTpInf/SvcLvl/Cd, PrvtId/Othr/SchmeNm/Cd).
+# Nested elements are flattened with "_" (PmtTpInf_SvcLvl_Cd). Built for
+# testing schema mapping; ISO 20022 defines messages, not a graph model.
+#
+# What this schema tests:
+#   - ISO abbreviations only: Dbtr = debtor = payer, Cdtr = creditor = payee.
+#   - Three money-movement candidates: PmtInf (pain.001 order, one per
+#     batch), CdtTrfTxInf (pacs.008 interbank transfer, one per payment)
+#     and TxInf (pacs.004 return). Transaction should be CdtTrfTxInf.
+#   - Edges from the transfer to the debtor account point FROM the
+#     transfer TO the account: the reverse of INITIATED.
+#   - Parties are one type (Pty) for customers and external parties;
+#     IsCstmr tells them apart. Beneficiary is a role, not a type.
+#   - Ultimate debtor / ultimate creditor edges as well as debtor /
+#     creditor: the mapper should use Dbtr/Cdtr, not Ultmt*.
+#   - Identity documents and postal addresses are their own vertices
+#     (PrvtId, PstlAdr), shared between parties.
+#   - Agents (banks) are BranchAndFinInstnId vertices with BICFI or a
+#     clearing-system member id.
+#   - The settlement amount lives on the transfer (IntrBkSttlmAmt) and
+#     the instructed amount may differ (FX); the creation time lives on
+#     the group header, not the transfer.
+#   - No devices, IP addresses, logins, cards or merchants.
+#   - No case type: RgltryRptg (regulatory reporting) and an AML alert
+#     flag on the account are the only suspicion signals.
+#
+# Expected mapping (ground truth):
+#   Person                   exact        Pty where IsCstmr = true
+#   Account                  exact        CshAcct
+#   Transaction              exact        CdtTrfTxInf
+#   Beneficiary              approximate  Pty where IsCstmr = false, reached by CdtTrfTxInf_Cdtr
+#   Device, IPAddress, LoginEvent, Card, Merchant   unmapped
+#   InvestigationCase        unmapped
+#   OWNS                     exact        CshAcct_Ownr (Pty -> CshAcct)
+#   INITIATED                exact        reverse_CdtTrfTxInf_DbtrAcct
+#   PAYS_TO_ACCOUNT          exact        CdtTrfTxInf_CdtrAcct when the CshAcct is held here
+#                                         (CshAcct_Svcr to this bank's BICFI)
+#   PAYS                     approximate  CdtTrfTxInf_Cdtr to a Pty with IsCstmr = false
+#   Transaction.amount       exact        IntrBkSttlmAmt (InstdAmt is the pre-FX amount)
+#   Transaction.timestamp    approximate  AccptncDtTm; GrpHdr.CreDtTm via CdtTrfTxInf_GrpHdr
+#   Transaction.channel      approximate  PmtTpInf_SvcLvl_Cd plus PmtTpInf_LclInstrm_Cd
+#   Account.open_date        exact        OpngDt
+#   Account.status           exact        Sts
+#   Account.kyc_score        unmapped
+#   Person.anonymized_ssn_hash  approximate  PrvtId.Id_Hash where SchmeNm_Cd = "NIDN"
+#   Person.kyc_verified_at   unmapped
+#   Beneficiary.bank_identifier exact     BranchAndFinInstnId.BICFI via CdtTrfTxInf_CdtrAgt
+#   Beneficiary.name_hash    exact        Pty.Nm_Hash
+#   account_under_investigation  approximate  CshAcct.AMLAlrtInd = true (a flag, not a case)
+
+CREATE GRAPH Bank_ISO20022 ()
+
+USE GRAPH Bank_ISO20022
+CREATE SCHEMA_CHANGE JOB setup_bank_iso20022 FOR GRAPH Bank_ISO20022 {
+  ADD VERTEX Pty (PRIMARY_ID PtyId STRING, Nm_Hash STRING, BirthDt DATETIME, CityOfBirth STRING, CtryOfRes STRING, OrgId_AnyBIC STRING, OrgId_LEI STRING, IsCstmr BOOL) WITH primary_id_as_attribute="true";
+  ADD VERTEX PrvtId (PRIMARY_ID PrvtIdKey STRING, Id_Hash STRING, SchmeNm_Cd STRING, Issr STRING) WITH primary_id_as_attribute="true";
+  ADD VERTEX PstlAdr (PRIMARY_ID PstlAdrKey STRING, AdrTp_Cd STRING, StrtNm STRING, BldgNb STRING, PstCd STRING, TwnNm STRING, Ctry STRING) WITH primary_id_as_attribute="true";
+  ADD VERTEX CshAcct (PRIMARY_ID AcctKey STRING, Id_IBAN STRING, Id_Othr_Id STRING, Id_Othr_SchmeNm_Cd STRING, Tp_Cd STRING, Ccy STRING, Nm STRING, OpngDt DATETIME, Sts STRING, AMLAlrtInd BOOL) WITH primary_id_as_attribute="true";
+  ADD VERTEX BranchAndFinInstnId (PRIMARY_ID AgtKey STRING, FinInstnId_BICFI STRING, FinInstnId_ClrSysMmbId_MmbId STRING, FinInstnId_ClrSysMmbId_ClrSysId_Cd STRING, FinInstnId_Nm STRING, FinInstnId_PstlAdr_Ctry STRING) WITH primary_id_as_attribute="true";
+  ADD VERTEX GrpHdr (PRIMARY_ID MsgId STRING, MsgDefIdr STRING, CreDtTm DATETIME, NbOfTxs INT, SttlmInf_SttlmMtd STRING) WITH primary_id_as_attribute="true";
+  ADD VERTEX PmtInf (PRIMARY_ID PmtInfId STRING, PmtMtd STRING, BtchBookg BOOL, ReqdExctnDt DATETIME, CtrlSum DOUBLE, NbOfTxs INT) WITH primary_id_as_attribute="true";
+  ADD VERTEX CdtTrfTxInf (PRIMARY_ID UETR STRING, PmtId_InstrId STRING, PmtId_EndToEndId STRING, PmtId_TxId STRING, PmtTpInf_InstrPrty STRING, PmtTpInf_SvcLvl_Cd STRING, PmtTpInf_LclInstrm_Cd STRING, PmtTpInf_CtgyPurp_Cd STRING, IntrBkSttlmAmt DOUBLE, IntrBkSttlmAmt_Ccy STRING, IntrBkSttlmDt DATETIME, AccptncDtTm DATETIME, InstdAmt DOUBLE, InstdAmt_Ccy STRING, XchgRate DOUBLE, ChrgBr STRING, Purp_Cd STRING, RmtInf_Ustrd STRING) WITH primary_id_as_attribute="true";
+  ADD VERTEX TxInf (PRIMARY_ID RtrId STRING, OrgnlUETR STRING, RtrdIntrBkSttlmAmt DOUBLE, RtrdIntrBkSttlmAmt_Ccy STRING, IntrBkSttlmDt DATETIME, RtrRsnInf_Rsn_Cd STRING) WITH primary_id_as_attribute="true";
+  ADD VERTEX RgltryRptg (PRIMARY_ID RgltryRptgKey STRING, DbtCdtRptgInd STRING, Authrty_Ctry STRING, Dtls_Tp STRING, Dtls_Cd STRING, Dtls_Inf STRING) WITH primary_id_as_attribute="true";
+
+  ADD UNDIRECTED EDGE Pty_PrvtId (FROM Pty, TO PrvtId);
+  ADD UNDIRECTED EDGE Pty_PstlAdr (FROM Pty, TO PstlAdr, AdrTp_Cd STRING);
+  ADD DIRECTED EDGE CshAcct_Ownr (FROM Pty, TO CshAcct, OwnrshTp_Cd STRING, VldFr DATETIME) WITH REVERSE_EDGE="reverse_CshAcct_Ownr";
+  ADD DIRECTED EDGE CshAcct_Svcr (FROM CshAcct, TO BranchAndFinInstnId) WITH REVERSE_EDGE="reverse_CshAcct_Svcr";
+
+  ADD DIRECTED EDGE PmtInf_DbtrAcct (FROM PmtInf, TO CshAcct) WITH REVERSE_EDGE="reverse_PmtInf_DbtrAcct";
+  ADD DIRECTED EDGE PmtInf_CdtTrfTxInf (FROM PmtInf, TO CdtTrfTxInf) WITH REVERSE_EDGE="reverse_PmtInf_CdtTrfTxInf";
+  ADD DIRECTED EDGE CdtTrfTxInf_GrpHdr (FROM CdtTrfTxInf, TO GrpHdr) WITH REVERSE_EDGE="reverse_CdtTrfTxInf_GrpHdr";
+
+  ADD DIRECTED EDGE CdtTrfTxInf_Dbtr (FROM CdtTrfTxInf, TO Pty) WITH REVERSE_EDGE="reverse_CdtTrfTxInf_Dbtr";
+  ADD DIRECTED EDGE CdtTrfTxInf_DbtrAcct (FROM CdtTrfTxInf, TO CshAcct) WITH REVERSE_EDGE="reverse_CdtTrfTxInf_DbtrAcct";
+  ADD DIRECTED EDGE CdtTrfTxInf_DbtrAgt (FROM CdtTrfTxInf, TO BranchAndFinInstnId) WITH REVERSE_EDGE="reverse_CdtTrfTxInf_DbtrAgt";
+  ADD DIRECTED EDGE CdtTrfTxInf_UltmtDbtr (FROM CdtTrfTxInf, TO Pty) WITH REVERSE_EDGE="reverse_CdtTrfTxInf_UltmtDbtr";
+  ADD DIRECTED EDGE CdtTrfTxInf_Cdtr (FROM CdtTrfTxInf, TO Pty) WITH REVERSE_EDGE="reverse_CdtTrfTxInf_Cdtr";
+  ADD DIRECTED EDGE CdtTrfTxInf_CdtrAcct (FROM CdtTrfTxInf, TO CshAcct) WITH REVERSE_EDGE="reverse_CdtTrfTxInf_CdtrAcct";
+  ADD DIRECTED EDGE CdtTrfTxInf_CdtrAgt (FROM CdtTrfTxInf, TO BranchAndFinInstnId) WITH REVERSE_EDGE="reverse_CdtTrfTxInf_CdtrAgt";
+  ADD DIRECTED EDGE CdtTrfTxInf_UltmtCdtr (FROM CdtTrfTxInf, TO Pty) WITH REVERSE_EDGE="reverse_CdtTrfTxInf_UltmtCdtr";
+  ADD DIRECTED EDGE CdtTrfTxInf_IntrmyAgt (FROM CdtTrfTxInf, TO BranchAndFinInstnId, Seq INT) WITH REVERSE_EDGE="reverse_CdtTrfTxInf_IntrmyAgt";
+  ADD DIRECTED EDGE CdtTrfTxInf_RgltryRptg (FROM CdtTrfTxInf, TO RgltryRptg) WITH REVERSE_EDGE="reverse_CdtTrfTxInf_RgltryRptg";
+
+  ADD DIRECTED EDGE TxInf_OrgnlTx (FROM TxInf, TO CdtTrfTxInf) WITH REVERSE_EDGE="reverse_TxInf_OrgnlTx";
+  ADD DIRECTED EDGE TxInf_RtrChain_Dbtr (FROM TxInf, TO Pty) WITH REVERSE_EDGE="reverse_TxInf_RtrChain_Dbtr";
+}
+RUN SCHEMA_CHANGE JOB setup_bank_iso20022
+DROP JOB setup_bank_iso20022

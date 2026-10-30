@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 140" width="120" height="140" role="img" aria-labelledby="kavach-title">
+  <title id="kavach-title">Kavach</title>
+  <!-- Shield: the launch video's path, stroked 8 with round joins exactly as the video draws it. -->
+  <path d="M60 6 L112 26 V64 C112 98 88 120 60 134 C32 120 8 98 8 64 V26 Z" fill="#C2491A" stroke="#C2491A" stroke-width="8" stroke-linejoin="round"/>
+  <!-- Graph: five nodes and four edges that also draw a K. -->
+  <path d="M43 39 V99 M43 69 L80 40 M43 69 L77 99" fill="none" stroke="#141A21" stroke-width="8"/>
+  <g fill="#141A21">
+    <circle cx="43" cy="39" r="10.5"/>
+    <circle cx="43" cy="69" r="10.5"/>
+    <circle cx="43" cy="99" r="10.5"/>
+    <circle cx="77" cy="99" r="10.5"/>
+  </g>
+  <!-- Flagged node: the one light point in the mark. -->
+  <circle cx="80" cy="40" r="13.5" fill="#EEF0F3" stroke="#141A21" stroke-width="4"/>
+</svg>
