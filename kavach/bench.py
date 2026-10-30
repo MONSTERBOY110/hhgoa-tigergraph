@@ -161,6 +161,10 @@ def instrument(llm) -> dict:
     return stats
 
 
+def _say(*a) -> None:
+    print(*a, flush=True)
+
+
 def _rows(cases: list[str] | None = None) -> list[dict]:
     from kavach import duckq
     rows = duckq.case_pack(2).to_dict("records")
@@ -170,9 +174,10 @@ def _rows(cases: list[str] | None = None) -> list[dict]:
 
 # ---------------------------------------------------------------------------------------------------------------
 # arms
-def run_arm(arm: str, rows: list[dict], backend: str = "duck", rep: int = 1, cold_first: bool = False, log=print) -> list[dict]:
+def run_arm(arm: str, rows: list[dict], backend: str = "duck", rep: int = 1, cold_first: bool = False, log=None) -> list[dict]:
     from kavach.harness.runner import decisions, run_case
     from kavach.llm import Llm
+    log = log or _say
     extra = {"KAVACH_NO_LLM": "1"} if arm == "det" else {"KAVACH_NO_LLM": "0"}
     out = []
     with quiet_env(extra):
@@ -257,12 +262,13 @@ def _wait_ready(client, cid: str, t0: float, timeout: float = 300.0, poll: float
         time.sleep(poll)
 
 
-def pipeline(rows: list[dict], backend: str = "duck", burst: bool = True, log=print) -> dict:
+def pipeline(rows: list[dict], backend: str = "duck", burst: bool = True, log=None) -> dict:
     """POST /alerts -> case ready (GET /cases/{id} serves the pre-investigated answer); then the same case by hand."""
     from fastapi.testclient import TestClient
 
     from kavach.harness.runner import decisions, run_case
     from kavach.server import create_app
+    log = log or _say
     res = {"single": [], "burst": None, "parity": []}
     with quiet_env({"KAVACH_NO_LLM": "1"}) as tmp:
         cases_dir, traces_dir, att_dir = tmp / "cases", tmp / "traces", tmp / "attestations"

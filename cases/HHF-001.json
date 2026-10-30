@@ -2,19 +2,65 @@
   "case_id": "HHF-001",
   "case": {
     "status": "escalated",
-    "verdict": "uncertain",
-    "fraud_probability": 0.42,
-    "pattern": "card_not_present_new_device",
-    "pattern_description": "",
+    "verdict": "fraud",
+    "fraud_probability": 0.89,
+    "pattern": "undocumented",
+    "pattern_description": "One device profile (RCT6303W87M7 Build/MRA58K | Windows 7 | ie 11.0 for desktop | ) makes low-value online purchases on many unrelated customers' cards, always marked New to the account and behind an anonymous proxy, keeping amounts small so the model scores them low. It touched 14 other cards around this alert and matches earlier confirmed cases on the same profile. It was found by pivoting from the card to the device profile and grouping every card on it.",
     "affected_txn_ids": [
       "3660106",
+      "3660107",
       "3660108"
     ],
     "first_suspicious_txn_id": "3660106",
-    "connected_card_ids": [],
+    "connected_card_ids": [
+      "C00450-K1",
+      "C02342-K1",
+      "C03528-K1",
+      "C05704-K2",
+      "C05770-K1",
+      "C06220-K1",
+      "C06962-K2",
+      "C07212-K2",
+      "C07925-K1",
+      "C07997-K1",
+      "C09251-K1",
+      "C10553-K1",
+      "C11309-K1",
+      "C11543-K2"
+    ],
     "connected_device_profiles": [],
-    "exposure_usd": 1298.23,
+    "exposure_usd": 2189.02,
     "evidence": [
+      {
+        "claim": "The same template (product C, New device behind an anonymous proxy, $200 or more, 2 or more within 72 hours) appears on 14 other cards within 14 days, none sharing a device with this card: coordinated abuse across customers (no labelled example: the closed months show this template on 3 or more cards 0 times (0 of the reference transactions), so a stated coordination weight of 1.5 is used)",
+        "source": "graph",
+        "ref": "query:entity_neighbors(entity_field=access_signature, value=C|IP_PROXY:ANONYMOUS|New|mobile, t_from=2016-12-31 00:00:00, t_to=2017-01-29 00:00:00)",
+        "entity_ids": [
+          "C00450-K1",
+          "C02342-K1",
+          "C03528-K1",
+          "C05704-K2",
+          "C05770-K1",
+          "C06220-K1",
+          "C06962-K2",
+          "C07212-K2",
+          "C07925-K1",
+          "C07997-K1",
+          "3660106",
+          "3660107",
+          "3660108",
+          "3660100",
+          "3660099",
+          "3660109",
+          "3660110",
+          "3615957",
+          "3615956",
+          "3660097",
+          "3660096",
+          "3660098",
+          "3660113"
+        ]
+      },
       {
         "claim": "Card C05061-K1 already has 3 confirmed-fraud closed case(s) (CC-2420, CC-2674, CC-4210). The account key is not usable in January, so the precedent is read at card level, where it is weaker: on cards of this size an earlier confirmed case made a new alert about 3.9 times as likely to be fraud",
         "source": "graph",
@@ -23,30 +69,6 @@
           "CC-2420",
           "CC-2674",
           "CC-4210"
-        ]
-      },
-      {
-        "claim": "Purchaser email domain gmail.com is this account's own: 42 earlier transactions on card C05061-K1 used it",
-        "source": "graph",
-        "ref": "query:card_history(card_id=C05061-K1)",
-        "entity_ids": [
-          "3660108"
-        ]
-      },
-      {
-        "claim": "Profile fit: $447.95 is within the account's earlier range (largest $2,147.02 over 116 purchases)",
-        "source": "graph",
-        "ref": "query:card_history(card_id=C05061-K1)",
-        "entity_ids": [
-          "3660108"
-        ]
-      },
-      {
-        "claim": "Profile fit: the purchase hour (20:00) is one the account already uses (20% of its earlier purchases within an hour of it)",
-        "source": "graph",
-        "ref": "query:card_history(card_id=C05061-K1)",
-        "entity_ids": [
-          "3660108"
         ]
       },
       {
@@ -66,84 +88,160 @@
         ]
       },
       {
-        "claim": "Policy applied, Fraud Policy R4: No reply within 24 hours: Recommend MONITOR_CARD and DECLINE_TRANSACTION for pending authorizations.",
+        "claim": "Policy applied, Fraud Policy R9: Undocumented patterns: When activity fits none of the known patterns but the evidence shows coordinated or repeated abuse across customers, recommend CREATE_CASE, FILE_REPORT, and ESCALATE_TO_ANALYST, and describe the pattern in your own words.",
         "source": "document",
-        "ref": "document:README#POLICY-R4",
+        "ref": "document:README#POLICY-R9",
         "entity_ids": []
       },
       {
-        "claim": "Pattern definition, Known fraud patterns: Card-not-present fraud from a new device: Same as above, with the identity record marking the device as New for this account, sometimes behind a proxy.",
+        "claim": "Nearest documented pattern by text similarity is Known fraud patterns: Card-not-present fraud (cosine 0.77), which does not describe a coordinated template across customers; its definition: The number is used online without the card.",
         "source": "document",
-        "ref": "document:README#PATTERN-3",
+        "ref": "document:README#PATTERN-2",
         "entity_ids": []
+      },
+      {
+        "claim": "Case memory: earlier investigation CASE-2016-4960 (HHF-002, verdict fraud, pattern undocumented) already touches card C05061-K1",
+        "source": "graph",
+        "ref": "query:case_memory(c=C05061-K1)",
+        "entity_ids": [
+          "C05061-K1",
+          "HHF-002"
+        ]
+      },
+      {
+        "claim": "Case memory: earlier investigation CASE-2016-4960 (HHF-002, verdict fraud, pattern undocumented) already touches card C00450-K1",
+        "source": "graph",
+        "ref": "query:case_memory(c=C00450-K1)",
+        "entity_ids": [
+          "C00450-K1",
+          "HHF-002"
+        ]
+      },
+      {
+        "claim": "Graph and vector fused: closed case CC-5229 (confirmed_fraud, card_not_present_fraud) is reached through the device profile iOS Device | iOS 10.0.2 | mobile safari 10.0 | 1136x640, which card C12418-K1 also used in the 30 days to the alert, and its analyst note is the closest to this case among the connected closed cases (similarity 0.83)",
+        "source": "graph",
+        "ref": "query:fused_precedent(card_ids=C05061-K1)",
+        "entity_ids": [
+          "CC-5229",
+          "C12418-K1"
+        ]
+      },
+      {
+        "claim": "Graph algorithm (weakly connected components of the cards whose atypical transactions share a rare element, 2016-12-16 to 2017-01-15): card C05061-K1 is in a component of 15 cards (13 components in the window, the largest 15); shared: ring template proxy_new_burst (15 cards)",
+        "source": "graph",
+        "ref": "query:ring_wcc(seed=C05061-K1)",
+        "entity_ids": [
+          "C00450-K1",
+          "C02342-K1",
+          "C03528-K1",
+          "C05704-K2",
+          "C05770-K1",
+          "C06220-K1",
+          "C06962-K2",
+          "C07212-K2",
+          "C07925-K1",
+          "C07997-K1",
+          "C09251-K1",
+          "C10553-K1",
+          "C11309-K1",
+          "C11543-K2"
+        ]
       }
     ],
     "similar_prior_cases": [
-      "CC-2420",
+      "CC-5229",
       "CC-2674",
+      "CC-2420",
       "CC-4210",
-      "CC-1439",
-      "CC-4369",
-      "CC-4398"
+      "CC-3907",
+      "CC-5571"
     ],
-    "summary": "Alert HHF-001 opened because an analyst asked for a review of transaction 3660108 and related activity on other cards ($447.95, product C, online, 2017-01-14 20:25) on card C05061-K1. The evidence is balanced (fraud probability 0.42): for fraud, Card C05061-K1 already has 3 confirmed-fraud closed case(s) (CC-2420, CC-2674, CC-4210). The account key is not usable in January, so the precedent is read at card level, where it is weaker: on cards of this size an earlier confirmed case made a new alert about 3.9 times as likely to be fraud; against, Purchaser email domain gmail.com is this account's own: 42 earlier transactions on card C05061-K1 used it; Profile fit: $447.95 is within the account's earlier range (largest $2,147.02 over 116 purchases). The case stays under monitoring pending the cardholder. Evidence request: No reply from the customer within 24 hours.",
-    "written_to_graph": false,
-    "graph_case_id": ""
+    "summary": "Alert HHF-001 opened because an analyst asked for a review of transaction 3660108 and related activity on other cards ($447.95, product C, online, 2017-01-14 20:25) on card C05061-K1. Assessed as an undocumented coordinated pattern with fraud probability 0.89. Main findings: The same template appears on 14 other cards within 14 days, none sharing a device with this card: coordinated abuse across customers; Card C05061-K1 already has 3 confirmed-fraud closed case. The account key is not usable in January, so the precedent is read at card level, where it is weaker: on cards of this size an earlier confirmed case made a new alert about 3.9 times as likely to be fraud. The episode covers 3 transaction(s) totalling $2,189.02, and 14 other card(s) are linked by a repeated template of product C purchases of $200 or more in bursts from devices marked New behind an anonymous proxy, with no shared device. Actions: block card, create case, file report, monitor connected cards, escalate to analyst.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-2016-7194"
   },
-  "evidence_requests": [
-    {
-      "type": "customer_validation",
-      "asked_after_step": 6,
-      "assumed_response": "No reply from the customer within 24 hours"
-    }
-  ],
+  "evidence_requests": [],
   "next_best_actions": {
     "initial": [
       {
-        "action": "VERIFY_WITH_CUSTOMER",
-        "route": "auto",
-        "reason": "R1 and §5: fraud probability 0.42 is below 0.70; verify with the cardholder before any block"
-      },
-      {
-        "action": "CREATE_CASE",
-        "route": "auto",
-        "reason": "§3a: requesting evidence opens a case"
-      }
-    ],
-    "final": [
-      {
-        "action": "DECLINE_TRANSACTION",
+        "action": "BLOCK_CARD",
         "route": "L1",
-        "reason": "R4: decline pending authorizations while unverified"
+        "reason": "R9: block and reissue; exposure $2,189.02 is under $2,500"
       },
       {
         "action": "CREATE_CASE",
         "route": "auto",
-        "reason": "§3a: the evidence request opened a case"
+        "reason": "R9 and §3a: open the internal fraud case with the evidence attached"
       },
       {
-        "action": "MONITOR_CARD",
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R9 and §3a: coordinated activity fitting no documented pattern, repeated on 14 other card(s)"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
         "route": "auto",
-        "reason": "R4: no reply within 24 hours, raise monitoring for 72 hours"
+        "reason": "R6: 14 other card(s) share a repeated template of product C purchases of $200 or more in bursts from devices marked New behind an anonymous proxy, with no shared device; place them under monitoring"
       },
       {
         "action": "ESCALATE_TO_ANALYST",
         "route": "auto",
-        "reason": "R4 and R8: no reply, uncertain, and exposure over $500"
+        "reason": "R9: undocumented coordinated pattern, hand to an analyst"
       }
     ],
-    "what_changed": "No reply within 24 hours, so R4 applies and the probability stays at 0.42: DECLINE_TRANSACTION, CREATE_CASE, MONITOR_CARD, ESCALATE_TO_ANALYST."
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R9: block and reissue; exposure $2,189.02 is under $2,500"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R9 and §3a: open the internal fraud case with the evidence attached"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R9 and §3a: coordinated activity fitting no documented pattern, repeated on 14 other card(s)"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: 14 other card(s) share a repeated template of product C purchases of $200 or more in bursts from devices marked New behind an anonymous proxy, with no shared device; place them under monitoring"
+      },
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R9: undocumented coordinated pattern, hand to an analyst"
+      }
+    ],
+    "what_changed": "nothing"
   },
   "sar": {
-    "file": false,
-    "reason": "§3a: the verdict is not fraud, so no suspicious activity report; the case record is sufficient",
-    "narrative": "",
-    "subjects": [],
-    "total_amount_usd": 0,
-    "activity_dates": []
+    "file": true,
+    "reason": "R9 and §3a: coordinated activity fitting no documented pattern, repeated on 14 other card(s)",
+    "narrative": "This report concerns customer C05061, card C05061-K1, issued as a visa credit. Between 2017-01-12 and 2017-01-14, 3 transaction(s) totalling $2,189.02 were identified as part of one fraud episode, beginning with transaction 3660106. The activity took place online, product code(s) C, billing region(s) 264, 492, from device profile(s) RCT6303W87M7 Build/MRA58K | Windows 10 | ie 11.0 for tablet | 1920x1080; RCT6303W87M7 Build/MRA58K | Windows 7 | ie 11.0 for desktop | . The transactions were bursts of online purchases from devices new to the account behind an anonymous proxy, the same template appearing on other customers' cards with no device in common. The activity is assessed as an undocumented coordinated pattern: The same template appears on 14 other cards within 14 days, none sharing a device with this card: coordinated abuse across customers; Card C05061-K1 already has 3 confirmed-fraud closed case. The account key is not usable in January, so the precedent is read at card level, where it is weaker: on cards of this size an earlier confirmed case made a new alert about 3.9 times as likely to be fraud. The shared element (a repeated template of product C purchases of $200 or more in bursts from devices marked New behind an anonymous proxy, with no shared device) links this activity to 14 other card(s), including C00450-K1, C02342-K1, C03528-K1, C05704-K2, which indicates a common actor across cardholders. Earlier confirmed cases CC-5229, CC-2674, CC-2420 show the same pattern. The cardholder has not yet been contacted. The bank has recommended BLOCK_CARD, MONITOR_CONNECTED_CARDS and opened an internal case; the report is filed under R9, §3a.",
+    "subjects": [
+      "C05061",
+      "C05061-K1",
+      "C00450-K1",
+      "C02342-K1",
+      "C03528-K1",
+      "C05704-K2",
+      "C05770-K1",
+      "C06220-K1",
+      "C06962-K2",
+      "C07212-K2"
+    ],
+    "total_amount_usd": 2189.02,
+    "activity_dates": [
+      "2017-01-12",
+      "2017-01-14"
+    ]
   },
-  "stop_reason": "The customer did not reply within 24 hours and the remaining graph evidence cannot move the probability (0.42) across a decision threshold, so the case stays open under R4 monitoring.",
-  "tool_calls": 12,
+  "stop_reason": "Fraud probability 0.89 is at or above 0.85 with 2 independent evidence groups (network, history), so section 6 allows a decision without asking the customer; further queries would not change the actions.",
+  "tool_calls": 21,
   "tokens": 0,
-  "latency_s": 1.23
+  "latency_s": 19.87
 }

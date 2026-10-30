@@ -41,8 +41,8 @@
       }
     }
   },
-  "backend": "duck",
-  "run_at": "2026-10-29T12:14:11Z",
+  "backend": "tg",
+  "run_at": "2026-10-29T22:46:05Z",
   "claims": [
     {
       "id": "E1",
@@ -72,7 +72,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:11Z",
+        "ts": "2026-10-29T22:46:05Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -103,7 +103,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:11Z",
+        "ts": "2026-10-29T22:46:05Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "customer",
@@ -132,7 +132,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:11Z",
+        "ts": "2026-10-29T22:46:05Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -161,7 +161,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:11Z",
+        "ts": "2026-10-29T22:46:05Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -190,7 +190,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:11Z",
+        "ts": "2026-10-29T22:46:05Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -200,35 +200,6 @@
     },
     {
       "id": "E6",
-      "kind": "evidence",
-      "what": "Profile fit: the purchase hour (13:00) is one the account already uses (10% of its earlier purchases within an hour of it)",
-      "evidence": {
-        "txn_ids": [
-          "3660350"
-        ],
-        "card_ids": [],
-        "customer_ids": [],
-        "case_ids": [],
-        "device_keys": [],
-        "other": []
-      },
-      "how": {
-        "tool": "card_history",
-        "params": {
-          "card_id": "C09582-K1"
-        }
-      },
-      "when": {
-        "ts": "2026-10-29T12:14:11Z",
-        "dataset_version": "eb6caf5672c6"
-      },
-      "source": "graph",
-      "ref": "query:card_history(card_id=C09582-K1)",
-      "signal": "hour_familiar",
-      "llr": -0.3
-    },
-    {
-      "id": "E7",
       "kind": "evidence",
       "what": "Policy applied, Fraud Policy R2: Customer denies the transaction: Recommend BLOCK_CARD and CREATE_CASE.",
       "evidence": {
@@ -246,7 +217,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:11Z",
+        "ts": "2026-10-29T22:46:05Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
@@ -255,7 +226,7 @@
       "llr": null
     },
     {
-      "id": "E8",
+      "id": "E7",
       "kind": "evidence",
       "what": "Pattern definition, Known fraud patterns: Card testing: A stolen card number is checked before use: three or more tiny online authorizations, often under $5, then a larger purchase.",
       "evidence": {
@@ -273,7 +244,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:11Z",
+        "ts": "2026-10-29T22:46:05Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
@@ -302,7 +273,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:11Z",
+        "ts": "2026-10-29T22:46:05Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -333,7 +304,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:11Z",
+        "ts": "2026-10-29T22:46:05Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -343,10 +314,10 @@
     }
   ],
   "counts": {
-    "claims": 10,
-    "with_how": 10,
+    "claims": 9,
+    "with_how": 9,
     "by_kind": {
-      "evidence": 8,
+      "evidence": 7,
       "sar_sentence": 0,
       "detector_hit": 2
     }

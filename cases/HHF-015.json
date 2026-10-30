@@ -58,9 +58,9 @@
       "CC-5132",
       "CC-4118"
     ],
-    "summary": "Alert HHF-015 opened because the bank's model flagged transaction 3601725 (recorded score 0.07) ($112.75, product W, in person, 2017-01-22 09:21) on card C00543-K1. The evidence points to the cardholder: Billing region 485 is familiar: 9 earlier transactions on this card there (8% of its in-person history); Profile fit: product W is this account's usual product (109 earlier purchases on card C00543-K1); Profile fit: $112.75 is within the account's earlier range (largest $418.03 over 111 purchases). Fraud probability 0.15; the alert is closed as legitimate.",
-    "written_to_graph": false,
-    "graph_case_id": ""
+    "summary": "Alert HHF-015 opened because the bank's model flagged transaction 3601725 (recorded score 0.07) ($112.75, product W, in person, 2017-01-22 09:21) on card C00543-K1. The evidence points to the cardholder: Billing region 485 is familiar: 9 earlier transactions on this card there; Profile fit: product W is this account's usual product. Fraud probability 0.15; the alert is closed as legitimate (allow transaction, verify with customer, monitor card, close no fraud).",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-2016-5098"
   },
   "evidence_requests": [],
   "next_best_actions": {
@@ -119,7 +119,7 @@
     "activity_dates": []
   },
   "stop_reason": "Fraud probability 0.15 is at or below 0.15 with 2 independent evidence groups (sequence, region), so section 6 allows a decision without asking the customer; further queries would not change the actions.",
-  "tool_calls": 8,
+  "tool_calls": 12,
   "tokens": 0,
-  "latency_s": 0.17
+  "latency_s": 11.59
 }

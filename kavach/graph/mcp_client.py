@@ -106,7 +106,7 @@ def allowed_queries() -> set:
     if _ALLOWED is None:
         gdir = Path(__file__).resolve().parent
         names = set()
-        for f in ("queries.gsql", "queries_r2.gsql", "queries_grow.gsql"):
+        for f in ("queries.gsql", "queries_r2.gsql", "queries_grow.gsql", "queries_fusion.gsql"):
             if (gdir / f).exists():
                 names |= set(re.findall(r"CREATE OR REPLACE QUERY (\w+)\(", (gdir / f).read_text(encoding="utf-8")))
         names |= {"similar_closed", "similar_docs", "similar_investigations", "case_memory"}   # vector queries (vectors_tg.py)

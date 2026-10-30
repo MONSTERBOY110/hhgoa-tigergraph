@@ -41,8 +41,8 @@
       }
     }
   },
-  "backend": "duck",
-  "run_at": "2026-10-29T12:14:13Z",
+  "backend": "tg",
+  "run_at": "2026-10-29T22:47:23Z",
   "claims": [
     {
       "id": "E1",
@@ -65,7 +65,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:13Z",
+        "ts": "2026-10-29T22:47:23Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -94,7 +94,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:13Z",
+        "ts": "2026-10-29T22:47:23Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -125,7 +125,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:13Z",
+        "ts": "2026-10-29T22:47:23Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -154,7 +154,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:13Z",
+        "ts": "2026-10-29T22:47:23Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -183,7 +183,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:13Z",
+        "ts": "2026-10-29T22:47:23Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -194,7 +194,7 @@
     {
       "id": "E6",
       "kind": "evidence",
-      "what": "Policy applied, Fraud Policy R4: No reply within 24 hours: Recommend MONITOR_CARD and DECLINE_TRANSACTION for pending authorizations.",
+      "what": "Policy applied, Fraud Policy R3: Customer confirms the transaction: Recommend CLOSE_NO_FRAUD.",
       "evidence": {
         "txn_ids": [],
         "card_ids": [],
@@ -206,42 +206,15 @@
       "how": {
         "tool": "document",
         "params": {
-          "doc_id": "POLICY-R4"
+          "doc_id": "POLICY-R3"
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:13Z",
+        "ts": "2026-10-29T22:47:23Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
-      "ref": "document:README#POLICY-R4",
-      "signal": "",
-      "llr": null
-    },
-    {
-      "id": "E7",
-      "kind": "evidence",
-      "what": "Pattern definition, Known fraud patterns: Account takeover: Mixed-channel activity inconsistent with the cardholder, often with device and match-flag anomalies, pointing to stolen credentials rather than a stolen number.",
-      "evidence": {
-        "txn_ids": [],
-        "card_ids": [],
-        "customer_ids": [],
-        "case_ids": [],
-        "device_keys": [],
-        "other": []
-      },
-      "how": {
-        "tool": "document",
-        "params": {
-          "doc_id": "PATTERN-5"
-        }
-      },
-      "when": {
-        "ts": "2026-10-29T12:14:13Z",
-        "dataset_version": "eb6caf5672c6"
-      },
-      "source": "document",
-      "ref": "document:README#PATTERN-5",
+      "ref": "document:README#POLICY-R3",
       "signal": "",
       "llr": null
     },
@@ -266,7 +239,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:13Z",
+        "ts": "2026-10-29T22:47:23Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
@@ -276,10 +249,10 @@
     }
   ],
   "counts": {
-    "claims": 8,
-    "with_how": 8,
+    "claims": 7,
+    "with_how": 7,
     "by_kind": {
-      "evidence": 7,
+      "evidence": 6,
       "sar_sentence": 0,
       "detector_hit": 1
     }

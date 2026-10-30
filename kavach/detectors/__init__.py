@@ -35,7 +35,9 @@ def run_all(ctx) -> tuple[list[Signal], Findings]:
 
     fnd = Findings()
     sigs: list[Signal] = []
-    for mod in (onecard, network, history, typologies):
+    import os
+    mods = (onecard, network, history) + (() if os.environ.get("KAVACH_TYPOLOGIES") == "0" else (typologies,))   # ablation switch
+    for mod in mods:
         sigs += mod.detect(ctx, fnd)
     # detectors the agent discovered itself (kavach.grow), loaded only after an L2 approval; KAVACH_GROWN=0 disables them
     from kavach.grow import registry
@@ -44,6 +46,13 @@ def run_all(ctx) -> tuple[list[Signal], Findings]:
         fnd.notes.setdefault("grown_detectors", []).append(s.name)
     _grown_rings(ctx, fnd, grown, registry)
     sigs += grown
+    # analyst feedback (kavach.feedback): accepted or rejected findings change later weights without retraining; every
+    # adjusted signal names the feedback records that changed it. KAVACH_FEEDBACK=0 turns it off.
+    from kavach import feedback
+    sigs = feedback.adjust(sigs, ctx)
+    changed = feedback.changed(sigs)
+    if changed:
+        fnd.notes["analyst_feedback"] = changed
     if set(fnd.episode) & PATTERN_EPISODES:
         # a ladder starts small, micro charges sit inside the normal range and a scripted burst copies the cardholder's habits
         # by design: the pattern itself explains the fit, so the fit is not an alibi for the transactions it explains

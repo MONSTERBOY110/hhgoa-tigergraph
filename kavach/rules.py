@@ -15,9 +15,11 @@ reading is measured, not argued. Change the sentence and the detector changes (t
     python -m kavach.rules [R5|R6|all] [--pop N] [--no-agent] [--refresh-agent]
     python -m kavach.rules parse [R1..R10|all]        tokens, template and open choices for any rule (no data needed)
     python -m kavach.rules check R5 CC-0137            re-run one attested claim (a closed case or an HHF case)
+    python -m kavach.rules doc                         rebuild docs/round2/policy-to-detector.md from detectors/rules/*.json
 
 Backtests follow kavach/backtest.py: one anchor transaction per closed case (backtest.labels), a reference sample of
-transactions before 2017 that are in no confirmed-fraud case (backtest.population, seed 42); support (confirmed-fraud
+transactions before 2017 that are in no confirmed-fraud case (the same population as backtest.population, sampled by a seeded
+hash so a re-run returns the same ids); support (confirmed-fraud
 cases hit), cleared hits (legitimate customers the rule would act against), population rate and lift with the same
 0.5-hit floor and interval. Rule versus agent: on the closed cases against the agent's own card-testing detector
 (kavach.detectors.onecard.detect, run unchanged) and the bank's labels; on the 18 HHF cases against the agent's dry-run
@@ -499,8 +501,8 @@ def _interpret_shared(text, toks, cons, q):
         "The rule is silent, but 'the same billing region' or 'the same recipient email' identifies a shared origin only when "
         "more cards show fraud from it than usually do: gmail.com and the largest regions carry dozens of atypical purchases "
         "every week. The baseline is the mean number of cards showing fraud from that value per window over the 90 days before "
-        "the window (complete windows inside the data only); with no baseline the value must be rare (100 cards or fewer in "
-        "the window).", "omitted"))
+        "the window (complete windows inside the data only), scaled to the part of the window the cutoff leaves; with no baseline "
+        "the value must be rare (100 cards or fewer in the window).", "omitted"))
     choices.append(Choice(
         "anchor_card", "", "Is the alert's own card one of the 'several'?",
         [{"label": "yes, when its flagged transaction carries the element", "params": {}}], "yes",
@@ -841,6 +843,13 @@ class ElementIndex:
         self._base[key] = val
         return val
 
+    def expected(self, f: str, v: str, t0: int, span_ns: int, p: dict):
+        """The baseline scaled to the length of the window actually observed (the cutoff usually ends it soon after the alert)."""
+        b = self.baseline(f, v, t0, p)
+        if b is None:
+            return None
+        return b * max(span_ns, NS_HOUR) / (2 * p["window_days"] * NS_DAY)
+
     def evaluate(self, f: str, v: str, card: str, t0: int, cut: int, own_case: str | None, p: dict) -> dict | None:
         W = int(p["window_days"] * NS_DAY)
         idx, ts = self.rows(f, v)
@@ -860,7 +869,7 @@ class ElementIndex:
         if n_cards < p["min_cards"]:
             return None
         n_sharing = int(len(np.unique(self._arr["_card"][win])))
-        base = self.baseline(f, v, t0, p)
+        base = self.expected(f, v, t0, hi - lo, p)
         if p["baseline_ratio"] > 0:
             if base is None:
                 if n_sharing > p["rare_cards"]:
@@ -874,7 +883,8 @@ class ElementIndex:
                 "txns": [str(int(x)) for x in self._arr["TransactionID"][fr]][:60], "baseline": None if base is None else round(base, 3),
                 "n_sharing": n_sharing, "monitor_cards": sharing[:200] if sharing else cards[:200],
                 "monitor_rule": "every card sharing the element (rare element)" if sharing else "the fraud-showing cards (common element)",
-                "precedent_cases": prec_cases[:20], "window": [str(pd.Timestamp(lo)), str(pd.Timestamp(hi))]}
+                "precedent_cases": prec_cases[:20], "window": [str(pd.Timestamp(lo)), str(pd.Timestamp(hi))],
+                "baseline_note": "expected cards showing fraud from this value in a window this long (90-day history)"}
 
 
 # ================================================================================================ backtest
@@ -1230,9 +1240,12 @@ def compare_hhf(rule, agent: dict, index: "ElementIndex | None" = None) -> list[
                 why = (f"rule fires on {hit['shared_element']} ({hit['n_cards']} cards showing fraud, baseline {hit['baseline']}) but the agent "
                        f"lists no connected or related cards (verdict {k['verdict']})")
             else:
-                why = (f"agent links {len(conn)} card(s) through {agent_el or 'a ring signal'}, which is not one of R6's three elements "
-                       "(device profile, billing region, recipient email) on the flagged transaction, or its cards do not show fraud "
-                       "within 7 days" if conn else f"agent monitors related cards through {agent_el or 'a ring signal'} without listing them")
+                why = (f"agent links {len(conn)} card(s) through {agent_el or 'a ring signal'}"
+                       + (", a behaviour template, not a device profile, billing region or recipient email"
+                          if agent_el.split(" ")[0] not in ("device_key", "addr1", "R_emaildomain") else "")
+                       if conn else f"agent monitors related cards through {agent_el or 'a ring signal'} without listing them")
+            if not hit:
+                why += f". Per element: {r6_diag(rule, index, a, until)}"
             out.append({"case_id": cid, "card": card, "flagged": str(int(a["TransactionID"])), "customer": c["customer_id"],
                         "rule": bool(hit), "rule_element": hit["shared_element"] if hit else "", "rule_cards": sorted(rule_cards)[:40],
                         "rule_txns": hit["txns"][:20] if hit else [], "rule_baseline": hit["baseline"] if hit else None,
@@ -1240,6 +1253,32 @@ def compare_hhf(rule, agent: dict, index: "ElementIndex | None" = None) -> list[
                         "agent_verdict": k["verdict"], "agent_pattern": k["pattern"], "agent_element": agent_el, "agent_connected": conn,
                         "agent_actions": final, "common_cards": overlap, "agree": bool(hit) == agent_yes, "why": why})
     return out
+
+
+def r6_diag(rule: "SharedElementRule", index: "ElementIndex", a: dict, until=None, own_case: str | None = None) -> str:
+    """Why R6 stays silent on an anchor: per element of the flagged transaction, how many cards show fraud from it in the window
+    against what the rule needs (evaluated with the count and baseline conditions switched off)."""
+    p = dict(rule.params)
+    t0 = _ns(a["ts"])
+    cut = _ns(until) if until is not None else t0 + index.median_delay_ns
+    out = []
+    for f in p["fields"]:
+        raw = a.get(f)
+        if not _ok(raw):
+            out.append(f"no {FIELD_LABEL[f]}")
+            continue
+        v = index.value_of(f, a, p)
+        if v is None:
+            out.append(f"{FIELD_LABEL[f]} is a placeholder or family-level profile")
+            continue
+        h = index.evaluate(f, v, str(a["card_id"]), t0, cut, own_case, {**p, "min_cards": 1, "baseline_ratio": 0.0})
+        n = h["n_cards"] if h else 1
+        lo = t0 - int(p["window_days"] * NS_DAY)
+        base = index.expected(f, v, t0, min(t0 + int(p["window_days"] * NS_DAY), cut) - lo, p)
+        need = max(p["min_cards"], p["baseline_ratio"] * base) if base is not None else p["min_cards"]
+        out.append(f"{FIELD_LABEL[f]} {v if len(str(v)) <= 24 else str(v)[:24] + '...'}: {n} card(s) showing fraud, needs {need:.1f}"
+                   + (f" (baseline {base:.1f})" if base else ""))
+    return "; ".join(out)
 
 
 def _agent_element(sigs: list[dict]) -> str:
@@ -1313,7 +1352,7 @@ def run(rule_id: str, pop_n: int | None = None, with_agent: bool = True, refresh
                                     "how": {"function": "kavach.rules.compare_r5_closed",
                                             "agent": "kavach.detectors.onecard.detect on card_features(card_history(card)), closed_hits = the card's closed cases"}}
     else:
-        out["closed_comparison"] = r6_closed_comparison(bt_out)
+        out["closed_comparison"] = r6_closed_comparison(bt_out, rule, index)
     if with_agent:
         ag = agent_answers(refresh=refresh_agent, log=log)
         out["hhf_comparison"] = {"agent_run_at": ag["run_at"], "agent_how": ag["how"],
@@ -1324,7 +1363,7 @@ def run(rule_id: str, pop_n: int | None = None, with_agent: bool = True, refresh
     return out
 
 
-def r6_closed_comparison(bt_out: dict) -> dict:
+def r6_closed_comparison(bt_out: dict, rule=None, index=None) -> dict:
     """R6 against the bank's own ring labels: connected cards listed, pattern undocumented, report filed."""
     from kavach import duckq
     meta = duckq.q("select case_id, outcome, pattern, connected_card_ids, report_filed from closed").set_index("case_id")
@@ -1334,21 +1373,24 @@ def r6_closed_comparison(bt_out: dict) -> dict:
         h = bt_out["hits"].get(int(r.tid))
         conn = [x for x in str(m.connected_card_ids or "").split("|") if x and x not in ("nan", "None")]
         bank_ring = bool(conn)
-        rule = bool(h)
-        if rule == bank_ring and not rule:
+        fired = bool(h)
+        if fired == bank_ring and not fired:
             continue                      # agreement on "no ring": counted, not listed
         common = sorted(set(h["cards"]) & set(conn)) if h else []
-        if rule and bank_ring:
+        if fired and bank_ring:
             why = f"both: rule on {h['shared_element']} ({h['n_cards']} cards), bank lists {len(conn)} connected cards, {len(common)} in common"
-        elif rule:
+        elif fired:
             why = (f"rule on {h['shared_element']} ({h['n_cards']} cards showing fraud, baseline {h['baseline']}); the bank lists no connected "
                    + ("cards (a cleared alert: a legitimate customer R6 would act against)" if r.outcome == "cleared" else
                       f"cards and labelled it {m.pattern}"))
         else:
-            why = (f"bank lists {len(conn)} connected cards; the rule finds fewer than 3 cards showing fraud from a shared element of the "
-                   "anchor within 7 days before the case opened")
+            why = f"bank lists {len(conn)} connected cards; the rule does not fire on the anchor"
+            if rule is not None and index is not None:
+                a = bt_out["rows"].get(int(r.tid))
+                if a is not None:
+                    why += f". Per element: {r6_diag(rule, index, a, pd.Timestamp(r.opened_at) if pd.notna(r.opened_at) else None, r.case_id)}"
         rows.append({"case_id": r.case_id, "outcome": r.outcome, "pattern": m.pattern, "card": r.card_id, "anchor": str(r.tid),
-                     "rule": rule, "bank_ring": bank_ring, "rule_element": h["shared_element"] if h else "",
+                     "rule": fired, "bank_ring": bank_ring, "rule_element": h["shared_element"] if h else "",
                      "rule_cards": h["cards"][:20] if h else [], "rule_txns": h["txns"][:12] if h else [], "bank_connected": conn[:30],
                      "common_cards": common, "why": why})
     n_bank = int((meta.connected_card_ids.fillna("").astype(str).str.len() > 3).sum())
@@ -1442,6 +1484,7 @@ def write_doc(outs: dict) -> None:
          "so the table below each rule shows what each ambiguity costs.", "",
          "Re-run any claim: `python -m kavach.rules check <R5|R6> <CC-xxxx|HHF-xxx>` (one case) or `python -m kavach.rules <rule>` "
          "(the whole backtest and comparison).", ""]
+    L += _summary_md(outs)
     for rid, o in outs.items():
         sp, tm, bt_ = o["spec"], o["timing"], o["backtest"]
         L += [f"## {rid}. {sp['title']}", "", f"> {sp['text']}", "",
@@ -1462,6 +1505,14 @@ def write_doc(outs: dict) -> None:
         L += [_md_choice(c) for c in sp["choices"]]
         L += ["", "### Backtest (closed cases and reference sample, kavach/backtest.py conventions)", ""]
         L += _variant_table(bt_["variants"])
+        v0 = bt_["variants"][0]
+        swing = max(bt_["variants"][1:], key=lambda x: abs(x["lift"] - v0["lift"]) + abs(x["cleared_hits"] - v0["cleared_hits"]) / 50)
+        verdict = ("does not separate fraud from normal traffic: the shape is at least as common around a random transaction as around "
+                   "the first transaction of a confirmed fraud" if v0["lift"] < 1.5 else
+                   "separates fraud from normal traffic" if v0["lift"] >= 3 else "separates weakly")
+        L += ["", f"Reading: as written and resolved, {rid} {verdict} (lift {v0['lift']:.2f}, {v0['cleared_hits']} cleared customers acted "
+              f"against). The most consequential open choice is `{swing['choice']}`: reading it as '{swing['option']}' moves the lift to "
+              f"{swing['lift']:.2f} and the cleared hits to {swing['cleared_hits']}."]
         L += ["", "`*` the reference sample had no hit, so the lift uses 0.5 hits as the floor and is an upper reading.", "",
               f"Population: {bt_['n_population']:,} transactions before 2017 in no confirmed-fraud case (seeded hash sample, seed 42); "
               f"backtest run {bt_['seconds']} s.", ""]
@@ -1476,8 +1527,39 @@ def write_doc(outs: dict) -> None:
     DOC.write_text("\n".join(L) + "\n", encoding="utf-8")
 
 
+def _summary_md(outs: dict) -> list[str]:
+    """Numbers only, from the runs below."""
+    L = ["## Summary", "", "| rule | prose to working fire() | open choices | default reading: fraud / cleared / reference hits | lift | "
+         "best reading by lift (cleared hits <= 3 first) | agent agreement on the closed cases | agreement on the 18 HHF cases |",
+         "|---|---|---|---|---|---|---|---|"]
+    for rid, o in outs.items():
+        v = o["backtest"]["variants"]
+        d = v[0]
+        ok = [x for x in v if x["cleared_hits"] <= 3 and x["support"] >= 1] or v
+        best = max(ok, key=lambda x: (x["lift"], x["support"]))
+        cc = o.get("closed_comparison", {}).get("rows") or []
+        if rid == "R5" and cc:
+            agree = f"{sum(1 for r in cc if r['rule'] == r['agent'])} of {len(cc)} (rule {sum(1 for r in cc if r['rule'])}, agent {sum(1 for r in cc if r['agent'])})"
+        elif cc is not None and rid == "R6":
+            n_both = sum(1 for r in cc if r["rule"] and r["bank_ring"])
+            agree = (f"bank rings: {n_both} of {o['closed_comparison'].get('n_bank_ring_cases', 0)} found; rule alone on "
+                     f"{sum(1 for r in cc if r['rule'] and not r['bank_ring'])}")
+        else:
+            agree = "n/a"
+        hh = o.get("hhf_comparison", {}).get("rows") or []
+        hh_s = f"{sum(1 for r in hh if r.get('agree'))} of {len(hh)}" if hh else "not run"
+        L.append(f"| {rid} | {o['timing']['prose_to_first_fire_ms']} ms | {len(o['spec']['choices'])} | {d['support']} / {d['cleared_hits']} / "
+                 f"{d['pop_hits']} of {d['n_fraud']} / {d['n_cleared']} / {d['n_population']} | {d['lift']:.2f} | {best['variant']} (lift "
+                 f"{best['lift']:.2f}, cleared {best['cleared_hits']}) | {agree} | {hh_s} |")
+    L.append("")
+    return L
+
+
 def _comparison_md(rid: str, o: dict) -> list[str]:
     L = ["### Rule versus agent", ""]
+
+    def e(x) -> str:                                  # table cells: device profiles and signatures contain "|"
+        return str(x).replace("|", "\\|")
     cc = o.get("closed_comparison", {})
     if rid == "R5" and cc.get("rows"):
         rows = cc["rows"]
@@ -1499,13 +1581,13 @@ def _comparison_md(rid: str, o: dict) -> list[str]:
         for r in rows:
             if r["rule"] != r["agent"]:
                 L.append(f"| {r['case_id']} | {r['outcome']} / {r['pattern']} | {r['card']} | {r['anchor']} | {'fires' if r['rule'] else '-'} | "
-                         f"{r['agent_branch'] or '-'} | {', '.join(r['rule_txns'][:5])} | {', '.join(r['agent_txns'][:5])} | {r['why_agent']} |")
+                         f"{r['agent_branch'] or '-'} | {', '.join(r['rule_txns'][:5])} | {', '.join(r['agent_txns'][:5])} | {e(r['why_agent'])} |")
         L += ["", "Every disagreement between rule and the bank's card_testing label:", "",
               "| case | outcome / bank label | card | anchor | rule | rule txns | why |", "|---|---|---|---|---|---|---|"]
         for r in rows:
             if r["rule"] != r["bank_ct"]:
                 L.append(f"| {r['case_id']} | {r['outcome']} / {r['pattern']} | {r['card']} | {r['anchor']} | {'fires' if r['rule'] else '-'} | "
-                         f"{', '.join(r['rule_txns'][:5])} | {r['why_bank']} |")
+                         f"{', '.join(r['rule_txns'][:5])} | {e(r['why_bank'])} |")
         L.append("")
     elif rid == "R6" and cc.get("rows") is not None:
         rows = cc["rows"]
@@ -1517,9 +1599,9 @@ def _comparison_md(rid: str, o: dict) -> list[str]:
               "| case | outcome / label | card | anchor | rule element | rule cards | bank connected | common | why |",
               "|---|---|---|---|---|---|---|---|---|"]
         for r in rows:
-            L.append(f"| {r['case_id']} | {r['outcome']} / {r['pattern']} | {r['card']} | {r['anchor']} | {r['rule_element'] or '-'} | "
+            L.append(f"| {r['case_id']} | {r['outcome']} / {r['pattern']} | {r['card']} | {r['anchor']} | {e(r['rule_element'] or '-')} | "
                      f"{', '.join(r['rule_cards'][:6])}{' ...' if len(r['rule_cards']) > 6 else ''} | {len(r['bank_connected'])} | "
-                     f"{len(r['common_cards'])} | {r['why']} |")
+                     f"{len(r['common_cards'])} | {e(r['why'])} |")
         L.append("")
     hh = o.get("hhf_comparison", {})
     if hh.get("rows"):
@@ -1531,7 +1613,7 @@ def _comparison_md(rid: str, o: dict) -> list[str]:
                     L.append(f"| {r['case_id']} | | | | | | | | {r['error']} |")
                     continue
                 L.append(f"| {r['case_id']} | {r['card']} | {r['flagged']} | {'fires' if r['rule'] else '-'} | {', '.join(r['rule_txns'][:6])} | "
-                         f"{r['agent_verdict']} / {r['agent_pattern']} | {', '.join(r['agent_actions'])} | {'yes' if r['agree'] else 'NO'} | {r['why']} |")
+                         f"{r['agent_verdict']} / {r['agent_pattern']} | {', '.join(r['agent_actions'])} | {'yes' if r['agree'] else 'NO'} | {e(r['why'])} |")
         else:
             L += ["| case | card | flagged | rule element | rule cards | agent element | agent connected | common | agree | why |",
                   "|---|---|---|---|---|---|---|---|---|---|"]
@@ -1539,8 +1621,8 @@ def _comparison_md(rid: str, o: dict) -> list[str]:
                 if "error" in r:
                     L.append(f"| {r['case_id']} | | | | | | | | | {r['error']} |")
                     continue
-                L.append(f"| {r['case_id']} | {r['card']} | {r['flagged']} | {r['rule_element'] or '-'} | {len(r['rule_cards'])} | "
-                         f"{r['agent_element'] or '-'} | {len(r['agent_connected'])} | {len(r['common_cards'])} | {'yes' if r['agree'] else 'NO'} | {r['why']} |")
+                L.append(f"| {r['case_id']} | {r['card']} | {r['flagged']} | {e(r['rule_element'] or '-')} | {len(r['rule_cards'])} | "
+                         f"{e(r['agent_element'] or '-')} | {len(r['agent_connected'])} | {len(r['common_cards'])} | {'yes' if r['agree'] else 'NO'} | {e(r['why'])} |")
         L.append("")
     return L
 
@@ -1574,6 +1656,11 @@ def main(argv=None) -> int:
             tpl = template_of(toks)
             print(f"{rid}: template {tpl or 'none (decision rule; kavach/policy.py)'}; tokens: "
                   + "; ".join(f"{t.text!r}->{t.slot}{'*' if t.vague else ''}" for t in toks))
+        return 0
+    if a.what == "doc":                               # rebuild the document from the stored runs (no recomputation)
+        outs = {k: json.loads((OUT_DIR / f"{k}.json").read_text(encoding="utf-8")) for k in ("R5", "R6") if (OUT_DIR / f"{k}.json").exists()}
+        write_doc(outs)
+        print(f"wrote {_rel(DOC)} from {', '.join(outs)}")
         return 0
     if a.what == "check":
         rid, cid = a.args[0], a.args[1]

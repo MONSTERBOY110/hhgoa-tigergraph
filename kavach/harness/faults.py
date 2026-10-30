@@ -44,6 +44,12 @@ class GraphDown(ToolFailure):
     kind = "graph_down"
 
 
+class IndexUnavailable(ToolFailure):
+    """The DuckDB index (lane A data, dataset version, case pack) is missing or unreadable."""
+
+    kind = "index_unavailable"
+
+
 class ModelFailure(HarnessError):
     """The model failed. Llm.write never raises it (prose falls back to the template); it exists for callers that
     need the model and must stop when it is unusable."""

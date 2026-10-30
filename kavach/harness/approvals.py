@@ -162,8 +162,8 @@ def approve(case_id: str, action: str, token: str | None, exposure: float = 0.0,
     role = role_for(token)
     ok = allowed(role, route)
     reason = ("" if ok else
-              f"unknown or unconfigured token; a {route} action needs role {required_role(route)}" if role is None else
-              f"role {role} cannot approve a {route} action; it needs role {required_role(route)} or above")
+              f"unknown or unconfigured token; an {route} action needs role {required_role(route)}" if role is None else
+              f"role {role} cannot approve an {route} action; it needs role {required_role(route)} or above")
     rec = {"id": str(uuid.uuid4()), "case_id": case_id, "action": action, "route": route, "role": role or "none",
            "approver": approver_id(token), "status": "approved" if ok else "denied",
            "ts": datetime.now(timezone.utc).isoformat(timespec="seconds"), "note": (note or "")[:500],

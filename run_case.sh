@@ -12,7 +12,9 @@ shift $(( $# >= 2 ? 2 : 1 ))
 if [ -x .venv/Scripts/python.exe ]; then PY=.venv/Scripts/python.exe; else PY=.venv/bin/python; fi
 if [ ! -x "$PY" ]; then
   echo "setup: creating .venv and installing requirements"
-  python -m venv .venv || python3 -m venv .venv
+  for cand in "py -3.11" "py -3.12" python3.11 python3.12 python python3; do
+    if $cand -m venv .venv 2>/dev/null; then break; fi
+  done
   if [ -x .venv/Scripts/python.exe ]; then PY=.venv/Scripts/python.exe; else PY=.venv/bin/python; fi
   "$PY" -m pip install --quiet -r requirements.txt || exit 1
 fi
@@ -20,5 +22,9 @@ fi
 if [ ! -f data/kavach_r2.duckdb ]; then
   echo "setup: downloading organizer files and building the index"
   "$PY" -m kavach download --round 1 && "$PY" -m kavach download --round 2 && "$PY" -m kavach index || exit 1
+fi
+if [ ! -f data/vectors.npz ]; then
+  echo "setup: embedding the closed-case notes and policy sections (one time, a few minutes)"
+  "$PY" -m kavach vectors || exit 1
 fi
 exec "$PY" -m kavach investigate "$CASE" --backend "$BACKEND" "$@"

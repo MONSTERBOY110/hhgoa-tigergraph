@@ -181,7 +181,8 @@ def _decoded_blobs(text: str) -> list[str]:
 
 
 def _clip(fragment: str, folded_match: re.Match | None) -> str:
-    fragment = fragment.strip()
+    from kavach.harness.redact import redact
+    fragment = redact(fragment.strip())                # mask secrets and emails before the 200-character cut
     if len(fragment) <= MAX_FRAGMENT:
         return fragment
     start = max(0, folded_match.start() - 60) if folded_match is not None and folded_match.start() < len(fragment) else 0
@@ -330,7 +331,8 @@ ID_LIKE = re.compile(r"\b(?:C\d{5}-K\d{1,2}|C\d{5}|CC-\d{1,6}|CASE-\d{4}-\d{4}|\
 
 def _quote(fragment: str) -> str:
     """ASCII-safe quote: tip-off words redacted, identifiers from the text never copied (they are unverified)."""
-    q = ascii_safe(fragment)
+    from kavach.harness.redact import redact
+    q = ascii_safe(redact(fragment))                   # mask secrets and emails BEFORE any cut, so half a secret never escapes
     q = ID_LIKE.sub("[unverified id]", q)
     q = TIPOFF.sub("[redacted instruction]", q)
     if len(q) > MAX_QUOTE:

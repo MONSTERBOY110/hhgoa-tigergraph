@@ -77,7 +77,7 @@ def _expr(field_: str) -> str:
 
 
 LABEL = {"device_key": "device profile", "R_emaildomain": "recipient email domain", "P_emaildomain": "purchaser email domain",
-         "addr1": "card-present billing region", "access_signature": "access signature (product|proxy|device New|device type)",
+         "addr1": "card-present billing region", "access_signature": "access signature (product, proxy, device New flag, device type)",
          "product_band": "product and amount band", "holder_key": "account key"}
 
 
@@ -269,7 +269,7 @@ def card_facts(ring: Ring, window_days: float = WINDOW_DAYS) -> dict:
                                           "so there is nothing to block yet")
         elif len(atyp):
             r0 = atyp.iloc[0]
-            cls, why = "compromised", (f"carries the element ({len(eb)} txns, ${realised:,.2f}) and {len(atyp)} of them are atypical for the "
+            cls, why = "compromised", (f"carries the element ({len(eb)} txns, ${realised:,.2f}) and {len(atyp)} of them {'is' if len(atyp) == 1 else 'are'} atypical for the "
                                        f"card (e.g. {int(r0.TransactionID)}: {r0.why})")
         elif n_habit or common:
             cls = "likely_legitimate"
@@ -321,16 +321,17 @@ def score(blocked: set, facts: dict, penalty: float) -> dict:
     risky = [c for c in cards if c["class"] in ("compromised", "unclear")]
     stopped = round(sum(c["forward"] for c in risky if c["card"] in blocked), 2)
     residual = round(sum(c["forward"] for c in risky if c["card"] not in blocked), 2)
-    legit = [c for c in cards if c["card"] in blocked and c["class"] == "likely_legitimate"]
-    legit_customers = sorted({c["customer"] for c in legit})
+    legit_customers = sorted({c["customer"] for c in cards if c["card"] in blocked and c["class"] == "likely_legitimate"})
+    unverified = sorted({c["customer"] for c in cards if c["card"] in blocked and c["class"] == "unclear"})
+    n_pen = len(legit_customers) + len(unverified)
     hs_stop = round(sum(c["hindsight"]["element_after"] for c in cards if c["card"] in blocked and c["class"] != "likely_legitimate"), 2)
     hs_res = round(sum(c["hindsight"]["element_after"] for c in cards if c["card"] not in blocked and c["class"] != "likely_legitimate"), 2)
     own_hit = round(sum(c["hindsight"]["own_after"] for c in cards if c["card"] in blocked), 2)
     return {"cards_blocked": len(blocked), "exposure_stopped": stopped, "residual": residual,
-            "legit_customers_acted_against": legit_customers, "penalty": round(penalty * len(legit_customers), 2),
-            "score": round(stopped - penalty * len(legit_customers), 2),
+            "legit_customers_acted_against": legit_customers, "unverified_customers_acted_against": unverified,
+            "penalty": round(penalty * n_pen, 2), "score": round(stopped - penalty * n_pen, 2),
             "hindsight": {"ring_spend_stopped": hs_stop, "ring_spend_residual": hs_res, "own_spend_interrupted": own_hit,
-                          "score": round(hs_stop - penalty * len(legit_customers), 2)}}
+                          "score": round(hs_stop - penalty * n_pen, 2)}}
 
 
 def element_rule_score(plan_score: dict, facts: dict, penalty: float) -> dict:
@@ -344,10 +345,10 @@ def element_rule_score(plan_score: dict, facts: dict, penalty: float) -> dict:
     cards = facts["cards"]
     hs_stop = round(sum(c["hindsight"]["element_after"] for c in cards if c["class"] != "likely_legitimate"), 2)
     outs_after = sorted({o["customer"] for o in rl["outsiders_after"]})
-    legit = sorted(set(plan_score["legit_customers_acted_against"]) | set(outs))
+    legit = sorted(set(plan_score["legit_customers_acted_against"]) | set(plan_score["unverified_customers_acted_against"]) | set(outs))
     hs_legit = set(plan_score["legit_customers_acted_against"]) | set(outs_after)
     return {"cards_blocked": plan_score["cards_blocked"], "exposure_stopped": stopped, "residual": 0.0,
-            "legit_customers_acted_against": legit, "penalty": round(penalty * len(legit), 2), "score": round(stopped - penalty * len(legit), 2),
+            "legit_customers_acted_against": legit, "unverified_customers_acted_against": [], "penalty": round(penalty * len(legit), 2), "score": round(stopped - penalty * len(legit), 2),
             "declines_on_outsiders": outs[:40],
             "hindsight": {"ring_spend_stopped": hs_stop, "ring_spend_residual": 0.0,
                           "own_spend_interrupted": round(plan_score["hindsight"]["own_spend_interrupted"] + sum(o["amt"] for o in rl["outsiders_after"]), 2),
@@ -359,20 +360,24 @@ def plan(ring: Ring, stop_usd: float = STOP_USD, penalty: float = PENALTY_USD, w
     facts = card_facts(ring, window_days)
     cards = facts["cards"]
     cand = sorted([c for c in cards if c["class"] == "compromised"], key=lambda c: (-c["forward"], -c["realised"], c["card"]))
-    chosen, steps, stop = [], [], ""
+    chosen, steps, stop, skipped = [], [], "", []
     ordered = sorted([c for c in cards if c["class"] != "not_yet_active"], key=lambda c: (-c["forward"], c["card"]))
     for c in ordered:
         if c["class"] != "compromised":
-            stop = stop or (f"next card by exposure, {c['card']} (${c['forward']:,.2f} forward), is {c['class'].replace('_', ' ')}: the "
-                            "planner never blocks a card that does not look compromised")
+            # a card that does not look compromised is never blocked; the greedy passes over it
+            skipped.append(f"{c['card']} ({c['class'].replace('_', ' ')}, ${c['forward']:,.0f} forward)")
             steps.append({"card": c["card"], "forward": c["forward"], "taken": False, "why": c["class"]})
             continue
-        if c["forward"] < stop_usd:
-            stop = stop or (f"next compromised card, {c['card']}, would cut ${c['forward']:,.2f}, below the ${stop_usd:,.0f} stop rule")
+        if stop or c["forward"] < stop_usd:
+            stop = stop or (f"the next compromised card, {c['card']}, would cut ${c['forward']:,.2f}, below the ${stop_usd:,.0f} stop rule; it "
+                            "and every smaller one get step-up authentication instead")
             steps.append({"card": c["card"], "forward": c["forward"], "taken": False, "why": f"marginal cut below ${stop_usd:,.0f}"})
             continue
         chosen.append(c)
         steps.append({"card": c["card"], "forward": c["forward"], "taken": True, "why": "compromised, largest remaining cut"})
+    stop = stop or f"every compromised card cuts at least ${stop_usd:,.0f}, so all were taken"
+    if skipped:
+        stop += "; passed over (never blocked): " + ", ".join(skipped)
     blocked = {c["card"] for c in chosen}
     actions = [_block(c) for c in chosen]
     for c in cards:
@@ -402,9 +407,9 @@ def plan(ring: Ring, stop_usd: float = STOP_USD, penalty: float = PENALTY_USD, w
            "as_of": str(ring.as_of), "as_of_label": ring.as_of_label, "element": ring.element, "n_ring_cards": len(ring.cards),
            "parameters": {"stop_usd": stop_usd, "penalty_usd": penalty, "window_days": window_days, "min_horizon_days": MIN_HORIZON_DAYS,
                           "lookback_days": LOOKBACK_DAYS, "l1_max": L1_MAX},
-           "facts": facts, "blocked": sorted(blocked), "greedy_steps": steps, "stop_reason": stop or "every compromised card was taken",
+           "facts": facts, "blocked": sorted(blocked), "greedy_steps": steps, "stop_reason": stop,
            "actions": actions, "total_forward_at_risk": total_forward, "legitimate_customers_touched": legit,
-           "alternatives": alts, "calibration": calib, "never": "BLOCK_ALL_CARDS: R10 is not met by a ring (no customer has two cards with confirmed fraud or "
+           "alternatives": alts, "calibration": calib, "never": "R10 is not met by a ring (no customer has two cards with confirmed fraud or "
                                           "confirmed compromised credentials)",
            "staged": staged, "staging_note": ("the case verdict is not fraud, so every block waits for the analyst escalation (R8) and the L1/L2 "
                                               "approval; only the auto actions (monitoring, step-up) may run now") if staged else
@@ -470,9 +475,14 @@ def answers(source: str = "auto") -> dict:
     return out
 
 
+def _md(v) -> str:
+    return str(v).replace("|", "\\|")
+
+
 def _md_plan(p: dict, src: str) -> list[str]:
     f = p["facts"]
-    L = [f"### Plan at {p['as_of_label']} ({p['as_of']})", "",
+    when = {"opened": "alert time (the case's opened_at)", "end": "the end of the data (every ring card already visible)"}
+    L = [f"### Plan at {when.get(p['as_of_label'], p['as_of_label'])}: {p['as_of']}", "",
          f"Ring window: first element transaction {f['first_element_txn']} at {f['t_start']}; window end {f['window_end']}; remaining "
          f"{f['remaining_days']} days (minimum {p['parameters']['min_horizon_days']}). The element was carried by {f['element_popularity']} "
          f"card(s) in the bank between the ring's start and the decision ({f['ring_active_cards']} of them ring cards, "
@@ -485,7 +495,7 @@ def _md_plan(p: dict, src: str) -> list[str]:
                  f"${c['own_spend_since_start']:,.2f} ({c['n_own_since_start']}) | {c['why']} |")
     steps = ", ".join(f"{'+' if s['taken'] else '-'}{s['card']} (${s['forward']:,.0f})" for s in p["greedy_steps"][:20])
     L += ["", f"Greedy order (+ blocked, - not blocked): {steps}. Stop: {p['stop_reason']}.", "",
-          "Recommended (blocks wait for the stated approval route; " + p["staging_note"] + "):", ""]
+          "Recommended (" + p["staging_note"] + "):", ""]
     for a in p["actions"]:
         if a["action"] != "MONITOR_CONNECTED_CARDS":
             L.append(f"- `{a['action']}` {a['card']} (customer {a['customer']}), route `{a['route']}`: {a['reason']}.")
@@ -494,14 +504,15 @@ def _md_plan(p: dict, src: str) -> list[str]:
     L.append(f"- Never `BLOCK_ALL_CARDS`: {p['never']}.")
     L += ["", "Legitimate customers this plan touches: " + ("; ".join(f"customer {x['customer']} (card {x['card']}): {x['plan_action']}, because {x['why']}"
                                                                      for x in p["legitimate_customers_touched"]) or "none classified likely legitimate") + ".", "",
-          f"| alternative | cards blocked | exposure stopped (projected) | residual | legitimate customers acted against | score (stopped - ${p['parameters']['penalty_usd']:,.0f} each) | hindsight: ring spend stopped | hindsight: residual | hindsight: own spend interrupted | hindsight score |",
+          f"| alternative | cards blocked | exposure stopped (projected) | residual | legitimate or unverified customers acted against | score (stopped - ${p['parameters']['penalty_usd']:,.0f} each) | hindsight: ring spend stopped | hindsight: residual | hindsight: own spend interrupted | hindsight score |",
           "|---|---|---|---|---|---|---|---|---|---|"]
     names = {"monitor_all": "block nothing (monitor all)", "block_all": "block every active ring card", "plan": "the planner's plan",
              "plan_plus_element_rule": "the plan plus declining new transactions carrying the element (L1)"}
     for k in ("monitor_all", "block_all", "plan", "plan_plus_element_rule"):
         s = p["alternatives"][k]
         L.append(f"| {names[k]} | {s['cards_blocked']} | ${s['exposure_stopped']:,.2f} | ${s['residual']:,.2f} | "
-                 f"{len(s['legit_customers_acted_against'])}{': ' + ', '.join(s['legit_customers_acted_against']) if s['legit_customers_acted_against'] else ''} | "
+                 f"{len(s['legit_customers_acted_against']) + len(s['unverified_customers_acted_against'])}"
+                 f"{': ' + ', '.join(s['legit_customers_acted_against'] + [u + ' (unverified)' for u in s['unverified_customers_acted_against']]) if s['legit_customers_acted_against'] or s['unverified_customers_acted_against'] else ''} | "
                  f"${s['score']:,.2f} | ${s['hindsight']['ring_spend_stopped']:,.2f} | ${s['hindsight']['ring_spend_residual']:,.2f} | "
                  f"${s['hindsight']['own_spend_interrupted']:,.2f} | ${s['hindsight']['score']:,.2f} |")
     cb, rl = p["calibration"], f["ring_level"]
@@ -516,7 +527,7 @@ def _md_plan(p: dict, src: str) -> list[str]:
           + "; an element rule would decline their next purchases."]
     L += ["", f"Attested: {len(p['claims'])} claims (what, card, customer and transaction ids, how = `{p['claims'][0]['how']['function']}` plus the "
           f"query below, when = {p['run_at']} on dataset `{p['dataset_version']}`). Query: `{f['how']['sql']}` with parameters "
-          f"{f['how']['params'][0]!r}, {len(f['how']['params'][1])} ring cards, {f['how']['params'][2]} to {f['how']['params'][3]}; flags: "
+          f"`{_md(f['how']['params'][0])}`, {len(f['how']['params'][1])} ring cards, {f['how']['params'][2]} to {f['how']['params'][3]}; flags: "
           f"{f['how']['flags']}.", ""]
     return L
 
@@ -534,12 +545,42 @@ def write_doc(plans: list[tuple[dict, dict | None, str]]) -> None:
          "likely legitimate when its element transactions fit its profile and the element is habitual for it or common, unclear "
          "otherwise. The planner takes compromised cards greedily by forward exposure and stops when the next cut is under "
          f"${STOP_USD:,.0f} (R5's own block threshold) or the next card is not compromised. Alternatives are scored as projected "
-         f"exposure stopped minus ${PENALTY_USD:,.0f} (the section 3a materiality line) per legitimate customer acted against; a "
+         f"exposure stopped minus ${PENALTY_USD:,.0f} (the section 3a materiality line) per legitimate customer acted against (a block on "
+         "a card whose compromise is not shown, class unclear, carries the same penalty: it may be an innocent customer); a "
          "hindsight column re-scores them with the ring spend that really followed the decision (the planner never sees it). "
          "Routes: BLOCK_CARD L1 up to $2,500 of the card's own exposure, L2 above; BLOCK_ALL_CARDS never (R10).", ""]
+    # summary, generated from the plans
+    L += ["## Summary", "", "| ring | element | cards (active at alert) | plan blocks | projected cut by the plan | ring spend that followed on "
+          "the blocked cards | ring spend that followed on cards not yet reached | stopped by plan + element rule (hindsight) | outsider "
+          "customers the element rule declines (hindsight) | legitimate customers acted against by the plan |",
+          "|---|---|---|---|---|---|---|---|---|---|"]
+    tot = {"plan_hs": 0.0, "rule_hs": 0.0, "later": 0.0, "proj": 0.0, "outs": 0}
+    n_el = sorted(c["n_element"] for p_open, _, _ in plans for c in p_open["facts"]["cards"] if c["n_element"])
+    for p_open, _, _ in plans:
+        a, cb = p_open["alternatives"], p_open["calibration"]
+        n_act = sum(1 for c in p_open["facts"]["cards"] if c["class"] != "not_yet_active")
+        er = a["plan_plus_element_rule"]
+        L.append(f"| {p_open['case_id']} | {p_open['element']['label']} `{_md(p_open['element']['value'])}` | {p_open['n_ring_cards']} ({n_act}) | "
+                 f"{len(p_open['blocked'])} | ${a['plan']['exposure_stopped']:,.2f} | ${a['plan']['hindsight']['ring_spend_stopped']:,.2f} | "
+                 f"${cb['actual_after_on_later_cards']:,.2f} | ${er['hindsight']['ring_spend_stopped']:,.2f} | "
+                 f"{len(er['hindsight']['outsider_customers_declined'])} | {len(a['plan']['legit_customers_acted_against'])} |")
+        tot["plan_hs"] += a["plan"]["hindsight"]["ring_spend_stopped"]
+        tot["rule_hs"] += er["hindsight"]["ring_spend_stopped"]
+        tot["later"] += cb["actual_after_on_later_cards"]
+        tot["proj"] += a["plan"]["exposure_stopped"]
+        tot["outs"] += len(er["hindsight"]["outsider_customers_declined"])
+    L += ["", f"Measured at alert time over the {len(plans)} rings: the plans project ${tot['proj']:,.2f} of exposure cut, but the ring spend that "
+          f"actually followed on the cards they block was ${tot['plan_hs']:,.2f}. A ring card active at the alert carried a median of "
+          f"{n_el[len(n_el) // 2] if n_el else 0} element transactions (75th-percentile span of use per card: "
+          + ", ".join(f"{p_open['case_id']} {p_open['facts']['ring_level']['card_life_hours_p75']} h" for p_open, _, _ in plans)
+          + f"), and the window projection assumes it keeps spending at its daily rate: it did not. ${tot['later']:,.2f} followed on ring cards the ring had not reached "
+          f"yet; declining new transactions carrying the shared element (DECLINE_TRANSACTION, L1) on top of the blocks stops "
+          f"${tot['rule_hs']:,.2f} in hindsight and declines {tot['outs']} customer(s) outside the ring. The plan acts against no customer "
+          "classified legitimate or unverified. Card-level detail, routes and the alternatives follow per ring; the projection check under "
+          "each plan compares the window projection, a burst-aware projection and what happened.", ""]
     for p_open, p_end, src in plans:
         el = p_open["element"]
-        L += [f"## {p_open['case_id']}: ring of {p_open['n_ring_cards']} cards on {el['label']} `{el['value']}`", "",
+        L += [f"## {p_open['case_id']}: ring of {p_open['n_ring_cards']} cards on {el['label']} `{_md(el['value'])}`", "",
               f"Source of the ring: {src}. Case card {p_open['case_card']}, verdict {p_open['case_verdict']}, final actions "
               f"{', '.join(p_open['case_final_actions'])}. Element: {el['source']}.", ""]
         L += _md_plan(p_open, src)
@@ -558,7 +599,8 @@ def _print(p: dict) -> None:
           f"{len(p['facts']['ring_level']['outsiders_after'])}")
     print(f"  blocked {p['blocked']}; stop: {p['stop_reason']}")
     for k, s in p["alternatives"].items():
-        print(f"  {k:22s} stopped ${s['exposure_stopped']:>10,.2f} residual ${s['residual']:>10,.2f} legit {len(s['legit_customers_acted_against'])} "
+        print(f"  {k:22s} stopped ${s['exposure_stopped']:>10,.2f} residual ${s['residual']:>10,.2f} legit {len(s['legit_customers_acted_against'])}"
+              f"+{len(s['unverified_customers_acted_against'])} "
               f"score ${s['score']:>10,.2f} | hindsight stopped ${s['hindsight']['ring_spend_stopped']:>9,.2f} score ${s['hindsight']['score']:>10,.2f}")
 
 

@@ -41,8 +41,8 @@
       }
     }
   },
-  "backend": "duck",
-  "run_at": "2026-10-29T12:14:13Z",
+  "backend": "tg",
+  "run_at": "2026-10-29T22:47:10Z",
   "claims": [
     {
       "id": "E1",
@@ -58,7 +58,7 @@
       },
       "how": {},
       "when": {
-        "ts": "2026-10-29T12:14:13Z",
+        "ts": "2026-10-29T22:47:10Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "customer",
@@ -87,7 +87,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:13Z",
+        "ts": "2026-10-29T22:47:10Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -116,7 +116,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:13Z",
+        "ts": "2026-10-29T22:47:10Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -127,7 +127,7 @@
     {
       "id": "E4",
       "kind": "evidence",
-      "what": "The alert names card C09241-K1 (customer C09241), but transaction 3640919 is on card C09241-K2 (customer C09241, card type debit)..",
+      "what": "The alert names card C09241-K1 (customer C09241), but transaction 3640919 is on card C09241-K2 (customer C09241, card type debit).",
       "evidence": {
         "txn_ids": [
           "3640919"
@@ -147,7 +147,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:13Z",
+        "ts": "2026-10-29T22:47:10Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -176,7 +176,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:13Z",
+        "ts": "2026-10-29T22:47:10Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -203,13 +203,49 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:13Z",
+        "ts": "2026-10-29T22:47:10Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
       "ref": "document:README#POLICY-R3",
       "signal": "",
       "llr": null
+    },
+    {
+      "id": "E7",
+      "kind": "evidence",
+      "what": "Graph and vector fused: closed case CC-0362 (cleared, none) is reached through the device profile Windows | Windows 10 | chrome 66.0 | 1280x1024, which card C08489-K2 also used in the 30 days to the alert, and its analyst note is the closest to this case among the connected closed cases (similarity 0.81)",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [
+          "C08489-K2"
+        ],
+        "customer_ids": [],
+        "case_ids": [
+          "CC-0362"
+        ],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "fused_precedent",
+        "params": {
+          "card_ids": [
+            "C09241-K2"
+          ],
+          "text": "cleared false alarm: Customer confirmed the transaction when asked: Customer confirms they made the purchase Profile fit: product W is this account's usual product (467 earlier purchases on card C09241-K2 in its region 494) Profile fit: $881.55 is within the account's earlier range (largest $1,103.96 over 486 purchases)",
+          "t0": "2017-01-20 09:06:19",
+          "k": 5
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:47:10Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "graph",
+      "ref": "query:fused_precedent(card_ids=C09241-K2)",
+      "signal": "fused_precedent",
+      "llr": 0.0
     },
     {
       "id": "D1",
@@ -232,7 +268,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:13Z",
+        "ts": "2026-10-29T22:47:10Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
@@ -268,7 +304,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:13Z",
+        "ts": "2026-10-29T22:47:10Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -278,10 +314,10 @@
     }
   ],
   "counts": {
-    "claims": 8,
-    "with_how": 7,
+    "claims": 9,
+    "with_how": 8,
     "by_kind": {
-      "evidence": 6,
+      "evidence": 7,
       "sar_sentence": 0,
       "detector_hit": 2
     }

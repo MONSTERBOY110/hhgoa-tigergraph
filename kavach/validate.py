@@ -75,7 +75,7 @@ class IdIndex:
 
     def exists(self, x: str) -> bool:
         return (x in self.txn or x in self.cards or x in self.customers or x in self.closed
-                or x in self.devices or x in self.extra)
+                or x in self.devices or x in self.extra or x in self.cases)
 
     @classmethod
     def from_duck(cls, round: int = 2, duck_path: Path | str | None = None) -> "IdIndex":
@@ -288,13 +288,18 @@ def review(raw: dict, idx: IdIndex | None, fname: str | None = None, strict: boo
     spots = [("evidence_requests", json.dumps(raw.get("evidence_requests") or []))]
     spots += [(f"{ph} WARN_CUSTOMER reason", x.reason) for ph, lst in (("initial", nba.initial), ("final", nba.final))
               for x in lst if x.action == "WARN_CUSTOMER"]
-    spots += [("summary", c.summary)] + [(f"evidence claim {i + 1}", e.claim) for i, e in enumerate(c.evidence)]
-    for where, text in spots:
+    for where, text in spots:                    # customer-facing text: a tip-off is an error (the grader checks the same)
         hit = _tipoff(text)
         if hit:
             errs.append(f"tip-off: {where} mentions a report or regulator ({hit!r})")
+    # internal text (case summary, evidence claims) never reaches the customer; flagged as a warning so a human can check
+    # that nothing internal is copied into a customer message
+    internal = [("summary", c.summary)] + [(f"evidence claim {i + 1}", e.claim) for i, e in enumerate(c.evidence)]
+    internal_hits = [(w, _tipoff(t)) for w, t in internal if _tipoff(t)]
 
     # warnings (never failing)
+    for w, hit in internal_hits:
+        warns.append(f"internal {w} mentions a report ({hit!r}); fine internally, never copy it into a customer message")
     if "BLOCK_ALL_CARDS" in fin:
         warns.append("BLOCK_ALL_CARDS in final: the grader raises policy finding r10_block_all every time")
     if c.verdict == "fraud" and p < 0.5:

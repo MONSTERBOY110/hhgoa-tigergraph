@@ -76,12 +76,20 @@ def weights():
 
 
 def _cases(ids, round: int | None = None):
-    from kavach import duckq
-    rows = duckq.case_pack(round).to_dict("records")
-    rows = [r for r in rows if not ids or r["case_id"] in ids]
-    if ids and not rows:
-        # not in the default pack: look in the other round's pack before giving up
-        rows = [r for r in duckq.case_pack(1).to_dict("records") if r["case_id"] in ids]
+    from kavach.harness import faults
+    from kavach.harness.runner import case_pack_rows
+    try:   # fail closed: a missing or unreadable index is an incident and exit 2, never a traceback
+        rows = case_pack_rows(round, label=ids[0] if ids else None)
+        rows = [r for r in rows if not ids or r["case_id"] in ids]
+        if ids and not rows:
+            # not in the default pack: look in the other round's pack before giving up
+            rows = [r for r in case_pack_rows(1, label=ids[0]) if r["case_id"] in ids]
+    except faults.IndexUnavailable as e:
+        print(f"INCIDENT index unavailable: {e}")
+        raise typer.Exit(2)
+    except Exception as e:  # noqa: BLE001  (the incident line was printed by the runner when it applies)
+        print(f"INCIDENT case pack unavailable: {type(e).__name__}: {str(e)[:160]}")
+        raise typer.Exit(2)
     if ids and not rows:
         print(f"unknown case id(s): {', '.join(ids)}")
         raise typer.Exit(1)
@@ -128,6 +136,25 @@ def _line(ans: dict, rerun=None) -> str:
             f"{ans['latency_s']}s{tail}")
 
 
+def _sync_graph(persist: bool, conn) -> None:
+    """After a persisted run: case events, approvals and approved detectors into the graph, then read back and verify."""
+    if not (persist and conn is not None):
+        return
+    from kavach.graph import writeback
+    rep = writeback.sync_all(conn)
+    print(f"graph write-back: {sum(c.get('inserted_vertices', 0) for c in rep['cases'])} new case events, "
+          f"{rep['approvals']['inserted_vertices']} new approvals, read-back {'ok' if rep['verify']['ok'] else 'FAILED'}")
+    if not rep["verify"]["ok"]:
+        raise typer.Exit(2)
+
+
+@app.command("writeback")
+def writeback_cmd(action: str = typer.Argument("all", help="all | verify | plan")):
+    """Write the case life (events, approvals, approved detectors) into TigerGraph and read it back."""
+    from kavach.graph.writeback import _main
+    raise typer.Exit(_main([action]))
+
+
 @app.command()
 def investigate(case_id: str, backend: str = "duck", verbose: bool = False, persist: bool = False, no_llm: bool = False,
                 no_write: bool = typer.Option(False, "--no-write", help="print only; leave cases/<id>.json untouched")):
@@ -144,6 +171,7 @@ def investigate(case_id: str, backend: str = "duck", verbose: bool = False, pers
             raise typer.Exit(2)
         if not no_write:
             _write(o.answer, o.trace)
+            _sync_graph(persist, conn)
         if verbose:
             print(json.dumps(o.answer, indent=2, ensure_ascii=False))
         print(_line(o.answer, o.rerun))
@@ -169,6 +197,7 @@ def run(all: bool = typer.Option(True, "--all"), backend: str = "duck", persist:
             continue
         _write(o.answer, o.trace)
         print(_line(o.answer, o.rerun), flush=True)
+    _sync_graph(persist, conn)
     if failed:
         print(f"{len(failed)} case(s) failed closed (see incidents/): {', '.join(failed)}")
         raise typer.Exit(2)
@@ -177,8 +206,12 @@ def run(all: bool = typer.Option(True, "--all"), backend: str = "duck", persist:
 @app.command()
 def serve(port: int = 8787, host: str = "127.0.0.1"):
     """Approvals and case API (role tokens from .env; the role comes from the token, never from the request body)."""
+    import os
     from kavach.server import main as serve_main
-    serve_main(port=port, host=host)
+    os.environ["KAVACH_RECORD"] = "1"
+    # a pre-investigated alert is written exactly like `kavach investigate` writes it (answer, trace, sidecar, case file),
+    # so GET /cases/{id} serves the fresh answer; a failed one writes nothing (the runner records the incident)
+    serve_main(port=port, host=host, on_outcome=lambda o: _write(o.answer, o.trace) if o.answer is not None else None)
 
 
 @app.command()
@@ -193,7 +226,24 @@ def drift(action: str = typer.Argument("detect", help="detect | status | approve
 
 
 PUBLISHED = ("RESILIENCE.md", "INNOVATION.md", "ablation.md", "backtests.md", "attacks.md", "drift-report.md", "data-quality.md",
-             "january-data-profile.md", "round1-postmortem.md")
+             "january-data-profile.md", "round1-postmortem.md", "policy-to-detector.md", "containment.md", "sar-filings.md",
+             "bench.md", "analyst-loop.md", "schema-mapping.md", "drills.md", "tigergraph.md")
+
+
+@app.command(context_settings={"allow_extra_args": True, "ignore_unknown_options": True})
+def rules(ctx: typer.Context):
+    """Challenge 3: turn written rules (R5, R6) into detectors, backtest them, compare with the agent. Args pass through."""
+    import sys
+    from kavach.rules import main as rules_main
+    sys.exit(rules_main(list(ctx.args) or ["all"]) or 0)
+
+
+@app.command(context_settings={"allow_extra_args": True, "ignore_unknown_options": True})
+def contain(ctx: typer.Context):
+    """Challenge 7: containment plan per ring (smallest block set, exposure cut, customers touched). Args pass through."""
+    import sys
+    from kavach.containment import main as contain_main
+    sys.exit(contain_main(list(ctx.args) or ["all"]) or 0)
 
 
 @app.command()
@@ -233,7 +283,7 @@ def monitor(limit: int = 6, backend: str = "duck", no_llm: bool = False):
 
 @app.command()
 def attest(case_id: str = typer.Argument("", help="case id, or empty with --all"), all_: bool = typer.Option(False, "--all"),
-           backend: str = "duck"):
+           backend: str = typer.Option("auto", help="auto: re-run on the lane recorded in each sidecar")):
     """Re-run every attested claim of a case (what, evidence ids, how, when) and verify the ids come back."""
     import sys
 

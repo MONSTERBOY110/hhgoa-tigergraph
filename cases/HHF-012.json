@@ -1,18 +1,16 @@
 {
   "case_id": "HHF-012",
   "case": {
-    "status": "escalated",
-    "verdict": "uncertain",
+    "status": "closed_legitimate",
+    "verdict": "legitimate",
     "fraud_probability": 0.17,
-    "pattern": "account_takeover",
+    "pattern": "none",
     "pattern_description": "",
-    "affected_txn_ids": [
-      "3655457"
-    ],
-    "first_suspicious_txn_id": "3655457",
+    "affected_txn_ids": [],
+    "first_suspicious_txn_id": "",
     "connected_card_ids": [],
     "connected_device_profiles": [],
-    "exposure_usd": 261.51,
+    "exposure_usd": 0.0,
     "evidence": [
       {
         "claim": "Profile fit: product W, purchaser email yahoo.com and the amount $261.51 all match card C12223-K1 before the last 7 days (129 earlier W purchases, 31 with this email, largest earlier purchase $884.02)",
@@ -55,29 +53,23 @@
         ]
       },
       {
-        "claim": "Policy applied, Fraud Policy R4: No reply within 24 hours: Recommend MONITOR_CARD and DECLINE_TRANSACTION for pending authorizations.",
+        "claim": "Policy applied, Fraud Policy R3: Customer confirms the transaction: Recommend CLOSE_NO_FRAUD.",
         "source": "document",
-        "ref": "document:README#POLICY-R4",
-        "entity_ids": []
-      },
-      {
-        "claim": "Pattern definition, Known fraud patterns: Account takeover: Mixed-channel activity inconsistent with the cardholder, often with device and match-flag anomalies, pointing to stolen credentials rather than a stolen number.",
-        "source": "document",
-        "ref": "document:README#PATTERN-5",
+        "ref": "document:README#POLICY-R3",
         "entity_ids": []
       }
     ],
     "similar_prior_cases": [
       "CC-0179",
-      "CC-3649",
-      "CC-1441",
-      "CC-2827",
-      "CC-0013",
-      "CC-3247"
+      "CC-4591",
+      "CC-4783",
+      "CC-1645",
+      "CC-5132",
+      "CC-4118"
     ],
-    "summary": "Alert HHF-012 opened because the bank's model flagged transaction 3655457 (recorded score 0.05) ($261.51, product W, in person, 2017-01-09 00:34) on card C12223-K1. The evidence is balanced (fraud probability 0.17): for fraud, Card C12223-K1 already has 1 confirmed-fraud closed case(s) (CC-0179). The account key is not usable in January, so the precedent is read at card level, where it is weaker: on cards of this size an earlier confirmed case made a new alert about 3.9 times as likely to be fraud; against, Profile fit: product W, purchaser email yahoo.com and the amount $261.51 all match card C12223-K1 before the last 7 days (129 earlier W purchases, 31 with this email, largest earlier purchase $884.02); Billing region 476 is familiar: 138 earlier transactions on this card there (100% of its in-person history). The case stays under monitoring pending the cardholder. Evidence request: No reply from the customer within 24 hours.",
-    "written_to_graph": false,
-    "graph_case_id": ""
+    "summary": "Alert HHF-012 opened because the bank's model flagged transaction 3655457 (recorded score 0.05) ($261.51, product W, in person, 2017-01-09 00:34) on card C12223-K1. The evidence points to the cardholder: Profile fit: product W, purchaser email yahoo.com and the amount $261.51 all match card C12223-K1 before the last 7 days; Billing region 476 is familiar: 138 earlier transactions on this card there. Fraud probability 0.17; the alert is closed as legitimate (allow transaction, verify with customer, monitor card, close no fraud). Evidence request: No reply from the customer within 24 hours.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-2016-2769"
   },
   "evidence_requests": [
     {
@@ -101,27 +93,27 @@
     ],
     "final": [
       {
-        "action": "DECLINE_TRANSACTION",
-        "route": "L1",
-        "reason": "R4: decline pending authorizations while unverified"
+        "action": "ALLOW_TRANSACTION",
+        "route": "auto",
+        "reason": "§6: the flagged transaction is consistent with the cardholder, let it stand"
       },
       {
-        "action": "CREATE_CASE",
+        "action": "VERIFY_WITH_CUSTOMER",
         "route": "auto",
-        "reason": "§3a: the evidence request opened a case"
+        "reason": "§6 and R3: confirm the purchase with the cardholder; the card stays active"
       },
       {
         "action": "MONITOR_CARD",
         "route": "auto",
-        "reason": "R4: no reply within 24 hours, raise monitoring for 72 hours"
+        "reason": "§6: keep the card under 72-hour monitoring after the alert"
       },
       {
-        "action": "ESCALATE_TO_ANALYST",
+        "action": "CLOSE_NO_FRAUD",
         "route": "auto",
-        "reason": "R8: evidence conflicts"
+        "reason": "§6, R3 and §3a: alert cleared; the bank records cleared alerts without a case"
       }
     ],
-    "what_changed": "No reply within 24 hours, so R4 applies and the probability stays at 0.17: DECLINE_TRANSACTION, CREATE_CASE, MONITOR_CARD, ESCALATE_TO_ANALYST."
+    "what_changed": "No reply within 24 hours, so R4 applies and the probability stays at 0.17: ALLOW_TRANSACTION, VERIFY_WITH_CUSTOMER, MONITOR_CARD, CLOSE_NO_FRAUD."
   },
   "sar": {
     "file": false,
@@ -132,7 +124,7 @@
     "activity_dates": []
   },
   "stop_reason": "The customer did not reply within 24 hours and the remaining graph evidence cannot move the probability (0.17) across a decision threshold, so the case stays open under R4 monitoring.",
-  "tool_calls": 8,
+  "tool_calls": 12,
   "tokens": 0,
-  "latency_s": 0.19
+  "latency_s": 12.36
 }

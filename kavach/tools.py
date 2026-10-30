@@ -46,6 +46,8 @@ class ToolRegistry:
         else:
             raise ValueError(self.backend)
         self._extra = {}
+        from kavach.graph import fusion
+        fusion.register(self)          # fused_precedent + ring_component on every lane; attest re-runs find them too
 
     def register(self, name: str, fn) -> None:
         self._extra[name] = fn

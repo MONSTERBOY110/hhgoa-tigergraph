@@ -445,7 +445,7 @@ def _summ(out) -> dict:
 
 
 def evaluate(source_case: str, label: str = "eval", shard: int = 0, shards: int = 1, n_fraud: int = 260,
-             replays: bool = True, hhf: bool = False) -> int:
+             replays: bool = True, hhf: bool = False, resume: bool = False) -> int:
     """One shard of the before-and-after run. Every case runs once without feedback (KAVACH_FEEDBACK=0); a case on
     which the recorded decisions would change at least one signal (the probe) runs again with feedback. A case with no
     matching signal gets identical signals in both arms by construction, so its "after" is its "before"."""
@@ -458,10 +458,13 @@ def evaluate(source_case: str, label: str = "eval", shard: int = 0, shards: int 
     items = truth_round1() + (replay_rows(n_fraud=n_fraud) if replays else []) + (hhf_rows() if hhf else [])
     p = _eval_path(label, shard)
     p.parent.mkdir(parents=True, exist_ok=True)
+    done = set()
+    if resume and p.exists():
+        done = {json.loads(ln)["case_id"] for ln in p.read_text(encoding="utf-8").splitlines() if ln.strip()}
     n = 0
-    with open(p, "w", encoding="utf-8") as fh:
+    with open(p, "a" if resume else "w", encoding="utf-8") as fh:
         for i, it in enumerate(items):
-            if i % shards != shard:
+            if i % shards != shard or it["row"]["case_id"] in done:
                 continue
             row = it["row"]
             os.environ["KAVACH_FEEDBACK"] = "0"
@@ -575,6 +578,7 @@ def main(argv=None) -> int:
     e.add_argument("--n-fraud", type=int, default=260)
     e.add_argument("--no-replays", action="store_true", help="only the Round 1 pack (and --hhf)")
     e.add_argument("--hhf", action="store_true", help="also the Round 2 pack (no truth: changes only)")
+    e.add_argument("--resume", action="store_true", help="skip the cases already in this shard's file")
     m = sub.add_parser("merge", help="merge eval shards into the report")
     m.add_argument("--label", default="eval")
     m.add_argument("--source-case", required=True)
@@ -598,7 +602,7 @@ def main(argv=None) -> int:
         return 0 if d["ok"] else 1
     if args.cmd == "eval":
         n = evaluate(args.source_case, args.label, args.shard, args.shards, n_fraud=args.n_fraud,
-                     replays=not args.no_replays, hhf=args.hhf)
+                     replays=not args.no_replays, hhf=args.hhf, resume=args.resume)
         print(f"shard {args.shard}/{args.shards}: {n} cases -> {_eval_path(args.label, args.shard)}")
         return 0
     if args.cmd == "merge":

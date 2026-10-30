@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SAR draft HHF-002</title>
+<style>
+:root{--ink:#16181d;--muted:#5b616e;--line:#d5d8de;--soft:#f4f5f7;--accent:#b4531a;--accent-soft:#fbeee4;--ok:#1f6f43;--bad:#a1261b}
+*{box-sizing:border-box}
+html{background:#e9eaee}
+body{margin:0 auto;max-width:900px;padding:40px 48px 56px;background:#fff;color:var(--ink);
+ font:15px/1.6 Charter,"Bitstream Charter","Sitka Text",Cambria,Georgia,serif}
+h1,h2,h3,.label,th,.meta,.banner,figcaption,.checks{font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif}
+h1{font-size:22px;line-height:1.3;margin:0 0 6px}
+h2{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);
+ padding-bottom:4px;margin:30px 0 12px}
+.meta{font-size:12.5px;color:var(--muted);margin:0 0 14px}
+.banner{border:1.5px solid var(--bad);color:var(--bad);background:#fff;padding:10px 14px;font-size:13px;font-weight:600;margin:14px 0}
+table{border-collapse:collapse;width:100%;font-size:13px;margin:6px 0}
+th,td{border:1px solid var(--line);padding:5px 8px;text-align:left;vertical-align:top}
+th{background:var(--soft);font-weight:600;font-size:12px}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+table.kv th{width:200px}
+td.nw,td.nw code{white-space:nowrap}
+code,.id{font-family:Consolas,"SFMono-Regular",Menlo,monospace;font-size:12px;overflow-wrap:anywhere}
+tr.total td{font-weight:600;background:var(--soft)}
+.tag{display:inline-block;font:600 10.5px/1.5 "Segoe UI",system-ui,sans-serif;padding:0 6px;border-radius:3px;
+ background:var(--accent-soft);color:var(--accent);margin-left:4px}
+.narrative{font-size:15.5px;line-height:1.75}
+.narrative sup a{color:var(--accent);text-decoration:none;font:600 10.5px "Segoe UI",system-ui,sans-serif;padding:0 1px}
+ol.fn{font-size:12.5px;padding-left:22px}
+ol.fn li{margin:0 0 6px}
+ol.fn b{color:var(--accent)}
+.s3a li{margin:2px 0}
+.yes{color:var(--ok);font-weight:600}.no{color:var(--muted)}
+figure{margin:8px 0 0}
+figcaption{font-size:12px;color:var(--muted)}
+svg.graph{width:100%;height:auto;border:1px solid var(--line);background:#fff}
+svg .e-txn{stroke:#9aa0ab;stroke-width:1}
+svg .e-el{stroke:var(--accent);stroke-width:2.5}
+svg .e-attr{stroke:#9aa0ab;stroke-width:1.5}
+svg .n-attr{fill:var(--soft);stroke:#9aa0ab;stroke-width:1}
+svg .e-card{stroke:var(--accent);stroke-width:1;opacity:.7}
+svg .e-card.dashed{stroke:#9aa0ab;stroke-dasharray:4 3;opacity:1}
+svg .n-txn{fill:#fff;stroke:#3c4250;stroke-width:1.5}
+svg .n-txn.mark{fill:var(--accent);stroke:var(--accent)}
+svg .n-el{fill:var(--accent-soft);stroke:var(--accent);stroke-width:1.5}
+svg .n-card{fill:#fff;stroke:var(--accent);stroke-width:1.5}
+svg .n-case{fill:var(--ink);stroke:var(--ink)}
+svg text{font-family:"Segoe UI",system-ui,sans-serif}
+svg .t-id{font-size:11.5px;fill:var(--ink);font-family:Consolas,Menlo,monospace}
+svg .t-sub,svg .t-edge{font-size:10.5px;fill:var(--muted)}
+svg .t-edge{fill:var(--accent);font-weight:600}
+svg .t-case{font-size:13px;fill:#fff;font-weight:700;font-family:Consolas,Menlo,monospace}
+svg .t-case-sub{font-size:10.5px;fill:#d8dbe2}
+ul.claims{font-size:12.5px;padding-left:18px}
+ul.claims li{margin:0 0 6px}
+.checks li{font-size:13px;list-style:none;margin:2px 0}
+.checks{padding-left:0}
+.edit{border-left:3px solid var(--accent);padding:6px 12px;background:var(--accent-soft);font-size:13.5px}
+@media (max-width:640px){body{padding:20px 16px}table.kv th{width:auto}}
+@page{size:A4;margin:16mm 14mm}
+@media print{html{background:#fff}body{max-width:none;padding:0;font-size:11pt}.banner{break-inside:avoid}
+ tr,li,figure{break-inside:avoid}h2{break-after:avoid}a{color:inherit}}
+</style>
+</head>
+<body>
+<header>
+<h1>Suspicious activity report, draft for analyst review: HHF-002</h1>
+<p class="meta">Prepared by the Kavach agent at 2026-10-29T22:52:21Z from the answer for case HHF-002 and its attestation
+(run 2026-10-29T22:44:37Z, backend tg, dataset version eb6caf5672c6).</p>
+<div class="banner" role="note">Confidential. Do not disclose this report, or that a report is being considered or has been filed, to the subject, the cardholder or anyone outside the bank&#x27;s fraud and compliance staff (no tip-off). Nothing in this document is sent to the customer.</div>
+<p class="meta">Approval: FILE_REPORT is an L2 (fraud manager) action and no L2 approval is recorded yet; this draft must not be sent before one is.</p>
+</header>
+<section><h2>1. Filing institution</h2>
+<table class="kv"><tbody>
+<tr><th>Name</th><td>[Filing institution name]</td></tr><tr><th>Identifier</th><td>[Institution identifier]</td></tr>
+<tr><th>Address</th><td>[Branch or office address]</td></tr><tr><th>Contact</th><td>[Analyst name, phone, email]</td></tr>
+<tr><th>Internal case</th><td>HHF-002 (case created, CREATE_CASE in the final actions)</td></tr>
+</tbody></table></section>
+<section><h2>2. Customer and cards concerned</h2>
+<table class="kv"><tbody>
+<tr><th>Customer</th><td><code>C06220</code> (cardholder; the transactions were made on the card by an unauthorized party)</td></tr>
+<tr><th>Card</th><td><code>C06220-K1</code> (visa credit)</td></tr>
+<tr><th>Connected cards</th><td>14: see section 6</td></tr>
+<tr><th>Device profiles</th><td><code>SM-J700T1 | iOS 11.1.2 | mobile safari 11.0 | 2048x1536</code>; <code>SM-J700T1 | iOS 11.1.1 | mobile safari 11.0 | 2048x1536</code>; <code>SM-J700T1 |  |  | </code></td></tr>
+<tr><th>Subject of the activity</th><td>Unidentified party</td></tr>
+</tbody></table></section>
+<section><h2>3. Suspicious activity</h2>
+<table class="kv"><tbody>
+<tr><th>Activity dates</th><td>2017-01-17 to 2017-01-19</td></tr>
+<tr><th>Total amount</th><td>$2,166.71 over 3 transaction(s)</td></tr>
+<tr><th>Category</th><td>Card fraud: coordinated activity across customers that fits none of the documented typologies</td></tr>
+<tr><th>Policy basis</th><td>R9 and §3a: coordinated activity fitting no documented pattern, repeated on 14 other card(s)</td></tr>
+<tr><th>Assessment</th><td>verdict fraud, fraud probability 0.97</td></tr>
+</tbody></table>
+<p>Section 3a test (a report exists only when it holds):</p>
+<ul class="s3a">
+<li>Fraud confirmed or strongly suspected: <span class="yes">yes</span> (verdict fraud, p 0.97)</li>
+<li>Exposure over $1,000: <span class="yes">yes</span> ($2,166.71)</li>
+<li>Connected to a shared element or another card's fraud: <span class="yes">yes</span> (14 card(s), 0 device profile(s))</li>
+<li>Coordinated or undocumented pattern (R9): <span class="yes">yes</span> (undocumented)</li>
+<li>Result: §3a: report owed: fraud confirmed (verdict fraud, p 0.97) and exposure $2,166.71 exceeds $1,000; the activity connects to 14 other card(s); the pattern is coordinated and undocumented (R9)</li>
+</ul><p>Pattern, in the agent's words: One device profile (SM-J700T1 |  |  | ) makes low-value online purchases on many unrelated customers&#x27; cards, always marked New to the account and behind an anonymous proxy, keeping amounts small so the model scores them low. It touched 14 other cards around this alert and matches earlier confirmed cases on the same profile. It was found by pivoting from the card to the device profile and grouping every card on it.</p></section>
+<section><h2>4. Narrative</h2>
+<p class="narrative"><span id="ref-1">This report concerns customer C06220, card C06220-K1, issued as a visa credit.</span><sup><a href="#fn-1">1</a></sup> <span id="ref-2">Between 2017-01-17 and 2017-01-19, 3 transaction(s) totalling $2,166.71 were identified as part of one fraud episode, beginning with transaction 3660125.</span><sup><a href="#fn-2">2</a></sup> <span id="ref-3">The activity took place online, product code(s) C, billing region(s) 126, 330, 384, from device profile(s) SM-J700T1 | | | ; SM-J700T1 | iOS 11.1.1 | mobile safari 11.0 | 2048x1536.</span><sup><a href="#fn-3">3</a></sup> <span id="ref-4">The transactions were bursts of online purchases from devices new to the account behind an anonymous proxy, the same template appearing on other customers&#x27; cards with no device in common.</span><sup><a href="#fn-4">4</a></sup> <span id="ref-5">The activity is assessed as an undocumented coordinated pattern: The same template appears on 14 other cards within 14 days, none sharing a device with this card: coordinated abuse across customers.</span><sup><a href="#fn-5">5</a></sup> <span id="ref-6">The shared element (a repeated template of product C purchases of $200 or more in bursts from devices marked New behind an anonymous proxy, with no shared device) links this activity to 14 other card(s), including C00450-K1, C02342-K1, C03528-K1, C05061-K1, which indicates a common actor across cardholders.</span><sup><a href="#fn-6">6</a></sup> <span id="ref-7">Earlier confirmed cases CC-3077, CC-1969, CC-0626 show the same pattern.</span><sup><a href="#fn-7">7</a></sup> <span id="ref-8">When contacted, the cardholder stated they did not make the transaction(s), did not share the card details, and still has the card.</span><sup><a href="#fn-8">8</a></sup> <span id="ref-9">The bank has recommended BLOCK_CARD, MONITOR_CONNECTED_CARDS and opened an internal case; the report is filed under R9, §3a.</span><sup><a href="#fn-9">9</a></sup></p></section>
+<section><h2>5. Transaction timeline</h2>
+<table><thead><tr><th>Transaction</th><th>Time</th><th class="num">Amount</th><th>Product</th><th>Channel</th><th>Region</th><th>Device profile</th><th>Cited in</th></tr></thead>
+<tbody><tr><td class="nw"><code>3660125</code><span class="tag">first</span></td><td class="nw">2017-01-17 19:58:27</td><td class="num nw">$637.13</td><td>C</td><td>online</td><td>330</td><td><code>SM-J700T1 | iOS 11.1.2 | mobile safari 11.0 | 2048x1536</code></td><td>E2, E10, S2, S3, S4, S5</td></tr><tr><td class="nw"><code>3660126</code></td><td class="nw">2017-01-18 19:48:45</td><td class="num nw">$758.80</td><td>C</td><td>online</td><td>384</td><td><code>SM-J700T1 | iOS 11.1.1 | mobile safari 11.0 | 2048x1536</code></td><td>E2, E10, S2, S3, S4, S5</td></tr><tr><td class="nw"><code>3660127</code><span class="tag">flagged</span></td><td class="nw">2017-01-19 18:18:58</td><td class="num nw">$770.78</td><td>C</td><td>online</td><td>126</td><td><code>SM-J700T1 |  |  | </code></td><td>E2, E3, E4, E10, D1, S2, S3, S4, S5</td></tr><tr class="total"><td>Total</td><td></td><td class="num">$2,166.71</td><td colspan="5"></td></tr></tbody></table></section>
+<section><h2>6. Connected cards</h2>
+<table><thead><tr><th>Card</th><th>Customer</th><th>Linked by</th><th class="num">Transactions via the link</th><th class="num">Amount via the link</th><th>First linked</th><th>Named in claims</th></tr></thead><tbody><tr><td class="nw"><code>C00450-K1</code></td><td class="nw"><code>C00450</code></td><td>named in attested claims E2, E8, E10, S6</td><td class="num"></td><td class="num"></td><td></td><td>E2, E8, E10, S6</td></tr><tr><td class="nw"><code>C02342-K1</code></td><td class="nw"><code>C02342</code></td><td>named in attested claims E2, E10, S6</td><td class="num"></td><td class="num"></td><td></td><td>E2, E10, S6</td></tr><tr><td class="nw"><code>C03528-K1</code></td><td class="nw"><code>C03528</code></td><td>named in attested claims E2, E10, S6</td><td class="num"></td><td class="num"></td><td></td><td>E2, E10, S6</td></tr><tr><td class="nw"><code>C05061-K1</code></td><td class="nw"><code>C05061</code></td><td>named in attested claims E2, E10, S6</td><td class="num"></td><td class="num"></td><td></td><td>E2, E10, S6</td></tr><tr><td class="nw"><code>C05704-K2</code></td><td class="nw"><code>C05704</code></td><td>named in attested claims E2, E10, S6</td><td class="num"></td><td class="num"></td><td></td><td>E2, E10, S6</td></tr><tr><td class="nw"><code>C05770-K1</code></td><td class="nw"><code>C05770</code></td><td>named in attested claims E2, E10, S6</td><td class="num"></td><td class="num"></td><td></td><td>E2, E10, S6</td></tr><tr><td class="nw"><code>C06962-K2</code></td><td class="nw"><code>C06962</code></td><td>named in attested claims E2, E10, S6</td><td class="num"></td><td class="num"></td><td></td><td>E2, E10, S6</td></tr><tr><td class="nw"><code>C07212-K2</code></td><td class="nw"><code>C07212</code></td><td>named in attested claims E2, E10, S6</td><td class="num"></td><td class="num"></td><td></td><td>E2, E10, S6</td></tr><tr><td class="nw"><code>C07925-K1</code></td><td class="nw"><code>C07925</code></td><td>named in attested claims E2, E10</td><td class="num"></td><td class="num"></td><td></td><td>E2, E10</td></tr><tr><td class="nw"><code>C07997-K1</code></td><td class="nw"><code>C07997</code></td><td>named in attested claims E2, E10</td><td class="num"></td><td class="num"></td><td></td><td>E2, E10</td></tr><tr><td class="nw"><code>C09251-K1</code></td><td class="nw"><code>C09251</code></td><td>named in attested claims E10</td><td class="num"></td><td class="num"></td><td></td><td>E10</td></tr><tr><td class="nw"><code>C10553-K1</code></td><td class="nw"><code>C10553</code></td><td>named in attested claims E10</td><td class="num"></td><td class="num"></td><td></td><td>E10</td></tr><tr><td class="nw"><code>C11309-K1</code></td><td class="nw"><code>C11309</code></td><td>named in attested claims E10</td><td class="num"></td><td class="num"></td><td></td><td>E10</td></tr><tr><td class="nw"><code>C11543-K2</code></td><td class="nw"><code>C11543</code></td><td>named in attested claims E10</td><td class="num"></td><td class="num"></td><td></td><td>E10</td></tr></tbody></table><p class="meta">No single shared value links these cards in the data; each is listed because the attested claims named in the table name it.</p></section>
+<section><h2>7. Evidence graph</h2>
+<figure><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 826" role="img" aria-labelledby="g-title g-desc" class="graph">
+<title id="g-title">Evidence graph for HHF-002</title>
+<desc id="g-desc">Case card C06220-K1 at the centre; 3 affected transaction(s) on the left; 2 linking element(s); 14 connected card(s) on the right.</desc>
+<line x1="420" y1="399" x2="225.1" y2="444.0" class="e-txn"/>
+<line x1="420" y1="399" x2="220.0" y2="399.0" class="e-txn"/>
+<line x1="420" y1="399" x2="225.1" y2="354.0" class="e-txn"/>
+<line x1="420" y1="399" x2="570" y2="365.0" class="e-attr"/>
+<line x1="420" y1="399" x2="570" y2="433.0" class="e-attr"/>
+<line x1="420" y1="399" x2="584.8" y2="45.5" class="e-card dashed"/>
+<line x1="420" y1="399" x2="643.7" y2="79.5" class="e-card dashed"/>
+<line x1="420" y1="399" x2="695.8" y2="123.2" class="e-card dashed"/>
+<line x1="420" y1="399" x2="739.5" y2="175.3" class="e-card dashed"/>
+<line x1="420" y1="399" x2="773.5" y2="234.2" class="e-card dashed"/>
+<line x1="420" y1="399" x2="796.7" y2="298.1" class="e-card dashed"/>
+<line x1="420" y1="399" x2="808.5" y2="365.0" class="e-card dashed"/>
+<line x1="420" y1="399" x2="808.5" y2="433.0" class="e-card dashed"/>
+<line x1="420" y1="399" x2="796.7" y2="499.9" class="e-card dashed"/>
+<line x1="420" y1="399" x2="773.5" y2="563.8" class="e-card dashed"/>
+<line x1="420" y1="399" x2="739.5" y2="622.7" class="e-card dashed"/>
+<line x1="420" y1="399" x2="695.8" y2="674.8" class="e-card dashed"/>
+<line x1="420" y1="399" x2="643.7" y2="718.5" class="e-card dashed"/>
+<line x1="420" y1="399" x2="584.8" y2="752.5" class="e-card dashed"/>
+<circle cx="225.1" cy="444.0" r="5.5" class="n-txn"/>
+<text x="213.1" y="443.0" text-anchor="end" class="t-id">3660125</text>
+<text x="213.1" y="455.0" text-anchor="end" class="t-sub">$637.13, 2017-01-17</text>
+<circle cx="220.0" cy="399.0" r="5.5" class="n-txn"/>
+<text x="208.0" y="398.0" text-anchor="end" class="t-id">3660126</text>
+<text x="208.0" y="410.0" text-anchor="end" class="t-sub">$758.80, 2017-01-18</text>
+<circle cx="225.1" cy="354.0" r="7" class="n-txn"/>
+<text x="213.1" y="353.0" text-anchor="end" class="t-id">3660127 (flagged)</text>
+<text x="213.1" y="365.0" text-anchor="end" class="t-sub">$770.78, 2017-01-19</text>
+<rect x="570" y="338.0" width="180" height="54" rx="6" class="n-attr"/>
+<text x="660.0" y="353.0" text-anchor="middle" class="t-sub">device profile</text>
+<text x="660.0" y="368.0" text-anchor="middle" class="t-id">SM-J700T1 | iOS 11.1.2 |...</text>
+<text x="660.0" y="383.0" text-anchor="middle" class="t-edge">1 of 3 affected transaction(s)</text>
+<rect x="570" y="406.0" width="180" height="54" rx="6" class="n-attr"/>
+<text x="660.0" y="421.0" text-anchor="middle" class="t-sub">device profile</text>
+<text x="660.0" y="436.0" text-anchor="middle" class="t-id">SM-J700T1 | iOS 11.1.1 |...</text>
+<text x="660.0" y="451.0" text-anchor="middle" class="t-edge">1 of 3 affected transaction(s)</text>
+<rect x="578.8" y="39.5" width="12" height="12" rx="2" class="n-card"/>
+<text x="596.8" y="44.5" class="t-id">C00450-K1</text>
+<text x="596.8" y="56.5" class="t-sub">named in attested claims E2, E8, E10, S6</text>
+<rect x="637.7" y="73.5" width="12" height="12" rx="2" class="n-card"/>
+<text x="655.7" y="78.5" class="t-id">C02342-K1</text>
+<text x="655.7" y="90.5" class="t-sub">named in attested claims E2, E10, S6</text>
+<rect x="689.8" y="117.2" width="12" height="12" rx="2" class="n-card"/>
+<text x="707.8" y="122.2" class="t-id">C03528-K1</text>
+<text x="707.8" y="134.2" class="t-sub">named in attested claims E2, E10, S6</text>
+<rect x="733.5" y="169.3" width="12" height="12" rx="2" class="n-card"/>
+<text x="751.5" y="174.3" class="t-id">C05061-K1</text>
+<text x="751.5" y="186.3" class="t-sub">named in attested claims E2, E10, S6</text>
+<rect x="767.5" y="228.2" width="12" height="12" rx="2" class="n-card"/>
+<text x="785.5" y="233.2" class="t-id">C05704-K2</text>
+<text x="785.5" y="245.2" class="t-sub">named in attested claims E2, E10, S6</text>
+<rect x="790.7" y="292.1" width="12" height="12" rx="2" class="n-card"/>
+<text x="808.7" y="297.1" class="t-id">C05770-K1</text>
+<text x="808.7" y="309.1" class="t-sub">named in attested claims E2, E10, S6</text>
+<rect x="802.5" y="359.0" width="12" height="12" rx="2" class="n-card"/>
+<text x="820.5" y="364.0" class="t-id">C06962-K2</text>
+<text x="820.5" y="376.0" class="t-sub">named in attested claims E2, E10, S6</text>
+<rect x="802.5" y="427.0" width="12" height="12" rx="2" class="n-card"/>
+<text x="820.5" y="432.0" class="t-id">C07212-K2</text>
+<text x="820.5" y="444.0" class="t-sub">named in attested claims E2, E10, S6</text>
+<rect x="790.7" y="493.9" width="12" height="12" rx="2" class="n-card"/>
+<text x="808.7" y="498.9" class="t-id">C07925-K1</text>
+<text x="808.7" y="510.9" class="t-sub">named in attested claims E2, E10</text>
+<rect x="767.5" y="557.8" width="12" height="12" rx="2" class="n-card"/>
+<text x="785.5" y="562.8" class="t-id">C07997-K1</text>
+<text x="785.5" y="574.8" class="t-sub">named in attested claims E2, E10</text>
+<rect x="733.5" y="616.7" width="12" height="12" rx="2" class="n-card"/>
+<text x="751.5" y="621.7" class="t-id">C09251-K1</text>
+<text x="751.5" y="633.7" class="t-sub">named in attested claims E10</text>
+<rect x="689.8" y="668.8" width="12" height="12" rx="2" class="n-card"/>
+<text x="707.8" y="673.8" class="t-id">C10553-K1</text>
+<text x="707.8" y="685.8" class="t-sub">named in attested claims E10</text>
+<rect x="637.7" y="712.5" width="12" height="12" rx="2" class="n-card"/>
+<text x="655.7" y="717.5" class="t-id">C11309-K1</text>
+<text x="655.7" y="729.5" class="t-sub">named in attested claims E10</text>
+<rect x="578.8" y="746.5" width="12" height="12" rx="2" class="n-card"/>
+<text x="596.8" y="751.5" class="t-id">C11543-K2</text>
+<text x="596.8" y="763.5" class="t-sub">named in attested claims E10</text>
+<rect x="350" y="373" width="140" height="52" rx="8" class="n-case"/>
+<text x="420" y="395" text-anchor="middle" class="t-case">C06220-K1</text>
+<text x="420" y="412" text-anchor="middle" class="t-case-sub">customer C06220</text>
+<g class="legend" transform="translate(16,786)"><circle cx="6" cy="0" r="5.5" class="n-txn mark"/><text x="16" y="4" class="t-sub">affected transaction carrying the linking element</text><circle cx="6" cy="18" r="5.5" class="n-txn"/><text x="16" y="22" class="t-sub">affected transaction</text><rect x="330" y="-6" width="12" height="12" rx="2" class="n-card"/><text x="348" y="4" class="t-sub">connected card</text><line x1="330" y1="18" x2="352" y2="18" class="e-card"/><text x="358" y="22" class="t-sub">shares the linking element in the data</text><line x1="610" y1="18" x2="632" y2="18" class="e-card dashed"/><text x="638" y="22" class="t-sub">named by attested claims</text></g>
+</svg>
+<figcaption>Built from the affected transactions and the ring query in the index at 2026-10-29T22:52:21Z; not a stored picture.</figcaption></figure></section>
+<section><h2>8. Citations</h2>
+<ol class="fn"><li id="fn-1" data-claims="S1 E7 S2" data-ids="[&quot;C06220-K1&quot;, &quot;C06220&quot;, &quot;3660125&quot;, &quot;3660126&quot;, &quot;3660127&quot;]">Claim <b>S1</b>, supported by <b>E7</b>. Cards: <code>C06220-K1</code>. Customers: <code>C06220</code>. Episode transactions (attested in <b>S2</b>): <code>3660125</code>, <code>3660126</code>, <code>3660127</code>. <a href="#ref-1" aria-label="back to sentence 1">&#8617;</a></li><li id="fn-2" data-claims="S2 E2 E3 E4 E10 D1" data-ids="[&quot;3660125&quot;, &quot;3660126&quot;, &quot;3660127&quot;]">Claim <b>S2</b>, supported by <b>E2</b>, <b>E3</b>, <b>E4</b>, <b>E10</b>, <b>D1</b>. Transactions: <code>3660125</code>, <code>3660126</code>, <code>3660127</code>. <a href="#ref-2" aria-label="back to sentence 2">&#8617;</a></li><li id="fn-3" data-claims="S3 E2 E3 E4 E10 D1" data-ids="[&quot;3660125&quot;, &quot;3660126&quot;, &quot;3660127&quot;, &quot;SM-J700T1 | iOS 11.1.1 | mobile safari 11.0 | 2048x1536&quot;, &quot;SM-J700T1 |  |  |&quot;]">Claim <b>S3</b>, supported by <b>E2</b>, <b>E3</b>, <b>E4</b>, <b>E10</b>, <b>D1</b>. Transactions: <code>3660125</code>, <code>3660126</code>, <code>3660127</code>. Device profiles: <code>SM-J700T1 | iOS 11.1.1 | mobile safari 11.0 | 2048x1536</code>, <code>SM-J700T1 |  |  |</code>. <a href="#ref-3" aria-label="back to sentence 3">&#8617;</a></li><li id="fn-4" data-claims="S4 E2 E3 E4 E10 D1" data-ids="[&quot;3660125&quot;, &quot;3660126&quot;, &quot;3660127&quot;]">Claim <b>S4</b>, supported by <b>E2</b>, <b>E3</b>, <b>E4</b>, <b>E10</b>, <b>D1</b>. Transactions: <code>3660125</code>, <code>3660126</code>, <code>3660127</code>. <a href="#ref-4" aria-label="back to sentence 4">&#8617;</a></li><li id="fn-5" data-claims="S5 E2 E3 E4 E10 D1" data-ids="[&quot;3660125&quot;, &quot;3660126&quot;, &quot;3660127&quot;]">Claim <b>S5</b>, supported by <b>E2</b>, <b>E3</b>, <b>E4</b>, <b>E10</b>, <b>D1</b>. Transactions: <code>3660125</code>, <code>3660126</code>, <code>3660127</code>. <a href="#ref-5" aria-label="back to sentence 5">&#8617;</a></li><li id="fn-6" data-claims="S6 E2 E7 E8 E10 S2" data-ids="[&quot;C06220-K1&quot;, &quot;C00450-K1&quot;, &quot;C02342-K1&quot;, &quot;C03528-K1&quot;, &quot;C05061-K1&quot;, &quot;C05704-K2&quot;, &quot;C05770-K1&quot;, &quot;C06962-K2&quot;, &quot;C07212-K2&quot;, &quot;3660125&quot;, &quot;3660126&quot;, &quot;3660127&quot;]">Claim <b>S6</b>, supported by <b>E2</b>, <b>E7</b>, <b>E8</b>, <b>E10</b>. Cards: <code>C06220-K1</code>, <code>C00450-K1</code>, <code>C02342-K1</code>, <code>C03528-K1</code>, <code>C05061-K1</code>, <code>C05704-K2</code>, <code>C05770-K1</code>, <code>C06962-K2</code>, <code>C07212-K2</code>. Episode transactions (attested in <b>S2</b>): <code>3660125</code>, <code>3660126</code>, <code>3660127</code>. <a href="#ref-6" aria-label="back to sentence 6">&#8617;</a></li><li id="fn-7" data-claims="S7 E9 D2 S2" data-ids="[&quot;CC-3077&quot;, &quot;CC-1969&quot;, &quot;CC-0626&quot;, &quot;3660125&quot;, &quot;3660126&quot;, &quot;3660127&quot;]">Claim <b>S7</b>, supported by <b>E9</b>, <b>D2</b>. Closed cases: <code>CC-3077</code>, <code>CC-1969</code>, <code>CC-0626</code>. Episode transactions (attested in <b>S2</b>): <code>3660125</code>, <code>3660126</code>, <code>3660127</code>. <a href="#ref-7" aria-label="back to sentence 7">&#8617;</a></li><li id="fn-8" data-claims="S8 S2" data-ids="[&quot;C06220&quot;, &quot;3660125&quot;, &quot;3660126&quot;, &quot;3660127&quot;]">Claim <b>S8</b>. Customers: <code>C06220</code>. Episode transactions (attested in <b>S2</b>): <code>3660125</code>, <code>3660126</code>, <code>3660127</code>. <a href="#ref-8" aria-label="back to sentence 8">&#8617;</a></li><li id="fn-9" data-claims="S9 E7 S2" data-ids="[&quot;C06220-K1&quot;, &quot;3660125&quot;, &quot;3660126&quot;, &quot;3660127&quot;]">Claim <b>S9</b>, supported by <b>E7</b>. Cards: <code>C06220-K1</code>. Episode transactions (attested in <b>S2</b>): <code>3660125</code>, <code>3660126</code>, <code>3660127</code>. <a href="#ref-9" aria-label="back to sentence 9">&#8617;</a></li></ol></section>
+<section><h2>9. Attested claims cited</h2>
+<p class="meta">Re-run every claim with <code>python -m kavach attest HHF-002</code> and every footnote with
+<code>python -m kavach.filing verify HHF-002</code>.</p>
+<ul class="claims"><li><b>S1</b> (sar_sentence): This report concerns customer C06220, card C06220-K1, issued as a visa credit. <br><span class="meta">How: <code>lookup_ids({&quot;card_ids&quot;: [&quot;C06220-K1&quot;], &quot;customer_ids&quot;: [&quot;C06220&quot;]})</code>. When: 2026-10-29T22:44:37Z, dataset eb6caf5672c6. Ids: 2.</span></li><li><b>S2</b> (sar_sentence): Between 2017-01-17 and 2017-01-19, 3 transaction(s) totalling $2,166.71 were identified as part of one fraud episode, beginning with transaction 3660125. <br><span class="meta">How: <code>lookup_ids({&quot;txn_ids&quot;: [&quot;3660125&quot;, &quot;3660126&quot;, &quot;3660127&quot;]})</code>. When: 2026-10-29T22:44:37Z, dataset eb6caf5672c6. Ids: 3.</span></li><li><b>S3</b> (sar_sentence): The activity took place online, product code(s) C, billing region(s) 126, 330, 384, from device profile(s) SM-J700T1 | | | ; SM-J700T1 | iOS 11.1.1 | mobile safari 11.0 | 2048x1536. <br><span class="meta">How: <code>lookup_ids({&quot;device_keys&quot;: [&quot;SM-J700T1 | iOS 11.1.1 | mobile safari 11.0 | 2048x1536&quot;, &quot;SM-J700T1 |  |  |&quot;], &quot;txn_ids&quot;: [&quot;3660125&quot;, &quot;3660126&quot;, &quot;3660127&quot;]})</code>. When: 2026-10-29T22:44:37Z, dataset eb6caf5672c6. Ids: 5.</span></li><li><b>S4</b> (sar_sentence): The transactions were bursts of online purchases from devices new to the account behind an anonymous proxy, the same template appearing on other customers&#x27; cards with no device in common. <br><span class="meta">How: <code>lookup_ids({&quot;txn_ids&quot;: [&quot;3660125&quot;, &quot;3660126&quot;, &quot;3660127&quot;]})</code>. When: 2026-10-29T22:44:37Z, dataset eb6caf5672c6. Ids: 3.</span></li><li><b>S5</b> (sar_sentence): The activity is assessed as an undocumented coordinated pattern: The same template appears on 14 other cards within 14 days, none sharing a device with this card: coordinated abuse across customers. <br><span class="meta">How: <code>lookup_ids({&quot;txn_ids&quot;: [&quot;3660125&quot;, &quot;3660126&quot;, &quot;3660127&quot;]})</code>. When: 2026-10-29T22:44:37Z, dataset eb6caf5672c6. Ids: 3.</span></li><li><b>S6</b> (sar_sentence): The shared element (a repeated template of product C purchases of $200 or more in bursts from devices marked New behind an anonymous proxy, with no shared device) links this activity to 14 other card(s), including C00450-K1, C02342-K1, C03528-K1, C05061-K1, which indicates a common actor across cardholders. <br><span class="meta">How: <code>lookup_ids({&quot;card_ids&quot;: [&quot;C06220-K1&quot;, &quot;C00450-K1&quot;, &quot;C02342-K1&quot;, &quot;C03528-K1&quot;, &quot;C05061-K1&quot;, &quot;C05704-K2&quot;, &quot;C05770-K1&quot;, &quot;C06962-K2&quot;, &quot;C07212-K2&quot;]})</code>. When: 2026-10-29T22:44:37Z, dataset eb6caf5672c6. Ids: 9.</span></li><li><b>S7</b> (sar_sentence): Earlier confirmed cases CC-3077, CC-1969, CC-0626 show the same pattern. <br><span class="meta">How: <code>lookup_ids({&quot;case_ids&quot;: [&quot;CC-3077&quot;, &quot;CC-1969&quot;, &quot;CC-0626&quot;]})</code>. When: 2026-10-29T22:44:37Z, dataset eb6caf5672c6. Ids: 3.</span></li><li><b>S8</b> (sar_sentence): When contacted, the cardholder stated they did not make the transaction(s), did not share the card details, and still has the card. <br><span class="meta">How: <code>lookup_ids({&quot;customer_ids&quot;: [&quot;C06220&quot;]})</code>. When: 2026-10-29T22:44:37Z, dataset eb6caf5672c6. Ids: 1.</span></li><li><b>S9</b> (sar_sentence): The bank has recommended BLOCK_CARD, MONITOR_CONNECTED_CARDS and opened an internal case; the report is filed under R9, §3a. <br><span class="meta">How: <code>lookup_ids({&quot;card_ids&quot;: [&quot;C06220-K1&quot;]})</code>. When: 2026-10-29T22:44:37Z, dataset eb6caf5672c6. Ids: 1.</span></li><li><b>E2</b> (evidence): The same template (product C, New device behind an anonymous proxy, $200 or more, 2 or more within 72 hours) appears on 14 other cards within 14 days, none sharing a device with this card: coordinated abuse across customers (no labelled example: the closed months show this template on 3 or more cards 0 times (0 of the reference transactions), so a stated coordination weight of 1.5 is used) <br><span class="meta">How: <code>entity_neighbors({&quot;entity_field&quot;: &quot;access_signature&quot;, &quot;t_from&quot;: &quot;2017-01-05 00:00:00&quot;, &quot;t_to&quot;: &quot;2017-02-03 00:00:00&quot;, &quot;value&quot;: &quot;C|IP_PROXY:ANONYMOUS|New|mobile&quot;})</code>. When: 2026-10-29T22:44:37Z, dataset eb6caf5672c6. Ids: 23.</span></li><li><b>E3</b> (evidence): Connection through an anonymous proxy (id_23), not seen before on this account <br><span class="meta">How: <code>txn_detail({&quot;txn_id&quot;: 3660127})</code>. When: 2026-10-29T22:44:37Z, dataset eb6caf5672c6. Ids: 1.</span></li><li><b>E4</b> (evidence): Identity record marks the device (SM-J700T1 | | | ) as New for this account; 57% of the card&#x27;s earlier online purchases were also from New devices (in the closed cases a New device is not more common in fraud than in normal traffic for this product) <br><span class="meta">How: <code>card_history({&quot;card_id&quot;: &quot;C06220-K1&quot;})</code>. When: 2026-10-29T22:44:37Z, dataset eb6caf5672c6. Ids: 1.</span></li><li><b>E7</b> (evidence): Case memory: earlier investigation CASE-2016-7194 (HHF-001, verdict fraud, pattern undocumented) already touches card C06220-K1 <br><span class="meta">How: <code>case_memory({&quot;card_ids&quot;: [&quot;C06220-K1&quot;]})</code>. When: 2026-10-29T22:44:37Z, dataset eb6caf5672c6. Ids: 1.</span></li><li><b>E8</b> (evidence): Case memory: earlier investigation CASE-2016-7194 (HHF-001, verdict fraud, pattern undocumented) already touches card C00450-K1 <br><span class="meta">How: <code>case_memory({&quot;card_ids&quot;: [&quot;C00450-K1&quot;]})</code>. When: 2026-10-29T22:44:37Z, dataset eb6caf5672c6. Ids: 1.</span></li><li><b>E9</b> (evidence): Graph and vector fused: closed case CC-3077 (confirmed_fraud, card_not_present_new_device) is reached through the recipient email domain windstream.net, which card C04865-K1 also used in the 30 days to the alert, and its analyst note is the closest to this case among the connected closed cases (similarity 0.81) <br><span class="meta">How: <code>fused_precedent({&quot;card_ids&quot;: [&quot;C06220-K1&quot;], &quot;k&quot;: 5, &quot;t0&quot;: &quot;2017-01-19 23:18:58&quot;, &quot;text&quot;: &quot;confirmed fraud undocumented: Customer denied the transaction(s) when asked: Customer states they did not make these purchases and still has the card The same template (product C, New device behind an anonymous proxy, $200 or more, 2 or more within 72 hours) appears on 14 other cards within 14 days, none sharing a device with this card: coordinated abuse across customers (no labelled example: the closed months show this template on 3 or more cards 0 times (0 of the reference transactions), so a stated coordination weight of 1.5 is used)&quot;})</code>. When: 2026-10-29T22:44:37Z, dataset eb6caf5672c6. Ids: 2.</span></li><li><b>E10</b> (evidence): Graph algorithm (weakly connected components of the cards whose atypical transactions share a rare element, 2016-12-20 to 2017-01-19): card C06220-K1 is in a component of 15 cards (10 components in the window, the largest 15); shared: ring template proxy_new_burst (15 cards); access signature C|IP_PROXY:ANONYMOUS|New|mobile (3 cards) <br><span class="meta">How: <code>ring_component({&quot;card_id&quot;: &quot;C06220-K1&quot;, &quot;t_from&quot;: &quot;2016-12-20 23:18:58&quot;, &quot;t_to&quot;: &quot;2017-01-19 23:18:58&quot;, &quot;template_cards&quot;: [&quot;C06220-K1&quot;, &quot;C00450-K1&quot;, &quot;C02342-K1&quot;, &quot;C03528-K1&quot;, &quot;C05061-K1&quot;, &quot;C05704-K2&quot;, &quot;C05770-K1&quot;, &quot;C06962-K2&quot;, &quot;C07212-K2&quot;, &quot;C07925-K1&quot;, &quot;C07997-K1&quot;, &quot;C09251-K1&quot;, &quot;C10553-K1&quot;, &quot;C11309-K1&quot;, &quot;C11543-K2&quot;], &quot;template_name&quot;: &quot;proxy_new_burst&quot;})</code>. When: 2026-10-29T22:44:37Z, dataset eb6caf5672c6. Ids: 23.</span></li><li><b>D1</b> (detector_hit): Model risk score 0.07. The bank&#x27;s model was not retrained for January (two transactions above 0.7 in the whole month, against 2.4 to 2.7 percent a month before), so the score is read as near-uninformative: its weight is clamped to [-0.10, +0.30] (a low score is not evidence of innocence, a high score alone cannot carry a verdict) <br><span class="meta">How: <code>txn_detail({&quot;txn_id&quot;: 3660127})</code>. When: 2026-10-29T22:44:37Z, dataset eb6caf5672c6. Ids: 1.</span></li><li><b>D2</b> (detector_hit): Card C06220-K1 already has 5 confirmed-fraud closed case(s) (CC-0626, CC-2539, CC-2807, CC-4224). The account key is not usable in January, so the precedent is read at card level, where it is weaker: this card pools many accounts, and an earlier confirmed case barely separates fraud from cleared alerts <br><span class="meta">How: <code>closed_cases_for({&quot;card_ids&quot;: [&quot;C06220-K1&quot;]})</code>. When: 2026-10-29T22:44:37Z, dataset eb6caf5672c6. Ids: 5.</span></li></ul></section>
+<section><h2>10. Checks before filing</h2>
+<ul class="checks"><li>&#9745; exposure_usd equals the sum of the affected transactions: $2,166.71 from the index, $2,166.71 in the answer</li><li>&#9745; sar.total_amount_usd equals exposure_usd: $2,166.71</li><li>&#9745; first_suspicious_txn_id is the earliest affected transaction: 3660125 in the answer, 3660125 earliest in the index</li><li>&#9745; sar.activity_dates match the first and last affected transaction: 2017-01-17 to 2017-01-19 in the answer, 2017-01-17 to 2017-01-19 in the index</li><li>&#9745; every narrative sentence carries a citation: 9 of 9 cited</li><li>&#9744; L2 approval of FILE_REPORT: FILE_REPORT is an L2 (fraud manager) action and no L2 approval is recorded yet; this draft must not be sent before one is</li></ul>
+<p class="edit">Analyst edits before sending: fill in section 1, confirm the subject description, attach the case file HHF-002,
+and keep the no tip-off instruction.</p></section>
+</body>
+</html>

@@ -41,33 +41,11 @@
       }
     }
   },
-  "backend": "duck",
-  "run_at": "2026-10-29T12:14:12Z",
+  "backend": "tg",
+  "run_at": "2026-10-29T22:46:35Z",
   "claims": [
     {
       "id": "E1",
-      "kind": "evidence",
-      "what": "Customer confirmed the transaction when asked: Customer confirms they made the purchase",
-      "evidence": {
-        "txn_ids": [],
-        "card_ids": [],
-        "customer_ids": [],
-        "case_ids": [],
-        "device_keys": [],
-        "other": []
-      },
-      "how": {},
-      "when": {
-        "ts": "2026-10-29T12:14:12Z",
-        "dataset_version": "eb6caf5672c6"
-      },
-      "source": "customer",
-      "ref": "evidence_request:1",
-      "signal": "customer_confirms",
-      "llr": -3.0
-    },
-    {
-      "id": "E2",
       "kind": "evidence",
       "what": "Purchaser email domain anonymous.com is this account's own: 4 earlier transactions on card C09177-K1 used it",
       "evidence": {
@@ -87,7 +65,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:12Z",
+        "ts": "2026-10-29T22:46:35Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -96,7 +74,7 @@
       "llr": -0.5
     },
     {
-      "id": "E3",
+      "id": "E2",
       "kind": "evidence",
       "what": "Profile fit: $228.01 is within the account's earlier range (largest $422.57 over 159 purchases)",
       "evidence": {
@@ -116,7 +94,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:12Z",
+        "ts": "2026-10-29T22:46:35Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -125,7 +103,7 @@
       "llr": -0.4
     },
     {
-      "id": "E4",
+      "id": "E3",
       "kind": "evidence",
       "what": "Online purchase on a card whose history is 95% in person (169 earlier transactions)",
       "evidence": {
@@ -145,7 +123,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:12Z",
+        "ts": "2026-10-29T22:46:35Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -154,7 +132,7 @@
       "llr": 0.3
     },
     {
-      "id": "E5",
+      "id": "E4",
       "kind": "evidence",
       "what": "Profile fit: the purchase hour (15:00) is one the account already uses (28% of its earlier purchases within an hour of it)",
       "evidence": {
@@ -174,7 +152,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:12Z",
+        "ts": "2026-10-29T22:46:35Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -183,7 +161,7 @@
       "llr": -0.3
     },
     {
-      "id": "E6",
+      "id": "E5",
       "kind": "evidence",
       "what": "Identity record marks the device (LG-H831 |  |  | ) as New for this account; 62% of the card's earlier online purchases were also from New devices (in the closed cases a New device is not more common in fraud than in normal traffic for this product)",
       "evidence": {
@@ -203,7 +181,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:12Z",
+        "ts": "2026-10-29T22:46:35Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -212,7 +190,7 @@
       "llr": -0.19
     },
     {
-      "id": "E7",
+      "id": "E6",
       "kind": "evidence",
       "what": "The alert states a model score of 0.80, but transaction 3660355 carries 0.10 in the bank's records; the recorded value is used and the stated one is treated as unverified alert text",
       "evidence": {
@@ -232,7 +210,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:12Z",
+        "ts": "2026-10-29T22:46:35Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -241,7 +219,7 @@
       "llr": 0.0
     },
     {
-      "id": "E8",
+      "id": "E7",
       "kind": "evidence",
       "what": "Policy applied, Fraud Policy R3: Customer confirms the transaction: Recommend CLOSE_NO_FRAUD.",
       "evidence": {
@@ -259,7 +237,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:12Z",
+        "ts": "2026-10-29T22:46:35Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
@@ -288,7 +266,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:12Z",
+        "ts": "2026-10-29T22:46:35Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
@@ -298,10 +276,10 @@
     }
   ],
   "counts": {
-    "claims": 9,
+    "claims": 8,
     "with_how": 8,
     "by_kind": {
-      "evidence": 8,
+      "evidence": 7,
       "sar_sentence": 0,
       "detector_hit": 1
     }

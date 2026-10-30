@@ -57,7 +57,12 @@ def entity_value(field: str, row) -> str | None:
     """The entity value of one transaction row (dict or namedtuple-like), computed in Python exactly like ENTITY_FIELDS."""
     g = (lambda k: row.get(k)) if isinstance(row, dict) else (lambda k: getattr(row, k, None))
     def ok(v):
-        return v is not None and not (isinstance(v, float) and v != v) and str(v) != ""
+        try:
+            if pd.isna(v):          # None, NaN, NaT and pd.NA (pd.NA != pd.NA raises, so test with isna first)
+                return False
+        except (TypeError, ValueError):
+            pass
+        return str(v) != ""
     if field in ("R_emaildomain", "P_emaildomain"):
         v = g(field)
         return str(v) if ok(v) else None

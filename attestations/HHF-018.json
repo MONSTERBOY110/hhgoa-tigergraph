@@ -41,8 +41,8 @@
       }
     }
   },
-  "backend": "duck",
-  "run_at": "2026-10-29T12:14:15Z",
+  "backend": "tg",
+  "run_at": "2026-10-29T22:48:57Z",
   "claims": [
     {
       "id": "E1",
@@ -65,7 +65,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:15Z",
+        "ts": "2026-10-29T22:48:57Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -97,7 +97,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:15Z",
+        "ts": "2026-10-29T22:48:57Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -126,7 +126,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:15Z",
+        "ts": "2026-10-29T22:48:57Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -155,7 +155,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:15Z",
+        "ts": "2026-10-29T22:48:57Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -184,7 +184,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:15Z",
+        "ts": "2026-10-29T22:48:57Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -195,7 +195,7 @@
     {
       "id": "E6",
       "kind": "evidence",
-      "what": "Policy applied, Fraud Policy R4: No reply within 24 hours: Recommend MONITOR_CARD and DECLINE_TRANSACTION for pending authorizations.",
+      "what": "Policy applied, Fraud Policy R3: Customer confirms the transaction: Recommend CLOSE_NO_FRAUD.",
       "evidence": {
         "txn_ids": [],
         "card_ids": [],
@@ -207,44 +207,53 @@
       "how": {
         "tool": "document",
         "params": {
-          "doc_id": "POLICY-R4"
+          "doc_id": "POLICY-R3"
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:15Z",
+        "ts": "2026-10-29T22:48:57Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
-      "ref": "document:README#POLICY-R4",
+      "ref": "document:README#POLICY-R3",
       "signal": "",
       "llr": null
     },
     {
       "id": "E7",
       "kind": "evidence",
-      "what": "Pattern definition, Known fraud patterns: Card-not-present fraud: The number is used online without the card.",
+      "what": "Graph and vector fused: closed case CC-0269 (cleared, none) is reached through the device profile Windows | Windows 7 | chrome generic | 1680x1050, which card C08256-K2 also used in the 30 days to the alert, and its analyst note is the closest to this case among the connected closed cases (similarity 0.79)",
       "evidence": {
         "txn_ids": [],
-        "card_ids": [],
+        "card_ids": [
+          "C08256-K2"
+        ],
         "customer_ids": [],
-        "case_ids": [],
+        "case_ids": [
+          "CC-0269"
+        ],
         "device_keys": [],
         "other": []
       },
       "how": {
-        "tool": "document",
+        "tool": "fused_precedent",
         "params": {
-          "doc_id": "PATTERN-2"
+          "card_ids": [
+            "C02753-K1"
+          ],
+          "text": "cleared false alarm: Profile fit: product H, purchaser email aol.com and the amount $34.22 all match card C02753-K1 before the last 7 days (6 earlier H purchases, 5 with this email, largest earlier purchase $3,162.97) Card C02753-K1 already has 2 confirmed-fraud closed case(s) (CC-1739, CC-4010). The account key is not usable in January, so the precedent is read at card level, where it is weaker: on cards of this size an earlier confirmed case made a new alert about 3.9 times as likely to be fraud The anonymous proxy on this purchase is not new: purchases on card C02753-K1 more than 7 days earlier came through one too",
+          "t0": "2017-01-01 18:29:48",
+          "k": 5
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:15Z",
+        "ts": "2026-10-29T22:48:57Z",
         "dataset_version": "eb6caf5672c6"
       },
-      "source": "document",
-      "ref": "document:README#PATTERN-2",
-      "signal": "",
-      "llr": null
+      "source": "graph",
+      "ref": "query:fused_precedent(card_ids=C02753-K1)",
+      "signal": "fused_precedent",
+      "llr": 0.0
     },
     {
       "id": "D1",
@@ -267,7 +276,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:15Z",
+        "ts": "2026-10-29T22:48:57Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",

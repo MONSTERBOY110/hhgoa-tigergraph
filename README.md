@@ -9,28 +9,28 @@
 ## Round 2 results (18 cases, HHF-001 to HHF-018)
 
 <!-- RESULTS_TABLE -->
-2 fraud, 9 legitimate, 7 uncertain (18 files).
+7 fraud, 9 legitimate, 2 uncertain (18 files).
 
 | Case | Verdict | Pattern | p | Episode | Exposure | Evidence asked | Final actions (route) | SAR | Graph | Calls | Tokens | Seconds |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| [HHF-001](cases/HHF-001.json) | uncertain | card_not_present_new_device | 0.42 | 2 | $1,298.23 | No reply from the customer within 24 hours | DECLINE_TRANSACTION (L1), CREATE_CASE (auto), MONITOR_CARD (auto), ESCALATE_TO_ANALYST (auto) | no | no | 12 | 0 | 1.23 |
-| [HHF-002](cases/HHF-002.json) | uncertain | card_not_present_new_device | 0.41 | 1 | $770.78 | No reply from the customer within 24 hours | DECLINE_TRANSACTION (L1), CREATE_CASE (auto), MONITOR_CARD (auto), ESCALATE_TO_ANALYST (auto) | no | no | 11 | 0 | 0.25 |
-| [HHF-003](cases/HHF-003.json) | legitimate | none | 0.03 | 0 | $0.00 | On review of the transaction details with the customer | ALLOW_TRANSACTION (auto), VERIFY_WITH_CUSTOMER (auto), MONITOR_CARD (auto), CLOSE_NO_FRAUD (auto) | no | no | 8 | 0 | 0.2 |
-| [HHF-004](cases/HHF-004.json) | fraud | card_not_present_fraud | 0.87 | 1 | $2.90 | Customer confirms the dispute covers this purchase: they did not make it | BLOCK_CARD (L1), CREATE_CASE (auto) | no | no | 8 | 0 | 0.23 |
-| [HHF-005](cases/HHF-005.json) | legitimate | none | 0.03 | 0 | $0.00 | On review of the transaction details with the customer | ALLOW_TRANSACTION (auto), VERIFY_WITH_CUSTOMER (auto), MONITOR_CARD (auto), CLOSE_NO_FRAUD (auto) | no | no | 7 | 0 | 0.17 |
-| [HHF-006](cases/HHF-006.json) | uncertain | card_not_present_fraud | 0.42 | 1 | $295.92 | No reply from the customer within 24 hours | DECLINE_TRANSACTION (L1), CREATE_CASE (auto), MONITOR_CARD (auto), ESCALATE_TO_ANALYST (auto) | no | no | 9 | 0 | 0.23 |
-| [HHF-007](cases/HHF-007.json) | fraud | card_testing | 0.93 | 5 | $246.38 | none | BLOCK_CARD (L1), CREATE_CASE (auto) | no | no | 8 | 0 | 0.26 |
-| [HHF-008](cases/HHF-008.json) | uncertain | out_of_region_use | 0.35 | 1 | $165.65 | No reply from the customer within 24 hours | DECLINE_TRANSACTION (L1), CREATE_CASE (auto), MONITOR_CARD (auto), ESCALATE_TO_ANALYST (auto) | no | no | 9 | 0 | 0.24 |
-| [HHF-009](cases/HHF-009.json) | legitimate | none | 0.03 | 0 | $0.00 | Customer confirms they made the purchase | ALLOW_TRANSACTION (auto), VERIFY_WITH_CUSTOMER (auto), MONITOR_CARD (auto), CLOSE_NO_FRAUD (auto) | no | no | 11 | 0 | 0.22 |
-| [HHF-010](cases/HHF-010.json) | uncertain | out_of_region_use | 0.51 | 1 | $1,336.84 | No reply from the customer within 24 hours | DECLINE_TRANSACTION (L1), CREATE_CASE (auto), MONITOR_CARD (auto), ESCALATE_TO_ANALYST (auto) | no | no | 8 | 0 | 0.23 |
-| [HHF-011](cases/HHF-011.json) | legitimate | none | 0.03 | 0 | $0.00 | Customer confirms they made the purchase | ALLOW_TRANSACTION (auto), VERIFY_WITH_CUSTOMER (auto), MONITOR_CARD (auto), CLOSE_NO_FRAUD (auto) | no | no | 10 | 0 | 0.29 |
-| [HHF-012](cases/HHF-012.json) | uncertain | account_takeover | 0.17 | 1 | $261.51 | No reply from the customer within 24 hours | DECLINE_TRANSACTION (L1), CREATE_CASE (auto), MONITOR_CARD (auto), ESCALATE_TO_ANALYST (auto) | no | no | 8 | 0 | 0.19 |
-| [HHF-013](cases/HHF-013.json) | legitimate | none | 0.09 | 0 | $0.00 | none | ALLOW_TRANSACTION (auto), VERIFY_WITH_CUSTOMER (auto), MONITOR_CARD (auto), CLOSE_NO_FRAUD (auto) | no | no | 8 | 0 | 0.15 |
-| [HHF-014](cases/HHF-014.json) | legitimate | none | 0.03 | 0 | $0.00 | Customer confirms they made the purchase | ALLOW_TRANSACTION (auto), VERIFY_WITH_CUSTOMER (auto), MONITOR_CARD (auto), CLOSE_NO_FRAUD (auto) | no | no | 8 | 0 | 0.24 |
-| [HHF-015](cases/HHF-015.json) | legitimate | none | 0.15 | 0 | $0.00 | none | ALLOW_TRANSACTION (auto), VERIFY_WITH_CUSTOMER (auto), MONITOR_CARD (auto), CLOSE_NO_FRAUD (auto) | no | no | 8 | 0 | 0.17 |
-| [HHF-016](cases/HHF-016.json) | legitimate | none | 0.10 | 0 | $0.00 | none | ALLOW_TRANSACTION (auto), VERIFY_WITH_CUSTOMER (auto), MONITOR_CARD (auto), CLOSE_NO_FRAUD (auto) | no | no | 8 | 0 | 0.25 |
-| [HHF-017](cases/HHF-017.json) | legitimate | none | 0.12 | 0 | $0.00 | none | ALLOW_TRANSACTION (auto), VERIFY_WITH_CUSTOMER (auto), MONITOR_CARD (auto), CLOSE_NO_FRAUD (auto) | no | no | 11 | 0 | 0.24 |
-| [HHF-018](cases/HHF-018.json) | uncertain | card_not_present_fraud | 0.27 | 1 | $34.22 | No reply from the customer within 24 hours | DECLINE_TRANSACTION (L1), CREATE_CASE (auto), MONITOR_CARD (auto), ESCALATE_TO_ANALYST (auto) | no | no | 10 | 0 | 0.24 |
+| [HHF-001](cases/HHF-001.json) | fraud | undocumented | 0.89 | 3 | $2,189.02 | none | BLOCK_CARD (L1), CREATE_CASE (auto), FILE_REPORT (L2), MONITOR_CONNECTED_CARDS (auto), ESCALATE_TO_ANALYST (auto) | yes | CASE-2016-7194 | 21 | 0 | 19.87 |
+| [HHF-002](cases/HHF-002.json) | fraud | undocumented | 0.97 | 3 | $2,166.71 | Customer states they did not make these purchases and still has the card | BLOCK_CARD (L1), CREATE_CASE (auto), FILE_REPORT (L2), MONITOR_CONNECTED_CARDS (auto), ESCALATE_TO_ANALYST (auto) | yes | CASE-2016-4960 | 17 | 0 | 16.89 |
+| [HHF-003](cases/HHF-003.json) | fraud | undocumented | 0.94 | 7 | $8,551.47 | none | BLOCK_CARD (L2), CREATE_CASE (auto), FILE_REPORT (L2), MONITOR_CONNECTED_CARDS (auto), ESCALATE_TO_ANALYST (auto) | yes | CASE-2016-2118 | 15 | 0 | 14.4 |
+| [HHF-004](cases/HHF-004.json) | fraud | undocumented | 0.97 | 6 | $23.99 | none | BLOCK_CARD (L1), CREATE_CASE (auto), FILE_REPORT (L2), MONITOR_CONNECTED_CARDS (auto), ESCALATE_TO_ANALYST (auto) | yes | CASE-2016-7061 | 15 | 0 | 16.69 |
+| [HHF-005](cases/HHF-005.json) | fraud | undocumented | 0.95 | 6 | $23.17 | none | BLOCK_CARD (L1), CREATE_CASE (auto), FILE_REPORT (L2), MONITOR_CONNECTED_CARDS (auto), ESCALATE_TO_ANALYST (auto) | yes | CASE-2016-4243 | 14 | 0 | 15.98 |
+| [HHF-006](cases/HHF-006.json) | fraud | undocumented | 0.88 | 3 | $967.68 | none | BLOCK_CARD (L1), CREATE_CASE (auto), FILE_REPORT (L2), MONITOR_CONNECTED_CARDS (auto), ESCALATE_TO_ANALYST (auto) | yes | CASE-2016-6009 | 18 | 0 | 19.69 |
+| [HHF-007](cases/HHF-007.json) | fraud | card_testing | 0.94 | 5 | $246.38 | none | BLOCK_CARD (L1), CREATE_CASE (auto) | no | CASE-2016-3799 | 12 | 0 | 13.62 |
+| [HHF-008](cases/HHF-008.json) | uncertain | out_of_region_use | 0.35 | 1 | $165.65 | No reply from the customer within 24 hours | DECLINE_TRANSACTION (L1), CREATE_CASE (auto), MONITOR_CARD (auto), ESCALATE_TO_ANALYST (auto) | no | CASE-2016-2302 | 13 | 0 | 13.33 |
+| [HHF-009](cases/HHF-009.json) | legitimate | none | 0.29 | 0 | $0.00 | No reply from the customer within 24 hours | ALLOW_TRANSACTION (auto), VERIFY_WITH_CUSTOMER (auto), MONITOR_CARD (auto), CLOSE_NO_FRAUD (auto) | no | CASE-2016-2616 | 15 | 0 | 14.24 |
+| [HHF-010](cases/HHF-010.json) | uncertain | out_of_region_use | 0.51 | 1 | $1,336.84 | No reply from the customer within 24 hours | DECLINE_TRANSACTION (L1), CREATE_CASE (auto), MONITOR_CARD (auto), ESCALATE_TO_ANALYST (auto) | no | CASE-2016-6741 | 12 | 0 | 13.18 |
+| [HHF-011](cases/HHF-011.json) | legitimate | none | 0.03 | 0 | $0.00 | Customer confirms they made the purchase | ALLOW_TRANSACTION (auto), VERIFY_WITH_CUSTOMER (auto), MONITOR_CARD (auto), CLOSE_NO_FRAUD (auto) | no | CASE-2016-9835 | 14 | 0 | 18.74 |
+| [HHF-012](cases/HHF-012.json) | legitimate | none | 0.17 | 0 | $0.00 | No reply from the customer within 24 hours | ALLOW_TRANSACTION (auto), VERIFY_WITH_CUSTOMER (auto), MONITOR_CARD (auto), CLOSE_NO_FRAUD (auto) | no | CASE-2016-2769 | 12 | 0 | 12.36 |
+| [HHF-013](cases/HHF-013.json) | legitimate | none | 0.09 | 0 | $0.00 | none | ALLOW_TRANSACTION (auto), VERIFY_WITH_CUSTOMER (auto), MONITOR_CARD (auto), CLOSE_NO_FRAUD (auto) | no | CASE-2016-7919 | 12 | 0 | 11.8 |
+| [HHF-014](cases/HHF-014.json) | legitimate | none | 0.03 | 0 | $0.00 | Customer confirms they made the purchase | ALLOW_TRANSACTION (auto), VERIFY_WITH_CUSTOMER (auto), MONITOR_CARD (auto), CLOSE_NO_FRAUD (auto) | no | CASE-2016-2700 | 12 | 0 | 17.31 |
+| [HHF-015](cases/HHF-015.json) | legitimate | none | 0.15 | 0 | $0.00 | none | ALLOW_TRANSACTION (auto), VERIFY_WITH_CUSTOMER (auto), MONITOR_CARD (auto), CLOSE_NO_FRAUD (auto) | no | CASE-2016-5098 | 12 | 0 | 11.59 |
+| [HHF-016](cases/HHF-016.json) | legitimate | none | 0.10 | 0 | $0.00 | none | ALLOW_TRANSACTION (auto), VERIFY_WITH_CUSTOMER (auto), MONITOR_CARD (auto), CLOSE_NO_FRAUD (auto) | no | CASE-2016-5600 | 12 | 0 | 14.96 |
+| [HHF-017](cases/HHF-017.json) | legitimate | none | 0.12 | 0 | $0.00 | none | ALLOW_TRANSACTION (auto), VERIFY_WITH_CUSTOMER (auto), MONITOR_CARD (auto), CLOSE_NO_FRAUD (auto) | no | CASE-2016-7662 | 15 | 0 | 14.66 |
+| [HHF-018](cases/HHF-018.json) | legitimate | none | 0.27 | 0 | $0.00 | No reply from the customer within 24 hours | ALLOW_TRANSACTION (auto), VERIFY_WITH_CUSTOMER (auto), MONITOR_CARD (auto), CLOSE_NO_FRAUD (auto) | no | CASE-2016-2063 | 17 | 0 | 15.67 |
 <!-- /RESULTS_TABLE -->
 
 Validation: `python -m kavach check --grader` runs our validator plus the organizer grader (`grader/grade.py`, unchanged) exactly as the judges do.
@@ -66,8 +66,11 @@ One page on dependencies, data egress and failure behaviour: [resilience stateme
 |---|---|
 | **Graph** | Savanna 4.2.5 workspace at the smallest size (TG-00). Customer, Card, Holder, Transaction, DeviceProfile, EmailDomain, BillingRegion, ClosedCase, InvestigationCase, PolicyDoc, CaseEvent, Approval, Detector: 650,938 transactions (July 2016 to January 2017), about 3.6M edges, counts checked against the source files |
 | **Tools** | installed GSQL queries for every agent tool (`kavach/graph/queries*.gsql`), including the grown-detector mirrors; the agent runs on the graph (`--backend tg`) or through the TigerGraph MCP server (`--backend mcp`, restricted to an allowlist of our own read-only installed queries) |
-| **Parity** | the same cases give identical decisions on TigerGraph and on a DuckDB analysis copy (`logs/parity.py`, `tests/test_parity.py`) |
+| **Parity** | the same cases give identical decisions on TigerGraph and on a DuckDB analysis copy (`scripts/parity.py`, `tests/test_parity.py`) |
 | **TigerVector** | 384-d embeddings of all 5,585 closed-case notes and the policy sections; `vectorSearch()` drives similar-case recall and policy citations |
+| **Vector search fused with traversal** | installed query `fused_precedent`: from the case card through the rare elements it shares (device profile, recipient email domain, billing region) to other cards and the closed cases touching them, then `vectorSearch(..., {candidate_set: ...})` ranks exactly that set; on legitimate alerts it surfaces cleared precedent first, on HHF-006 a confirmed-fraud precedent reached through the sc.rr.com ring (`python -m kavach.graph.fusion precedent HHF-006 --backend tg`) |
+| **Graph algorithm** | installed query `ring_wcc` (label propagation, weakly connected components) over the card graph induced by shared rare elements on atypical transactions in a 30-day window; with no detector input it recovers 14 of the 16 HHF-006 ring cards and leaves 8 of 9 legitimate alerts as single cards; its component is attested evidence on every case and the containment planner's ring (`python -m kavach.graph.fusion ring HHF-006 --backend tg`) |
+| **Case life in the graph** | CaseEvent (every lifecycle step), Approval (insert-only, hash-chained), Detector (the grown detector, with DETECTOR_HIT to the transactions it fired on and APPROVED_DETECTOR from its L2 approval), read back and verified after every persisted run (`python -m kavach writeback verify`) |
 | **Write-back and read-back** | each investigation is upserted as an InvestigationCase with edges to its card, transactions, devices and similar closed cases, then read back before `written_to_graph: true`; later investigations retrieve it as case memory |
 
 ## The 14 challenges

@@ -2,18 +2,48 @@
   "case_id": "HHF-006",
   "case": {
     "status": "escalated",
-    "verdict": "uncertain",
-    "fraud_probability": 0.42,
-    "pattern": "card_not_present_fraud",
-    "pattern_description": "",
+    "verdict": "fraud",
+    "fraud_probability": 0.88,
+    "pattern": "undocumented",
+    "pattern_description": "Several unrelated customers' cards paid the same recipient email domain (sc.rr.com) in a short spike that the bank had rarely seen before; this case card is one of 17 cards in the spike. It matches none of the documented typologies: each card's own purchases look ordinary, and the abuse only shows across customers. It was found by a detector the agent discovered in the closed cases and an L2 manager approved (approval 54983eaa-faa5-4569-b6ce-e6602d25072f), which then fired on this alert.",
     "affected_txn_ids": [
+      "3660261",
+      "3660262",
       "3660263"
     ],
-    "first_suspicious_txn_id": "3660263",
-    "connected_card_ids": [],
+    "first_suspicious_txn_id": "3660261",
+    "connected_card_ids": [
+      "C00534-K2",
+      "C01357-K1",
+      "C01507-K1",
+      "C01594-K1",
+      "C02167-K2",
+      "C03060-K1",
+      "C04146-K1",
+      "C04668-K1",
+      "C05610-K1",
+      "C06115-K1",
+      "C06639-K1",
+      "C08384-K1",
+      "C10350-K1",
+      "C11617-K1",
+      "C11743-K2",
+      "C11940-K1"
+    ],
     "connected_device_profiles": [],
-    "exposure_usd": 295.92,
+    "exposure_usd": 967.68,
     "evidence": [
+      {
+        "claim": "Grown detector fanin_r_emaildomain_k3_1d_r0p2 (approved 54983eaa-faa5-4569-b6ce-e6602d25072f by L2) fired: R_emaildomain sc.rr.com was paid by 4 cards in the 1 day(s) up to 2017-01-28 (4 card-days) against 35 card-days in the previous 56 days. Backtest on the closed cases: 8 confirmed-fraud hits, 0 cleared hits, population rate 0.01%, lift 18.0",
+        "source": "graph",
+        "ref": "query:grow_entity_daily_cards(entity=R_emaildomain, value=sc.rr.com, d_from=2016-12-03, d_to=2017-01-28)",
+        "entity_ids": [
+          "C00534-K2",
+          "C01727-K2",
+          "C05610-K1",
+          "C11743-K2"
+        ]
+      },
       {
         "claim": "Card C01727-K2 already has 5 confirmed-fraud closed case(s) (CC-0723, CC-1501, CC-1833, CC-1975). The account key is not usable in January, so the precedent is read at card level, where it is weaker: on cards of this size an earlier confirmed case made a new alert about 3.9 times as likely to be fraud",
         "source": "graph",
@@ -27,100 +57,187 @@
         ]
       },
       {
-        "claim": "Purchaser email domain gmail.com is this account's own: 57 earlier transactions on card C01727-K2 used it",
+        "claim": "Recipient email domain sc.rr.com was paid by 17 distinct cards in the 30 days to 2017-01-29, against 0.3 cards per 30 days over the previous 90 days: many cards suddenly paying one recipient (weak signal: the closed cases do not validate this rule (lift 171.1, 2 confirmed-fraud hits))",
         "source": "graph",
-        "ref": "query:card_history(card_id=C01727-K2)",
+        "ref": "query:entity_neighbors(entity_field=R_emaildomain, value=sc.rr.com, t_from=2016-12-30 00:00:00, t_to=2017-01-29 00:00:00)",
         "entity_ids": [
+          "C06115-K1",
+          "C04146-K1",
+          "C08384-K1",
+          "C03060-K1",
+          "C11940-K1",
+          "C01357-K1",
+          "C11743-K2",
+          "C06639-K1",
+          "C01594-K1",
+          "C02167-K2",
           "3660263"
         ]
       },
       {
-        "claim": "Profile fit: $295.92 is within the account's earlier range (largest $1,419.28 over 118 purchases)",
-        "source": "graph",
-        "ref": "query:card_history(card_id=C01727-K2)",
-        "entity_ids": [
-          "3660263"
-        ]
-      },
-      {
-        "claim": "Policy applied, Fraud Policy R4: No reply within 24 hours: Recommend MONITOR_CARD and DECLINE_TRANSACTION for pending authorizations.",
+        "claim": "Policy applied, Fraud Policy R9: Undocumented patterns: When activity fits none of the known patterns but the evidence shows coordinated or repeated abuse across customers, recommend CREATE_CASE, FILE_REPORT, and ESCALATE_TO_ANALYST, and describe the pattern in your own words.",
         "source": "document",
-        "ref": "document:README#POLICY-R4",
+        "ref": "document:README#POLICY-R9",
         "entity_ids": []
       },
       {
-        "claim": "Pattern definition, Known fraud patterns: Card-not-present fraud: The number is used online without the card.",
+        "claim": "Nearest documented pattern by text similarity is Known fraud patterns: Card-not-present fraud (cosine 0.69), which does not describe a coordinated template across customers; its definition: The number is used online without the card.",
         "source": "document",
         "ref": "document:README#PATTERN-2",
         "entity_ids": []
+      },
+      {
+        "claim": "Graph and vector fused: closed case CC-3907 (confirmed_fraud, undocumented) is reached through the recipient email domain sc.rr.com, which card C03060-K1 also used in the 30 days to the alert, and its analyst note is the closest to this case among the connected closed cases (similarity 0.77)",
+        "source": "graph",
+        "ref": "query:fused_precedent(card_ids=C01727-K2)",
+        "entity_ids": [
+          "CC-3907",
+          "C03060-K1"
+        ]
+      },
+      {
+        "claim": "Graph algorithm (weakly connected components of the cards whose atypical transactions share a rare element, 2016-12-29 to 2017-01-28): card C01727-K2 is in a component of 17 cards (4 components in the window, the largest 17); shared: ring template grown:fanin_r_emaildomain_k3_1d_r0p2 (17 cards); recipient email domain sc.rr.com (15 cards)",
+        "source": "graph",
+        "ref": "query:ring_wcc(seed=C01727-K2)",
+        "entity_ids": [
+          "C00534-K2",
+          "C01357-K1",
+          "C01507-K1",
+          "C01594-K1",
+          "C02167-K2",
+          "C03060-K1",
+          "C04146-K1",
+          "C04668-K1",
+          "C05610-K1",
+          "C06115-K1",
+          "C06639-K1",
+          "C08384-K1",
+          "C10350-K1",
+          "C11617-K1",
+          "C11743-K2",
+          "C11940-K1",
+          "3660261",
+          "3660262",
+          "3660263",
+          "3660264",
+          "3660265",
+          "3660266",
+          "3660267",
+          "3660274",
+          "3660275",
+          "3660276",
+          "3660278",
+          "3660279",
+          "3660280",
+          "3660281",
+          "3660282",
+          "3660283",
+          "3660284",
+          "3660285",
+          "3660286",
+          "3660287",
+          "3660288",
+          "3660289",
+          "3660311",
+          "3660312",
+          "3660313"
+        ]
       }
     ],
     "similar_prior_cases": [
       "CC-0723",
-      "CC-1501",
       "CC-1833",
+      "CC-1501",
       "CC-1975",
-      "CC-4946",
-      "CC-0321"
+      "CC-3748",
+      "CC-3841"
     ],
-    "summary": "Alert HHF-006 opened because an analyst asked for a review of transaction 3660263 and related activity on other cards ($295.92, product C, online, 2017-01-28 07:59) on card C01727-K2. The evidence is balanced (fraud probability 0.42): for fraud, Card C01727-K2 already has 5 confirmed-fraud closed case(s) (CC-0723, CC-1501, CC-1833, CC-1975). The account key is not usable in January, so the precedent is read at card level, where it is weaker: on cards of this size an earlier confirmed case made a new alert about 3.9 times as likely to be fraud; against, Purchaser email domain gmail.com is this account's own: 57 earlier transactions on card C01727-K2 used it; Profile fit: $295.92 is within the account's earlier range (largest $1,419.28 over 118 purchases). The case stays under monitoring pending the cardholder. Evidence request: No reply from the customer within 24 hours.",
-    "written_to_graph": false,
-    "graph_case_id": ""
+    "summary": "Alert HHF-006 opened because an analyst asked for a review of transaction 3660263 and related activity on other cards ($295.92, product C, online, 2017-01-28 07:59) on card C01727-K2. Assessed as an undocumented coordinated pattern with fraud probability 0.88. Main findings: R_emaildomain sc.rr.com was paid by 4 cards in the 1 day up to 2017-01-28 against 35 card-days in the previous 56 days; Card C01727-K2 already has 5 confirmed-fraud closed case. The account key is not usable in January, so the precedent is read at card level, where it is weaker: on cards of this size an earlier confirmed case made a new alert about 3.9 times as likely to be fraud. The episode covers 3 transaction(s) totalling $967.68, and 16 other card(s) are linked by recipient email domain sc.rr.com. Actions: block card, create case, file report, monitor connected cards, escalate to analyst.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-2016-6009"
   },
-  "evidence_requests": [
-    {
-      "type": "customer_validation",
-      "asked_after_step": 6,
-      "assumed_response": "No reply from the customer within 24 hours"
-    }
-  ],
+  "evidence_requests": [],
   "next_best_actions": {
     "initial": [
       {
-        "action": "VERIFY_WITH_CUSTOMER",
-        "route": "auto",
-        "reason": "R1 and §5: fraud probability 0.42 is below 0.70; verify with the cardholder before any block"
-      },
-      {
-        "action": "CREATE_CASE",
-        "route": "auto",
-        "reason": "§3a: requesting evidence opens a case"
-      }
-    ],
-    "final": [
-      {
-        "action": "DECLINE_TRANSACTION",
+        "action": "BLOCK_CARD",
         "route": "L1",
-        "reason": "R4: decline pending authorizations while unverified"
+        "reason": "R9: block and reissue; exposure $967.68 is under $2,500"
       },
       {
         "action": "CREATE_CASE",
         "route": "auto",
-        "reason": "§3a: the evidence request opened a case"
+        "reason": "R9 and §3a: open the internal fraud case with the evidence attached"
       },
       {
-        "action": "MONITOR_CARD",
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R9 and §3a: coordinated activity fitting no documented pattern, repeated on 16 other card(s)"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
         "route": "auto",
-        "reason": "R4: no reply within 24 hours, raise monitoring for 72 hours"
+        "reason": "R6: 16 other card(s) share recipient email domain sc.rr.com; place them under monitoring"
       },
       {
         "action": "ESCALATE_TO_ANALYST",
         "route": "auto",
-        "reason": "R8: evidence conflicts"
+        "reason": "R9: undocumented coordinated pattern, hand to an analyst"
       }
     ],
-    "what_changed": "No reply within 24 hours, so R4 applies and the probability stays at 0.42: DECLINE_TRANSACTION, CREATE_CASE, MONITOR_CARD, ESCALATE_TO_ANALYST."
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R9: block and reissue; exposure $967.68 is under $2,500"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R9 and §3a: open the internal fraud case with the evidence attached"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "R9 and §3a: coordinated activity fitting no documented pattern, repeated on 16 other card(s)"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: 16 other card(s) share recipient email domain sc.rr.com; place them under monitoring"
+      },
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R9: undocumented coordinated pattern, hand to an analyst"
+      }
+    ],
+    "what_changed": "nothing"
   },
   "sar": {
-    "file": false,
-    "reason": "§3a: the verdict is not fraud, so no suspicious activity report; the case record is sufficient",
-    "narrative": "",
-    "subjects": [],
-    "total_amount_usd": 0,
-    "activity_dates": []
+    "file": true,
+    "reason": "R9 and §3a: coordinated activity fitting no documented pattern, repeated on 16 other card(s)",
+    "narrative": "This report concerns customer C01727, card C01727-K2, issued as a visa debit. Between 2017-01-17 and 2017-01-28, 3 transaction(s) totalling $967.68 were identified as part of one fraud episode, beginning with transaction 3660261. The activity took place online, product code(s) C, billing region(s) 231. The transactions were purchases paying one recipient email domain that suddenly drew payments from several unrelated customers' cards. The activity is assessed as an undocumented coordinated pattern: R_emaildomain sc.rr.com was paid by 4 cards in the 1 day up to 2017-01-28 against 35 card-days in the previous 56 days; Card C01727-K2 already has 5 confirmed-fraud closed case. The account key is not usable in January, so the precedent is read at card level, where it is weaker: on cards of this size an earlier confirmed case made a new alert about 3.9 times as likely to be fraud. The shared element (recipient email domain sc.rr.com) links this activity to 16 other card(s), including C00534-K2, C01357-K1, C01507-K1, C01594-K1, which indicates a common actor across cardholders. Earlier confirmed cases CC-0723, CC-1833, CC-1501 show the same pattern. The cardholder has not yet been contacted. The bank has recommended BLOCK_CARD, MONITOR_CONNECTED_CARDS and opened an internal case; the report is filed under R9, §3a.",
+    "subjects": [
+      "C01727",
+      "C01727-K2",
+      "C00534-K2",
+      "C01357-K1",
+      "C01507-K1",
+      "C01594-K1",
+      "C02167-K2",
+      "C03060-K1",
+      "C04146-K1",
+      "C04668-K1"
+    ],
+    "total_amount_usd": 967.68,
+    "activity_dates": [
+      "2017-01-17",
+      "2017-01-28"
+    ]
   },
-  "stop_reason": "The customer did not reply within 24 hours and the remaining graph evidence cannot move the probability (0.42) across a decision threshold, so the case stays open under R4 monitoring.",
-  "tool_calls": 9,
+  "stop_reason": "Fraud probability 0.88 is at or above 0.85 with 2 independent evidence groups (network, history), so section 6 allows a decision without asking the customer; further queries would not change the actions.",
+  "tool_calls": 18,
   "tokens": 0,
-  "latency_s": 0.23
+  "latency_s": 19.69
 }

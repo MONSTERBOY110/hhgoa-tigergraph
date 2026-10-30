@@ -45,16 +45,21 @@ def pattern_description(facts: dict) -> str:
 def summary_template(facts: dict) -> str:
     v, p = facts["verdict"], facts["p"]
     lead = facts["headline"]
+    tf = facts.get("top_fraud_plain") or facts["top_fraud"]
+    tl = facts.get("top_legit_plain") or facts["top_legit"]
+    acts = ", ".join(a.replace("_", " ").lower() for a in facts.get("final_actions", []))
     if v == "legitimate":
-        s = (f"{lead} The evidence points to the cardholder: {facts['top_legit']}. "
-             f"Fraud probability {p:.2f}; the alert is closed as legitimate.")
+        s = (f"{lead} The evidence points to the cardholder: {tl or 'the purchase fits the card history'}. "
+             f"Fraud probability {p:.2f}; the alert is closed as legitimate ({acts}).")
     elif v == "fraud":
-        s = (f"{lead} Assessed as {PATTERN_WORDS[facts['pattern']]} with fraud probability {p:.2f}: {facts['top_fraud']}. "
-             f"The episode covers {facts['n_txns']} transaction(s) totalling ${facts['exposure']:,.2f}"
-             + (f", and {facts['n_connected']} other card(s) are linked through {facts['shared']}" if facts["n_connected"] else "") + ".")
+        s = (f"{lead} Assessed as {PATTERN_WORDS[facts['pattern']]} with fraud probability {p:.2f}. Main findings: "
+             f"{tf or 'the evidence listed in the case'}. The episode covers {facts['n_txns']} transaction(s) totalling "
+             f"${facts['exposure']:,.2f}"
+             + (f", and {facts['n_connected']} other card(s) are linked by {facts['shared']}" if facts["n_connected"] else "")
+             + f". Actions: {acts}.")
     else:
-        s = (f"{lead} The evidence is balanced (fraud probability {p:.2f}): for fraud, {facts['top_fraud'] or 'little beyond the alert'}; "
-             f"against, {facts['top_legit'] or 'no clear exculpatory evidence'}. The case stays under monitoring pending the cardholder.")
+        s = (f"{lead} The evidence is balanced (fraud probability {p:.2f}): for fraud, {tf or 'little beyond the alert'}; "
+             f"against, {tl or 'no clear exculpatory evidence'}. The case is escalated for an analyst ({acts}).")
     if facts.get("reply"):
         s += f" Evidence request: {facts['reply']}."
     return s
@@ -69,10 +74,10 @@ def sar_template(facts: dict) -> str:
         f"were identified as part of one fraud episode, beginning with transaction {facts['first_txn']}.",
         f"The activity took place {facts['where']}.",
         f"The transactions were {facts['how']}.",
-        f"The activity is assessed as {PATTERN_WORDS[facts['pattern']]}: {facts['top_fraud']}.",
+        f"The activity is assessed as {PATTERN_WORDS[facts['pattern']]}: {facts.get('top_fraud_plain') or facts['top_fraud']}.",
     ]
     if facts["n_connected"]:
-        s.append(f"The same {facts['shared']} links this activity to {facts['n_connected']} other card(s), including "
+        s.append(f"The shared element ({facts['shared']}) links this activity to {facts['n_connected']} other card(s), including "
                  f"{', '.join(facts['connected'][:4])}, which indicates a common actor across cardholders.")
     else:
         s.append("No other cardholder was found to share a device profile, region cluster or email with this activity.")

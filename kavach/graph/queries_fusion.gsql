@@ -1,0 +1,216 @@
+// Graph and vector fused, a graph algorithm, and the read-back of the case life (kavach/graph/fusion.py, writeback.py).
+// All read-only (SELECT / PRINT); writes go through the REST upsert endpoints in kavach/graph/writeback.py.
+//
+//   fused_precedent  traversal from the case's cards (own card, connected card, or another card sharing a rare
+//                    device profile / recipient email domain / billing region in the window) to the ClosedCases touching
+//                    them, then vectorSearch over ClosedCase.emb restricted to that candidate set
+//   ring_wcc         weakly connected components (label propagation) of the card graph induced by rare elements that
+//                    the cards' ATYPICAL window transactions share; returns the seed's component with its elements
+//   case_life        InvestigationCase -> CaseEvent / Approval / Detector (write-back read-back)
+//   detector_life    Detector -> its Approval, the transactions it fired on, the cases it fired in
+//
+// Definitions shared with the DuckDB lane (fusion.py): a linking device profile has DeviceInfo, n_cards <= max_dev and is
+// not a bare OS/browser family name without a screen; email domains, regions and signatures link only when max_shared or
+// fewer distinct cards use them in the whole window. Null strings are "" on the graph.
+
+CREATE OR REPLACE QUERY fused_precedent(SET<STRING> card_ids, LIST<FLOAT> qv, INT k, DATETIME t_from, DATETIME t_to,
+                                        INT max_dev, INT max_shared) FOR GRAPH Fraud SYNTAX V2 {
+  SetAccum<STRING> @via;
+  SetAccum<STRING> @through;
+  SetAccum<STRING> @wcards;
+  SetAccum<STRING> @@seeds;
+  SetAccum<STRING> @@others;
+  MapAccum<STRING, SetAccum<STRING>> @@card_el;
+  MapAccum<VERTEX, FLOAT> @@dist;
+  INT kk = 0;
+
+  S = to_vertex_set(card_ids, "Card");
+  S = SELECT s FROM S:s POST-ACCUM @@seeds += s.id;
+  T0 = SELECT t FROM S:s -(MADE>)- Transaction:t WHERE t.ts >= t_from AND t.ts <= t_to;
+
+  D = SELECT d FROM T0:t -(FROM_DEVICE>)- DeviceProfile:d
+      WHERE d.device_info != "" AND d.n_cards <= max_dev
+        AND NOT ((lower(d.device_info) IN ("windows", "ios device", "macos", "linux", "samsung")
+                  OR lower(d.device_info) LIKE "trident/%" OR lower(d.device_info) LIKE "rv:%") AND d.screen == "");
+  D = SELECT d FROM D:d -(DEVICE_OF>)- Transaction:t WHERE t.ts >= t_from AND t.ts <= t_to
+      ACCUM @@card_el += (t.card_id -> "device:" + d.id);
+
+  E = SELECT e FROM T0:t -(RECIPIENT_EMAIL>)- EmailDomain:e;
+  E = SELECT e FROM E:e -(RECIPIENT_EMAIL_OF>)- Transaction:t WHERE t.ts >= t_from AND t.ts <= t_to
+      ACCUM e.@wcards += t.card_id;
+  E = SELECT e FROM E:e WHERE e.@wcards.size() <= max_shared
+      POST-ACCUM FOREACH c IN e.@wcards DO @@card_el += (c -> "r_email:" + e.id) END;
+
+  R = SELECT r FROM T0:t -(BILLED_IN>)- BillingRegion:r;
+  R = SELECT r FROM R:r -(REGION_OF>)- Transaction:t WHERE t.ts >= t_from AND t.ts <= t_to
+      ACCUM r.@wcards += t.card_id;
+  R = SELECT r FROM R:r WHERE r.@wcards.size() <= max_shared
+      POST-ACCUM FOREACH c IN r.@wcards DO @@card_el += (c -> "region:" + r.id) END;
+
+  FOREACH (c, els) IN @@card_el DO
+    IF NOT @@seeds.contains(c) THEN @@others += c; END;
+  END;
+  C1 = to_vertex_set(@@others, "Card");
+
+  X1 = SELECT x FROM S:s -(CARD_CASE>)- ClosedCase:x ACCUM x.@via += "card";
+  X2 = SELECT x FROM S:s -(CONNECTED_CASE>)- ClosedCase:x ACCUM x.@via += "connected_card";
+  X3 = SELECT x FROM C1:c -(CARD_CASE>)- ClosedCase:x ACCUM x.@via += @@card_el.get(c.id), x.@through += c.id;
+  X4 = SELECT x FROM C1:c -(CONNECTED_CASE>)- ClosedCase:x ACCUM x.@via += @@card_el.get(c.id), x.@through += c.id;
+  X = X1 UNION X2 UNION X3 UNION X4;
+
+  // rank THIS candidate set by similarity: every candidate gets its distance (k only bounds what the caller keeps)
+  kk = X.size();
+  IF kk > 1000 THEN kk = 1000; END;
+  IF kk > 0 THEN
+    H = vectorSearch({ClosedCase.emb}, qv, kk, {candidate_set: X, distance_map: @@dist});
+    PRINT H[H.outcome] AS hits;
+  END;
+  PRINT @@dist AS dist;
+  PRINT X.size() AS n_candidates;
+  PRINT k AS k;
+  PRINT X[X.outcome, X.pattern, X.opened_at, X.@via, X.@through] AS candidates;
+}
+
+CREATE OR REPLACE QUERY ring_wcc(STRING seed, DATETIME t_from, DATETIME t_to, INT max_dev, INT max_shared, INT min_prior,
+                                 STRING tmpl_name, SET<STRING> tmpl_cards) FOR GRAPH Fraud SYNTAX V2 {
+  SumAccum<INT> @n_b;
+  MaxAccum<DOUBLE> @max_b;
+  SumAccum<INT> @proxy_b;
+  SetAccum<STRING> @prod_b;
+  SetAccum<STRING> @acards;
+  SetAccum<STRING> @wcards;
+  MapAccum<STRING, SetAccum<STRING>> @@sig_a;
+  MapAccum<STRING, SetAccum<STRING>> @@sig_w;
+  MapAccum<STRING, SetAccum<STRING>> @@keep;
+  MapAccum<STRING, MinAccum<INT>> @@lab;
+  MapAccum<INT, SumAccum<INT>> @@size;
+  SetAccum<STRING> @@comp;
+  SetAccum<STRING> @@tcards;
+  MapAccum<STRING, SetAccum<STRING>> @@comp_el;
+  MapAccum<STRING, SetAccum<STRING>> @@el_txn;
+  INT n = 0;
+  INT m = 0;
+  INT sl = -1;
+  INT largest = 0;
+  INT iters = 0;
+  BOOL changed = TRUE;
+
+  // 1. the window and each active card's history BEFORE it
+  W = SELECT t FROM Transaction:t WHERE t.ts >= t_from AND t.ts <= t_to
+      POST-ACCUM IF t.proxy_type != "" THEN
+                   @@sig_w += (t.product_cd + "|" + t.proxy_type + "|" + t.id_15 + "|" + t.device_type -> t.card_id) END;
+  C = SELECT c FROM W:t -(MADE_BY>)- Card:c;
+  B = SELECT c FROM C:c -(MADE>)- Transaction:e WHERE e.ts < t_from
+      ACCUM c.@n_b += 1, c.@max_b += e.amt, c.@prod_b += e.product_cd,
+            IF e.proxy_type != "" THEN c.@proxy_b += 1 END;
+
+  // 2. atypical rows: a product the card never used, an amount above every earlier one, or its first proxied row
+  A = SELECT t FROM W:t -(MADE_BY>)- Card:c
+      WHERE c.@n_b >= min_prior
+        AND (NOT c.@prod_b.contains(t.product_cd) OR t.amt > c.@max_b OR (t.proxy_type != "" AND c.@proxy_b == 0));
+
+  // 3. rare elements shared by two or more cards' atypical rows
+  D = SELECT d FROM A:t -(FROM_DEVICE>)- DeviceProfile:d
+      WHERE d.device_info != "" AND d.n_cards <= max_dev
+        AND NOT ((lower(d.device_info) IN ("windows", "ios device", "macos", "linux", "samsung")
+                  OR lower(d.device_info) LIKE "trident/%" OR lower(d.device_info) LIKE "rv:%") AND d.screen == "")
+      ACCUM d.@acards += t.card_id;
+  D = SELECT d FROM D:d WHERE d.@acards.size() >= 2
+      POST-ACCUM @@keep += ("device:" + d.id -> d.@acards);
+
+  E = SELECT e FROM A:t -(RECIPIENT_EMAIL>)- EmailDomain:e ACCUM e.@acards += t.card_id;
+  E = SELECT e FROM E:e WHERE e.@acards.size() >= 2;
+  E = SELECT e FROM E:e -(RECIPIENT_EMAIL_OF>)- Transaction:t WHERE t.ts >= t_from AND t.ts <= t_to
+      ACCUM e.@wcards += t.card_id;
+  E = SELECT e FROM E:e WHERE e.@wcards.size() <= max_shared
+      POST-ACCUM @@keep += ("r_email:" + e.id -> e.@acards);
+
+  AP2 = SELECT t FROM A:t WHERE t.proxy_type != ""
+       POST-ACCUM @@sig_a += (t.product_cd + "|" + t.proxy_type + "|" + t.id_15 + "|" + t.device_type -> t.card_id);
+  FOREACH (key, cs) IN @@sig_a DO
+    IF cs.size() >= 2 AND @@sig_w.get(key).size() <= max_shared THEN @@keep += ("signature:" + key -> cs); END;
+  END;
+
+  FOREACH c IN tmpl_cards DO
+    IF c != "" THEN @@tcards += c; END;
+  END;
+  IF tmpl_name != "" AND @@tcards.size() >= 2 THEN @@keep += ("template:" + tmpl_name -> @@tcards); END;
+
+  // 4. weakly connected components by label propagation over the card-element graph
+  FOREACH (key, cs) IN @@keep DO
+    FOREACH c IN cs DO
+      IF NOT @@lab.containsKey(c) THEN @@lab += (c -> n); n = n + 1; END;
+    END;
+  END;
+  WHILE changed LIMIT 1000 DO
+    changed = FALSE;
+    iters = iters + 1;
+    FOREACH (key, cs) IN @@keep DO
+      m = 2147483647;
+      FOREACH c IN cs DO
+        IF @@lab.get(c) < m THEN m = @@lab.get(c); END;
+      END;
+      FOREACH c IN cs DO
+        IF @@lab.get(c) > m THEN @@lab += (c -> m); changed = TRUE; END;
+      END;
+    END;
+  END;
+  FOREACH (c, l) IN @@lab DO @@size += (l -> 1); END;
+  FOREACH (l, s) IN @@size DO
+    IF s > largest THEN largest = s; END;
+  END;
+
+  // 5. the seed's component, its elements and the atypical transactions behind every element
+  IF @@lab.containsKey(seed) THEN sl = @@lab.get(seed); END;
+  IF sl >= 0 THEN
+    FOREACH (c, l) IN @@lab DO
+      IF l == sl THEN @@comp += c; END;
+    END;
+  ELSE
+    @@comp += seed;
+  END;
+  FOREACH (key, cs) IN @@keep DO
+    FOREACH c IN cs DO
+      IF @@comp.contains(c) THEN @@comp_el += (key -> cs); END;
+    END;
+  END;
+  CA = SELECT t FROM A:t WHERE @@comp.contains(t.card_id);
+  X1 = SELECT d FROM CA:t -(FROM_DEVICE>)- DeviceProfile:d
+       ACCUM IF @@comp_el.containsKey("device:" + d.id) THEN @@el_txn += ("device:" + d.id -> t.id) END;
+  X2 = SELECT e FROM CA:t -(RECIPIENT_EMAIL>)- EmailDomain:e
+       ACCUM IF @@comp_el.containsKey("r_email:" + e.id) THEN @@el_txn += ("r_email:" + e.id -> t.id) END;
+  X3 = SELECT t FROM CA:t WHERE t.proxy_type != ""
+       POST-ACCUM IF @@comp_el.containsKey("signature:" + t.product_cd + "|" + t.proxy_type + "|" + t.id_15 + "|" + t.device_type) THEN
+                    @@el_txn += ("signature:" + t.product_cd + "|" + t.proxy_type + "|" + t.id_15 + "|" + t.device_type -> t.id) END;
+
+  PRINT @@comp AS component;
+  PRINT @@comp_el AS elements;
+  PRINT @@el_txn AS element_txns;
+  PRINT @@size.size() AS n_components, largest AS largest, @@keep.size() AS n_elements, W.size() AS n_window_txns,
+        A.size() AS n_atypical, iters AS iterations;
+}
+
+CREATE OR REPLACE QUERY case_life(SET<STRING> gids) FOR GRAPH Fraud SYNTAX V2 {
+  // the life of written-back cases: events, approvals and the detectors that fired in them
+  S = to_vertex_set(gids, "InvestigationCase");
+  EV = SELECT v FROM S:s -(CASE_EVENT>)- CaseEvent:v;
+  AP = SELECT a FROM S:s -(CASE_APPROVAL>)- Approval:a;
+  DT = SELECT d FROM S:s -(CASE_DETECTOR>)- Detector:d;
+  PRINT S[S.case_id, S.verdict, S.status] AS cases;
+  PRINT EV AS events;
+  PRINT AP AS approvals;
+  PRINT DT[DT.family, DT.status] AS detectors;
+}
+
+CREATE OR REPLACE QUERY detector_life(SET<STRING> names) FOR GRAPH Fraud SYNTAX V2 {
+  // an approved detector: who approved it, the transactions it fired on and the cases it fired in
+  SumAccum<INT> @n_hits;
+  D = to_vertex_set(names, "Detector");
+  H = SELECT t FROM D:d -(DETECTOR_HIT>)- Transaction:t ACCUM d.@n_hits += 1;
+  AP = SELECT a FROM D:d -(DETECTOR_APPROVED_BY>)- Approval:a;
+  CS = SELECT i FROM D:d -(DETECTOR_IN_CASE>)- InvestigationCase:i;
+  PRINT D AS detectors;
+  PRINT AP AS approvals;
+  PRINT CS[CS.case_id] AS cases;
+  PRINT H[H.card_id] AS hits;
+}

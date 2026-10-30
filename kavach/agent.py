@@ -28,6 +28,16 @@ MAX_EVIDENCE = 8
 ROUND2_START = pd.Timestamp("2017-01-01")
 
 
+def _plain(claim: str) -> str:
+    """A claim as a regulator reads it: no detector names, approval ids or backtest figures (those stay in the evidence list)."""
+    import re
+    c = re.sub(r"^Grown detector \S+ \(approved [^)]*\) fired: ", "", str(claim))
+    for _ in range(3):                                   # drop parenthetical notes, innermost first
+        c = re.sub(r"\s*\([^()]*\)", "", c)
+    c = re.split(r"\.\s+(?:Backtest|In the closed|Weak signal|No labelled)", c)[0]   # evidence-list detail, not narrative
+    return c.strip().rstrip(".")
+
+
 class Investigation:
     def __init__(self, case: dict, backend: str = "duck", llm: Llm | None = None, graph_conn=None, verbose: bool = False):
         self.case = case
@@ -211,6 +221,22 @@ class Investigation:
         # and for undocumented activity the nearest documented pattern (to show how far it is from all of them)
         docs = self._policy_docs(final, pattern, query_text)
         memory = self._case_memory(ctx, ep, query_text)
+        # GRAPH x VECTOR + GRAPH ALGORITHM (kavach/graph/fusion.py): precedent that is both connected and similar, and the
+        # card's ring component; zero weight, attested, same ids on both lanes (installed fused_precedent / ring_wcc on tg, mcp)
+        from kavach.graph import fusion
+        t_alert = pd.Timestamp(case["opened_at"])
+        fp_params = {"card_ids": [ctx.card_id], "text": query_text, "t0": str(t_alert), "k": 5}
+        fused = [h for h in T.call("fused_precedent", **fp_params) if verdict != "legitimate" or h["outcome"] == "cleared"]
+        similar_ids = list(dict.fromkeys([h["case_id"] for h in fused if h["outcome"] == want][:2] + similar_ids))[:6]
+        ring_params = {"card_id": ctx.card_id, "t_from": str(t_alert - pd.Timedelta(days=fusion.RING_DAYS)), "t_to": str(t_alert),
+                       "template_name": (fnd.undocumented_kind or "ring") if ep.connected_cards else "",
+                       "template_cards": ([ctx.card_id] + list(ep.connected_cards)) if ep.connected_cards else []}
+        ring = T.call("ring_component", **ring_params)
+        for s_ in (fusion.precedent_signal(fused, fp_params), fusion.ring_signal(ring, ctx.card_id, ring_params)):
+            if s_ is not None:
+                self.memory_sigs = getattr(self, "memory_sigs", [])
+                self.memory_sigs.append(s_)
+                memory.append({"claim": s_.claim, "source": s_.source, "ref": s_.ref, "entity_ids": [str(x) for x in s_.entity_ids]})
 
         # NARRATE (step 11)
         T.step = 11
@@ -223,6 +249,7 @@ class Investigation:
         evidence += [{"claim": s.claim, "source": s.source, "ref": s.ref, "entity_ids": [str(x) for x in s.entity_ids]} for s in dq_sigs]
         note = intake.evidence_note(it)
         if note:
+            note["entity_ids"] = [cid]     # the case-pack row the quoted text came from (re-read by attest via case_pack:)
             evidence.append(note)
         for d in docs:
             first = d["text"].split(". ")[0].replace("**", "").replace("`", "").strip()
@@ -258,7 +285,8 @@ class Investigation:
         }
 
         # ATTEST: every evidence claim, detector hit and SAR sentence with what / evidence ids / how / when
-        self.attestation = attest.build(cid, answer, sigs1 + dq_sigs, None, T.backend, attest.dataset_version(),
+        self.attestation = attest.build(cid, answer, sigs1 + dq_sigs + getattr(self, "memory_sigs", []), None, T.backend,
+                                        attest.dataset_version(),
                                         sar_sentences=texts.get("sar_sentences"))
         self.attestation["data_quality"] = self.dq_flags
 
@@ -297,22 +325,26 @@ class Investigation:
         """Case memory on the graph lane: earlier investigations written back into TigerGraph that touch this card or
         read like this one. They are cited in the evidence (their ids are graph ids, not dataset ids)."""
         impl = self.tools._impl
+        self.memory_sigs = []
         if not hasattr(impl, "case_memory"):
             return []
         out = []
         try:
-            hits = [h for h in self.tools.call("case_memory", card_ids=[ctx.card_id] + ep.connected_cards[:5])
-                    if h["case_id"] != self.case["case_id"]]
+            cards = [ctx.card_id] + ep.connected_cards[:5]
+            hits = [h for h in self.tools.call("case_memory", card_ids=cards) if h["case_id"] != self.case["case_id"]]
             for h in hits[:2]:
-                out.append({"claim": f"Case memory: earlier investigation {h['id']} ({h['case_id']}, verdict {h['verdict']}, pattern "
-                                     f"{h['pattern']}) already touches card {h['card_id']}", "source": "graph",
-                            "ref": f"query:case_memory(c={h['card_id']})", "entity_ids": [h["card_id"]]})
-            sims = [s for s in self.tools.call("similar_investigations", text=query_text, k=3)
-                    if s.get("case_id") and s["case_id"] != self.case["case_id"] and (s.get("score") or 0) >= 0.8]
-            for s in sims[:1]:
-                out.append({"claim": f"Case memory: the most similar earlier investigation by summary is {s['id']} ({s['case_id']}, "
-                                     f"verdict {s['verdict']}, similarity {s['score']:.2f})", "source": "graph",
-                            "ref": "query:similar_investigations(vectorSearch InvestigationCase.emb)", "entity_ids": []})
+                # zero-weight graph memory, attested: re-running case_memory for the card returns the same investigation
+                self.memory_sigs.append(Signal(
+                    "case_memory", "history", 0.0,
+                    f"Case memory: earlier investigation {h['id']} ({h['case_id']}, verdict {h['verdict']}, pattern {h['pattern']}) "
+                    f"already touches card {h['card_id']}", [h["card_id"], h["case_id"]], f"query:case_memory(c={h['card_id']})",
+                    "graph", {"tool": "case_memory", "params": {"card_ids": [h["card_id"]]}}))
+            # Similar earlier investigations by summary vector are NOT cited: InvestigationCase summaries are re-embedded every
+            # time a case is re-run, so a nearest-neighbour claim over them cannot be re-checked later (a claim nobody can
+            # re-run counts as wrong). Vector evidence comes from the closed-case notes instead (fused_precedent,
+            # vector_search_cases), which never change.
+            out = [{"claim": m.claim, "source": m.source, "ref": m.ref, "entity_ids": [str(x) for x in m.entity_ids]}
+                   for m in self.memory_sigs]
         except Exception as e:
             self.say(f"case memory lookup failed: {str(e)[:100]}")
         return out
@@ -371,6 +403,9 @@ class Investigation:
         f = ctx.f
         fr = [s.claim for s in sorted(sigs, key=lambda s: -s.llr) if s.llr >= 0.4 and s.group not in ("score",)][:3]
         lg = [s.claim for s in sorted(sigs, key=lambda s: s.llr) if s.llr <= -0.4][:3]
+        # plain findings for prose: the strongest data findings, not the dispute or the score (stated separately)
+        fr_plain = [_plain(s.claim) for s in sorted(sigs, key=lambda s: -s.llr) if s.llr >= 0.4 and s.group not in ("score", "customer")][:2]
+        lg_plain = [_plain(s.claim) for s in sorted(sigs, key=lambda s: s.llr) if s.llr <= -0.4][:2]
         rows = ep.rows if ep.rows is not None and len(ep.rows) else ctx.h[ctx.h.TransactionID == f["TransactionID"]]
         regions = sorted({int(x) for x in rows.addr1.dropna()})
         channels = sorted(set(rows.channel))
@@ -410,11 +445,18 @@ class Investigation:
             "how": ("purchases paying one " + fnd.notes["grown_spec"]["entity"].replace("R_emaildomain", "recipient email domain").replace("P_emaildomain", "purchaser email domain")
                     + " that suddenly drew payments from several unrelated customers' cards" if (fnd.undocumented_kind or "").startswith("grown:") and fnd.notes.get("grown_spec") else
                     "a burst of online purchases priced just under a round limit" if fnd.undocumented_kind == "sub_threshold" else
+                    "small online charges of a few dollars spread over several weeks, never followed by a larger purchase, the same "
+                    "shape appearing on other customers' cards in the same weeks" if fnd.undocumented_kind == "micro_charges" else
+                    "online purchases of one product stepping up roughly doubling in amount until they reached a fixed cap, the same "
+                    "ladder appearing on other customers' cards" if fnd.undocumented_kind == "amount_ladder" else
+                    "bursts of online purchases from devices new to the account behind an anonymous proxy, the same template "
+                    "appearing on other customers' cards with no device in common" if fnd.undocumented_kind == "proxy_new_burst" else
                     "small online authorizations followed by a larger purchase" if fnd.card_testing else
                     "purchases from one device profile used across several customers' cards" if fnd.connected_devices else
                     "card-present purchases on an account already compromised in earlier confirmed cases" if "holder_prior_fraud" in fnd.episode else
                     "online purchases inconsistent with the cardholder" if f["channel"] == "online" else "card-present purchases inconsistent with the cardholder"),
-            "top_fraud": "; ".join(fr), "top_legit": "; ".join(lg),
+            "top_fraud": "; ".join(fr), "top_legit": "; ".join(lg), "top_fraud_plain": "; ".join(fr_plain),
+            "top_legit_plain": "; ".join(lg_plain),
             "n_connected": len(ep.connected_cards), "connected": ep.connected_cards[:8], "shared": fnd.shared_element or "shared element",
             "connected_devices": ep.connected_devices, "prior_cases": similar_ids[:3],
             "customer_statement": stmt, "reply": reply.text if reply else "",

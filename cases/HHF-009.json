@@ -3,7 +3,7 @@
   "case": {
     "status": "closed_legitimate",
     "verdict": "legitimate",
-    "fraud_probability": 0.03,
+    "fraud_probability": 0.29,
     "pattern": "none",
     "pattern_description": "",
     "affected_txn_ids": [],
@@ -12,12 +12,6 @@
     "connected_device_profiles": [],
     "exposure_usd": 0.0,
     "evidence": [
-      {
-        "claim": "Customer confirmed the transaction when asked: Customer confirms they made the purchase",
-        "source": "customer",
-        "ref": "evidence_request:1",
-        "entity_ids": []
-      },
       {
         "claim": "Purchaser email domain anonymous.com is this account's own: 4 earlier transactions on card C09177-K1 used it",
         "source": "graph",
@@ -74,21 +68,21 @@
       }
     ],
     "similar_prior_cases": [
-      "CC-2937",
       "CC-4591",
+      "CC-2937",
       "CC-4442",
       "CC-0893",
       "CC-5324"
     ],
-    "summary": "Alert HHF-009 opened because the bank's model flagged transaction 3660355 (recorded score 0.10) ($228.01, product C, online, 2017-01-27 15:08) on card C09177-K1. The evidence points to the cardholder: Customer confirmed the transaction when asked: Customer confirms they made the purchase; Purchaser email domain anonymous.com is this account's own: 4 earlier transactions on card C09177-K1 used it; Profile fit: $228.01 is within the account's earlier range (largest $422.57 over 159 purchases). Fraud probability 0.03; the alert is closed as legitimate. Evidence request: Customer confirms they made the purchase.",
-    "written_to_graph": false,
-    "graph_case_id": ""
+    "summary": "Alert HHF-009 opened because the bank's model flagged transaction 3660355 (recorded score 0.10) ($228.01, product C, online, 2017-01-27 15:08) on card C09177-K1. The evidence points to the cardholder: Purchaser email domain anonymous.com is this account's own: 4 earlier transactions on card C09177-K1 used it; Profile fit: $228.01 is within the account's earlier range. Fraud probability 0.29; the alert is closed as legitimate (allow transaction, verify with customer, monitor card, close no fraud). Evidence request: No reply from the customer within 24 hours.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-2016-2616"
   },
   "evidence_requests": [
     {
       "type": "customer_validation",
       "asked_after_step": 6,
-      "assumed_response": "Customer confirms they made the purchase"
+      "assumed_response": "No reply from the customer within 24 hours"
     }
   ],
   "next_best_actions": {
@@ -108,25 +102,25 @@
       {
         "action": "ALLOW_TRANSACTION",
         "route": "auto",
-        "reason": "R3: the flagged transaction is consistent with the cardholder, let it stand"
+        "reason": "§6: the flagged transaction is consistent with the cardholder, let it stand"
       },
       {
         "action": "VERIFY_WITH_CUSTOMER",
         "route": "auto",
-        "reason": "R3 and R3: confirm the purchase with the cardholder; the card stays active"
+        "reason": "§6 and R3: confirm the purchase with the cardholder; the card stays active"
       },
       {
         "action": "MONITOR_CARD",
         "route": "auto",
-        "reason": "R3: keep the card under 72-hour monitoring after the alert"
+        "reason": "§6: keep the card under 72-hour monitoring after the alert"
       },
       {
         "action": "CLOSE_NO_FRAUD",
         "route": "auto",
-        "reason": "R3, R3 and §3a: alert cleared; the bank records cleared alerts without a case"
+        "reason": "§6, R3 and §3a: alert cleared; the bank records cleared alerts without a case"
       }
     ],
-    "what_changed": "The customer's confirmation lowered the fraud probability from 0.29 to 0.03; under R3 the alert closes: ALLOW_TRANSACTION, VERIFY_WITH_CUSTOMER, MONITOR_CARD, CLOSE_NO_FRAUD."
+    "what_changed": "No reply within 24 hours, so R4 applies and the probability stays at 0.29: ALLOW_TRANSACTION, VERIFY_WITH_CUSTOMER, MONITOR_CARD, CLOSE_NO_FRAUD."
   },
   "sar": {
     "file": false,
@@ -136,8 +130,8 @@
     "total_amount_usd": 0,
     "activity_dates": []
   },
-  "stop_reason": "The customer's reply settled the question (section 6): probability moved from 0.29 to 0.03. Further steps would not change the actions.",
-  "tool_calls": 11,
+  "stop_reason": "The customer did not reply within 24 hours and the remaining graph evidence cannot move the probability (0.29) across a decision threshold, so the case stays open under R4 monitoring.",
+  "tool_calls": 15,
   "tokens": 0,
-  "latency_s": 0.22
+  "latency_s": 14.24
 }

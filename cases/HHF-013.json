@@ -49,18 +49,83 @@
         "source": "document",
         "ref": "document:README#POLICY-R3",
         "entity_ids": []
+      },
+      {
+        "claim": "Case memory: earlier investigation CASE-2016-6009 (HHF-006, verdict fraud, pattern undocumented) already touches card C06115-K1",
+        "source": "graph",
+        "ref": "query:case_memory(c=C06115-K1)",
+        "entity_ids": [
+          "C06115-K1",
+          "HHF-006"
+        ]
+      },
+      {
+        "claim": "Graph and vector fused: closed case CC-3709 (cleared, none) is reached through the recipient email domain sc.rr.com, which card C05610-K1 also used in the 30 days to the alert, and its analyst note is the closest to this case among the connected closed cases (similarity 0.78)",
+        "source": "graph",
+        "ref": "query:fused_precedent(card_ids=C06115-K1)",
+        "entity_ids": [
+          "CC-3709",
+          "C05610-K1"
+        ]
+      },
+      {
+        "claim": "Graph algorithm (weakly connected components of the cards whose atypical transactions share a rare element, 2016-12-27 to 2017-01-26): card C06115-K1 is in a component of 15 cards (4 components in the window, the largest 15); shared: recipient email domain sc.rr.com (15 cards)",
+        "source": "graph",
+        "ref": "query:ring_wcc(seed=C06115-K1)",
+        "entity_ids": [
+          "C00534-K2",
+          "C01357-K1",
+          "C01507-K1",
+          "C01594-K1",
+          "C01727-K2",
+          "C02167-K2",
+          "C04146-K1",
+          "C04668-K1",
+          "C05610-K1",
+          "C06639-K1",
+          "C08384-K1",
+          "C11617-K1",
+          "C11743-K2",
+          "C11940-K1",
+          "3660261",
+          "3660262",
+          "3660264",
+          "3660266",
+          "3660267",
+          "3660274",
+          "3660275",
+          "3660276",
+          "3660278",
+          "3660279",
+          "3660281",
+          "3660282",
+          "3660283",
+          "3660284",
+          "3660285",
+          "3660286",
+          "3660287",
+          "3660288",
+          "3660289",
+          "3660311",
+          "3660312",
+          "3660313",
+          "3660314",
+          "3660315",
+          "3660316"
+        ]
       }
     ],
     "similar_prior_cases": [
+      "CC-3709",
+      "CC-3184",
       "CC-4197",
       "CC-2037",
       "CC-4592",
-      "CC-5137",
-      "CC-0003"
+      "CC-5137"
     ],
-    "summary": "Alert HHF-013 opened because the bank's model flagged transaction 3626720 (recorded score 0.11) ($409.30, product W, in person, 2017-01-26 16:40) on card C06115-K1. The evidence points to the cardholder: Profile fit: product W, purchaser email yahoo.com and the amount $409.30 all match card C06115-K1 before the last 7 days (78 earlier W purchases, 12 with this email, largest earlier purchase $2,945.01); Billing region 203 is familiar: 5 earlier transactions on this card there (6% of its in-person history). Fraud probability 0.09; the alert is closed as legitimate.",
-    "written_to_graph": false,
-    "graph_case_id": ""
+    "summary": "Alert HHF-013 opened because the bank's model flagged transaction 3626720 (recorded score 0.11) ($409.30, product W, in person, 2017-01-26 16:40) on card C06115-K1. The evidence points to the cardholder: Profile fit: product W, purchaser email yahoo.com and the amount $409.30 all match card C06115-K1 before the last 7 days; Billing region 203 is familiar: 5 earlier transactions on this card there. Fraud probability 0.09; the alert is closed as legitimate (allow transaction, verify with customer, monitor card, close no fraud).",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-2016-7919"
   },
   "evidence_requests": [],
   "next_best_actions": {
@@ -119,7 +184,7 @@
     "activity_dates": []
   },
   "stop_reason": "Fraud probability 0.09 is at or below 0.15 with 2 independent evidence groups (sequence, region), so section 6 allows a decision without asking the customer; further queries would not change the actions.",
-  "tool_calls": 8,
+  "tool_calls": 12,
   "tokens": 0,
-  "latency_s": 0.15
+  "latency_s": 11.8
 }

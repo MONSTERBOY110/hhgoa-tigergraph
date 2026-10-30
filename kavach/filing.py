@@ -284,6 +284,10 @@ def _link_from_claim(answer: dict, sidecar: dict, affected: set) -> dict | None:
         p = (cl.get("how") or {}).get("params") or {}
         value = p.get("value") or p.get("device_key") or p.get("domain")
         field = p.get("entity_field") or p.get("entity") or ("device_key" if p.get("device_key") else p.get("field") or "")
+        if not value and (cl.get("how") or {}).get("tool"):
+            # no single value: the link is the behaviour the claim's query selects (e.g. small online charges)
+            keep = {k: v for k, v in p.items() if not any(w in k for w in ("t_from", "t_to", "t0", "from", "to", "days", "card"))}
+            field, value = f"behaviour:{cl['id']}", f"{cl['how']['tool']}(" + ", ".join(f"{k}={v}" for k, v in sorted(keep.items())) + ")"
         n = len(conn & set(_ids(cl.get("evidence"))["card_ids"]))
         if cl.get("kind") in ("evidence", "detector_hit") and value and n >= 2 and (best is None or n > best[0]):
             best = (n, cl, str(field), str(value))
@@ -301,7 +305,9 @@ def _link_from_claim(answer: dict, sidecar: dict, affected: set) -> dict | None:
                           "first_ts": str(g["ts"].iloc[0])[:19] if "ts" in g.columns else None,
                           "first_txn": str(int(g["TransactionID"].iloc[0])) if "TransactionID" in g.columns else None}
     txns = {str(int(x)) for x in df["TransactionID"]} if "TransactionID" in df.columns else set()
-    return {"label": LINK_LABEL.get(field, field or "shared value"), "value": value, "field": field, "per_card": per,
+    label = (f"shared behaviour selected by the query of claim {cl['id']}" if field.startswith("behaviour:")
+             else LINK_LABEL.get(field, field or "shared value"))
+    return {"label": label, "value": value, "field": field, "per_card": per,
             "case_txns": txns & affected, "claim": cl["id"],
             "source": f"a re-run of the query recorded in attested claim {cl['id']}: {cl['how']['tool']}("
                       f"{json.dumps(cl['how']['params'], sort_keys=True, default=str)}) on the DuckDB index"}
@@ -395,11 +401,15 @@ def sentences(answer: dict, sidecar: dict, template: list | None = None) -> tupl
         raise FilingError("the sidecar's SAR sentences do not reproduce the answer's narrative (stale sidecar?); "
                           "re-run the case so answer and attestation come from the same run")
     attested = {x for c in claims.values() for x in _flat(_ids(c.get("evidence")))}
-    first = str(answer["case"].get("first_suspicious_txn_id") or "")
-    episode = (next((c for c in s_claims if first and first in _ids(c.get("evidence"))["txn_ids"]), None)
-               or max(s_claims, key=lambda c: len(_ids(c.get("evidence"))["txn_ids"])))
-    if not _ids(episode.get("evidence"))["txn_ids"]:
-        episode = None
+    # the episode: every affected transaction, each with the first claim that attests it (SAR sentences first)
+    ep_txns_all, ep_claims = [], []
+    ordered = s_claims + [c for c in claims.values() if c.get("kind") != "sar_sentence"]
+    for t in [str(x) for x in answer["case"].get("affected_txn_ids") or []]:
+        by = next((c["id"] for c in ordered if t in _ids(c.get("evidence"))["txn_ids"]), None)
+        if by:
+            ep_txns_all.append(t)
+            ep_claims.append(by)
+    ep_claims = list(dict.fromkeys(ep_claims))
     out, dropped = [], []
     for c in s_claims:
         ev = _ids(c.get("evidence"))
@@ -415,9 +425,9 @@ def sentences(answer: dict, sidecar: dict, template: list | None = None) -> tupl
             ev = {k: v for k, v in split_ids(keep).items() if k in KEYS}
             sup = _claims_with(keep, claims, kinds=("sar_sentence", "evidence", "detector_hit"))
             sup = [x for x in sup if x != c["id"]]
-        ep_from, ep_txns = None, []
-        if not ev["txn_ids"] and episode is not None:
-            ep_from, ep_txns = episode["id"], list(_ids(episode.get("evidence"))["txn_ids"])
+        ep_from, ep_txns = [], []
+        if not ev["txn_ids"] and ep_txns_all:
+            ep_from, ep_txns = list(ep_claims), list(ep_txns_all)
         out.append({"n": len(out) + 1, "text": _norm(text), "claim": c["id"], "supported_by": sup, "ids": ev,
                     "episode_from": ep_from, "episode_txns": ep_txns, "rewritten": rewritten, "original": original})
     if not out:
@@ -430,7 +440,7 @@ def footnote_ids(s: dict) -> list[str]:
 
 
 def footnote_claims(s: dict) -> list[str]:
-    return list(dict.fromkeys([s["claim"]] + s["supported_by"] + ([s["episode_from"]] if s["episode_from"] else [])))
+    return list(dict.fromkeys([s["claim"]] + s["supported_by"] + list(s["episode_from"])))
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -601,7 +611,8 @@ def svg(g: dict, title: str) -> str:
     # elements
     for i, el in enumerate(g["elements"]):
         val = el["value"] if len(el["value"]) <= 26 else el["value"][:24] + "..."
-        label = el["label"].split(" (")[0] + (", linking element" if el.get("link") else "")
+        label = ("shared behaviour, " + el["field"].split(":", 1)[1] if el["field"].startswith("behaviour:")
+                 else el["label"].split(" (")[0])[:30]
         out.append(f'<rect x="{ex}" y="{ey[i] - 27:.1f}" width="{BW}" height="54" rx="6" class="{"n-el" if el.get("link") else "n-attr"}"/>')
         out.append(f'<text x="{ex + BW / 2}" y="{ey[i] - 12:.1f}" text-anchor="middle" class="t-sub">{e(label)}</text>')
         out.append(f'<text x="{ex + BW / 2}" y="{ey[i] + 3:.1f}" text-anchor="middle" class="t-id">{e(val)}</text>')
@@ -659,7 +670,8 @@ def _fn_text_md(s: dict) -> str:
         if s["ids"].get(k):
             parts.append(f"{label}: " + ", ".join(f"`{x}`" for x in s["ids"][k]) + ".")
     if s["episode_txns"]:
-        parts.append(f"Episode transactions (attested in **{s['episode_from']}**): " + ", ".join(f"`{x}`" for x in s["episode_txns"]) + ".")
+        parts.append("Episode transactions (attested in " + ", ".join(f"**{x}**" for x in s["episode_from"]) + "): "
+                     + ", ".join(f"`{x}`" for x in s["episode_txns"]) + ".")
     return " ".join(parts)
 
 
@@ -683,7 +695,7 @@ def _mdcell(v) -> str:
 def _link_note(f: dict) -> str:
     link, ring = f["link"], f["ring"] or {}
     if link:
-        return f"Linked by {link['label']} {link['value']}, from {link['source']}."
+        return f"Linked by {link['label']}: {link['value']}, from {link['source']}."
     why = ring.get("link_error") or (ring.get("reason") if ring and not ring.get("available") else "")
     return ("No single shared value links these cards in the data" + (f" ({why})" if why else "")
             + "; each is listed because the attested claims named in the table name it.")
@@ -850,7 +862,7 @@ def _fn_html(s: dict) -> str:
         if s["ids"].get(k):
             parts.append(f"{label}: {codes(s['ids'][k])}.")
     if s["episode_txns"]:
-        parts.append(f"Episode transactions (attested in <b>{e(s['episode_from'])}</b>): {codes(s['episode_txns'])}.")
+        parts.append("Episode transactions (attested in " + ", ".join(f"<b>{e(x)}</b>" for x in s["episode_from"]) + f"): {codes(s['episode_txns'])}.")
     data = (f' data-claims="{e(" ".join(footnote_claims(s)))}" '
             f'data-ids="{e(json.dumps(footnote_ids(s), ensure_ascii=True))}"')
     return f'<li id="fn-{s["n"]}"{data}>{" ".join(parts)} <a href="#ref-{s["n"]}" aria-label="back to sentence {s["n"]}">&#8617;</a></li>'

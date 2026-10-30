@@ -41,8 +41,8 @@
       }
     }
   },
-  "backend": "duck",
-  "run_at": "2026-10-29T12:14:12Z",
+  "backend": "tg",
+  "run_at": "2026-10-29T22:46:49Z",
   "claims": [
     {
       "id": "E1",
@@ -65,7 +65,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:12Z",
+        "ts": "2026-10-29T22:46:49Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -83,7 +83,9 @@
         "customer_ids": [],
         "case_ids": [],
         "device_keys": [],
-        "other": []
+        "other": [
+          "HHF-010"
+        ]
       },
       "how": {
         "tool": "case_pack_row",
@@ -92,7 +94,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:12Z",
+        "ts": "2026-10-29T22:46:49Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "external",
@@ -119,7 +121,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:12Z",
+        "ts": "2026-10-29T22:46:49Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
@@ -146,13 +148,49 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:12Z",
+        "ts": "2026-10-29T22:46:49Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
       "ref": "document:README#PATTERN-4",
       "signal": "",
       "llr": null
+    },
+    {
+      "id": "E5",
+      "kind": "evidence",
+      "what": "Graph and vector fused: closed case CC-4888 (confirmed_fraud, out_of_region_use) is reached through the device profile MHA-L29 Build/HUAWEIMHA-L29 | Android 8.0.0 | chrome 66.0 for android | 1920x1080, which card C05509-K1 also used in the 30 days to the alert, and its analyst note is the closest to this case among the connected closed cases (similarity 0.81)",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [
+          "C05509-K1"
+        ],
+        "customer_ids": [],
+        "case_ids": [
+          "CC-4888"
+        ],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "fused_precedent",
+        "params": {
+          "card_ids": [
+            "C07196-K2"
+          ],
+          "text": "confirmed fraud out_of_region_use: ",
+          "t0": "2017-01-08 16:13:05",
+          "k": 5
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:46:49Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "graph",
+      "ref": "query:fused_precedent(card_ids=C07196-K2)",
+      "signal": "fused_precedent",
+      "llr": 0.0
     },
     {
       "id": "D1",
@@ -175,7 +213,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:12Z",
+        "ts": "2026-10-29T22:46:49Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
@@ -208,7 +246,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:12Z",
+        "ts": "2026-10-29T22:46:49Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -218,10 +256,10 @@
     }
   ],
   "counts": {
-    "claims": 6,
-    "with_how": 6,
+    "claims": 7,
+    "with_how": 7,
     "by_kind": {
-      "evidence": 4,
+      "evidence": 5,
       "sar_sentence": 0,
       "detector_hit": 2
     }

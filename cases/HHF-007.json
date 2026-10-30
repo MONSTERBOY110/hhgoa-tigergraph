@@ -3,7 +3,7 @@
   "case": {
     "status": "closed_fraud",
     "verdict": "fraud",
-    "fraud_probability": 0.93,
+    "fraud_probability": 0.94,
     "pattern": "card_testing",
     "pattern_description": "",
     "affected_txn_ids": [
@@ -64,14 +64,6 @@
         ]
       },
       {
-        "claim": "Profile fit: the purchase hour (13:00) is one the account already uses (10% of its earlier purchases within an hour of it)",
-        "source": "graph",
-        "ref": "query:card_history(card_id=C09582-K1)",
-        "entity_ids": [
-          "3660350"
-        ]
-      },
-      {
         "claim": "Policy applied, Fraud Policy R2: Customer denies the transaction: Recommend BLOCK_CARD and CREATE_CASE.",
         "source": "document",
         "ref": "document:README#POLICY-R2",
@@ -92,9 +84,9 @@
       "CC-3653",
       "CC-5573"
     ],
-    "summary": "Alert HHF-007 opened because customer C09582 disputed transaction 3660350 ($236.28, product C, online, 2017-01-14 13:57) on card C09582-K1. Assessed as card testing with fraud probability 0.93: 4 online authorizations under $10 within an hour, then a $236.28 purchase; Customer C09582 disputes transaction 3660350 ($236.28); a dispute is strong but not conclusive evidence (in the Round 1 review 7 of 8 customer reports were confirmed fraud, and one was cleared because the purchase fitted the cardholder); $236.28 is 2.2 times the largest earlier purchase on card C09582-K1 in its region 476. The episode covers 5 transaction(s) totalling $246.38.",
-    "written_to_graph": false,
-    "graph_case_id": ""
+    "summary": "Alert HHF-007 opened because customer C09582 disputed transaction 3660350 ($236.28, product C, online, 2017-01-14 13:57) on card C09582-K1. Assessed as card testing with fraud probability 0.94. Main findings: 4 online authorizations under $10 within an hour, then a $236.28 purchase; $236.28 is 2.2 times the largest earlier purchase on card C09582-K1 in its region 476. The episode covers 5 transaction(s) totalling $246.38. Actions: block card, create case.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-2016-3799"
   },
   "evidence_requests": [],
   "next_best_actions": {
@@ -132,8 +124,8 @@
     "total_amount_usd": 0,
     "activity_dates": []
   },
-  "stop_reason": "Fraud probability 0.93 is at or above 0.85 with 2 independent evidence groups (sequence, customer), so section 6 allows a decision without asking the customer; further queries would not change the actions.",
-  "tool_calls": 8,
+  "stop_reason": "Fraud probability 0.94 is at or above 0.85 with 2 independent evidence groups (sequence, customer), so section 6 allows a decision without asking the customer; further queries would not change the actions.",
+  "tool_calls": 12,
   "tokens": 0,
-  "latency_s": 0.26
+  "latency_s": 13.62
 }

@@ -119,6 +119,10 @@ class MappingNotApproved(RuntimeError):
     pass
 
 
+class MappingIncomplete(RuntimeError):
+    """A recoded column holds values its recode does not cover: written as they are, they would be silently wrong."""
+
+
 def _p(path) -> str:
     return str(path).replace("\\", "/").replace("'", "''")
 
@@ -211,8 +215,10 @@ def profile_sim(ps: dict, pt: dict) -> float:
              0.15 * max(0.0, 1 - abs(math.log10(ps["distinct"] + 1) - math.log10(pt["distinct"] + 1)) / 2))
         return round(s, 4)
     if (kt == "num") != (ks == "num"):
-        # a 2-valued numeric (0/1) can still be an enum; anything else is a different type
-        return 0.05
+        # a numeric column whose sample holds only a few values profiles as an enumeration: compare it by its values
+        enum_side = ps if ks != "num" else pt
+        if not all(norm_value(k) is not None and re.fullmatch(r"-?[0-9.e+]+", str(norm_value(k))) for k in enum_side.get("top", {})):
+            return 0.05
     top = sum(min(v, ps.get("top", {}).get(k, 0.0)) for k, v in pt.get("top", {}).items())
     shp = sum(min(v, ps.get("shapes", {}).get(k, 0.0)) for k, v in pt.get("shapes", {}).items())
     ln = 1 - min(1.0, abs(ps["len"][1] - pt["len"][1]) / max(pt["len"][1], 1))
@@ -349,14 +355,16 @@ def _list_info(vals: pd.Series):
     """A list column with a delimiter other than '|' (variable item count, items look like ids or action names)."""
     v = vals.dropna().astype(str)
     v = v[v != ""]
-    if len(v) < 3:
+    if not len(v):
         return None
     for d in LIST_DELIMS:
         cnt = v.str.count(re.escape(d))
         if cnt.max() == 0:
             continue
         items = v.str.split(re.escape(d), regex=True).explode().str.strip()
-        sh = items.map(shape).value_counts(normalize=True)
+        if len(items) < 3:
+            continue
+        sh = items.map(lambda x: re.sub(r"(A_)+", "A_", shape(x))).value_counts(normalize=True)   # VERIFY_WITH_CUSTOMER ~ BLOCK_CARD
         if sh.iloc[0] >= 0.9 and " " not in sh.index[0]:
             return d
     return None
@@ -395,7 +403,10 @@ def candidates(df: pd.DataFrame) -> list[dict]:
             if fmt and fmt != TS_FMT:
                 out.append({"id": f"{c}@ts", "sources": [c], "transform": {"kind": "ts_format", "format": fmt}, "values": ts,
                             "atoms": {c}})
+        ld = _list_info(s)
         sp = None if any(x["id"] == f"{c}@ts" for x in out) else _split_info(s)
+        if sp and ld == sp[0]:
+            sp = None          # items of one shape: a list (actions, ids), not a composite of different fields
         if sp:
             d, k = sp
             parts = s.astype("object").map(lambda x: None if x is None else str(x).split(d))
@@ -403,7 +414,6 @@ def candidates(df: pd.DataFrame) -> list[dict]:
                 pv = parts.map(lambda p, i=i: None if p is None or len(p) <= i or p[i] == "" else p[i])
                 out.append({"id": f"{c}[{i}]", "sources": [c], "transform": {"kind": "split", "delim": d, "index": i, "parts": k},
                             "values": pv, "atoms": {f"{c}[{i}]"}, "base": c})
-        ld = _list_info(s)
         if ld:
             out.append({"id": f"{c}@list", "sources": [c], "transform": {"kind": "list", "delim": ld},
                         "values": s.map(lambda x: None if x is None else "|".join(t.strip() for t in str(x).split(ld))),
@@ -446,7 +456,17 @@ def _recode_for(cand_vals: pd.Series, ref_prof: dict, aligned: pd.Series | None 
             m = pairs.groupby("a")["b"].agg(lambda x: x.value_counts().index[0]).to_dict()
             agree = (pairs.a.map(m) == pairs.b).mean()
             if agree >= 0.98 and len(set(m.values())) == len(m):
-                return {str(k): str(val) for k, val in m.items() if str(k) != str(val)} or None
+                m = {str(k): str(val) for k, val in m.items()}
+                # a boolean pair seen on one side only in the sample (M1 is almost always T): complete the pair
+                for sset in BOOL_SETS:
+                    for tset in BOOL_SETS:
+                        if set(m) <= set(sset) and all(m[k] == tset[sset.index(k)] for k in m):
+                            m = {sset[0]: tset[0], sset[1]: tset[1]}
+                            break
+                    else:
+                        continue
+                    break
+                return {k: v for k, v in m.items() if k != v} or None
     low = {w.lower(): w for w in want}
     if all(h.lower() in low for h in have):
         return {h: low[h.lower()] for h in have if h != low[h.lower()]}
@@ -560,7 +580,8 @@ def _samples(df_key: pd.Series, cand: dict, vals: pd.Series, aligned: pd.Series 
     return out
 
 
-def _match_table(path: Path, role: str, df: pd.DataFrame, cands: list[dict], long_spec: dict | None, verbose=False) -> dict:
+def _match_table(path: Path, role: str, df: pd.DataFrame, cands: list[dict], long_spec: dict | None, verbose=False,
+                 align: bool = True) -> dict:
     ref = reference(role)
     targets = [t for t in CANON[role] if t in ref]
     for c in cands:
@@ -570,7 +591,7 @@ def _match_table(path: Path, role: str, df: pd.DataFrame, cands: list[dict], lon
     # cross-file join: the variant key column against the bank's own records
     key_cand = _key_candidate(cands, ref[KEY[role]])
     aligned_df, join_rate = None, 0.0
-    if key_cand is not None:
+    if key_cand is not None and align:
         ids = [x for x in key_cand["values"].dropna().astype(str).unique()][:SAMPLE]
         bank = reference_rows(role, ids)
         if len(bank):
@@ -614,6 +635,8 @@ def _match_table(path: Path, role: str, df: pd.DataFrame, cands: list[dict], lon
                 score = 0.7 * agree + 0.2 * ps + 0.1 * ns
             else:
                 score = 0.6 * ps + 0.4 * ns
+            if rc and len(rc) > 4:
+                score -= 0.05      # a long value map cannot cover values the sample did not hold; a structural reshape can
             scores[(t, c["id"])] = (round(score, 4), round(ps, 4), round(ns, 4), agree)
             if rc:
                 recodes[(t, c["id"])] = rc
@@ -694,9 +717,10 @@ def _match_table(path: Path, role: str, df: pd.DataFrame, cands: list[dict], lon
             "unused_source_columns": [c for c in df.columns if c not in used_sources and (long_spec is None or c not in long_spec.values())]}
 
 
-def propose(variant_files, n: int = SAMPLE, verbose: bool = False) -> dict:
+def propose(variant_files, n: int = SAMPLE, verbose: bool = False, align: bool = True) -> dict:
     """Work out the mapping of a set of variant files onto the canonical schema. Nothing is written or used until
-    approve() records a human approval of this exact mapping."""
+    approve() records a human approval of this exact mapping. align=False never joins the variant to the bank's own
+    records (profiles and names only: what is left when a variant's ids are re-keyed)."""
     files = [Path(f) for f in variant_files]
     t0 = time.time()
     tables = []
@@ -707,11 +731,11 @@ def propose(variant_files, n: int = SAMPLE, verbose: bool = False) -> dict:
         role = max(rs, key=rs.get)
         if verbose:
             print(f"  {f.name}: role {role} {rs}{' (long format, pivoted)' if long_spec else ''}", flush=True)
-        tab = _match_table(f, role, df, cands, long_spec, verbose)
+        tab = _match_table(f, role, df, cands, long_spec, verbose, align=align)
         tab["role_scores"] = rs
         tables.append(tab)
     mapping = {"version": 1, "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-               "variant_fingerprint": fingerprint(files), "files": tables, "seconds": round(time.time() - t0, 1)}
+               "variant_fingerprint": fingerprint(files), "aligned": align, "files": tables, "seconds": round(time.time() - t0, 1)}
     roles = {t["role"] for t in tables}
     mapping["missing_roles"] = [r for r in CANON if r not in roles]
     mapping["unresolved_needed"] = [f"{t['file']}:{u['target']}" for t in tables for u in t["unresolved"] if u["needed"]]
@@ -820,6 +844,18 @@ def apply(mapping, out_dir=None, files_check: bool = True) -> dict:
         else:
             con.execute(f"create or replace temp table v as select * from {src}")
         exprs = {c["target"]: _sql_value(c) for c in tab["columns"]}
+        for c in tab["columns"]:
+            rc = c["transform"].get("recode")
+            if not rc:
+                continue
+            raw = dict(c, transform={k: v for k, v in c["transform"].items() if k != "recode"})
+            ok = sorted(set(rc) | set(rc.values()))
+            bad = con.execute(f"select v, count(*) from (select {_sql_value(raw)} v from v) where v is not null and v not in "
+                              f"(select unnest(?)) group by 1 order by 2 desc limit 5", [ok]).fetchall()
+            if bad:
+                con.close()
+                raise MappingIncomplete(f"{path.name}: column {c['candidate']} -> {c['target']} has values the approved recode {rc} "
+                                        f"does not cover: {bad}; propose again with a larger sample or extend the recode")
         for d in tab.get("derived", []):
             if d["target"] == "TransactionDT":
                 exprs["TransactionDT"] = f"cast(epoch(try_strptime({exprs['ts']}, '{TS_FMT}')) - {EPOCH0} as bigint)"
@@ -1024,28 +1060,36 @@ def variant_files(d=None) -> list[Path]:
 def score(mapping: dict, truth: dict) -> dict:
     """Accuracy of a proposed mapping against the generator's truth: per canonical column, is the source right (and,
     for reshapes, the part)? Roles per file are checked too."""
-    got = {}
-    role_ok = []
+    role_ok, rows = [], []
     for tab in mapping["files"]:
         role_ok.append({"file": tab["file"], "role": tab["role"], "truth": truth["files"].get(tab["file"]),
                         "ok": tab["role"] == truth["files"].get(tab["file"])})
-        for c in tab["columns"]:
-            got.setdefault(f"{tab['role']}.{c['target']}", c)
+        got = {f"{tab['role']}.{c['target']}": c for c in tab["columns"]}
         for d in tab.get("derived", []):
             got.setdefault(f"{tab['role']}.{d['target']}", {"source": ["(derived) " + d["rule"]], "transform": {"kind": "derived"}})
+        want = truth["files"].get(tab["file"])
+        rows += _score_file(tab["file"], got, {k: v for k, v in truth["columns"].items() if k.split(".")[0] == want})
+    return _score_summary(rows, role_ok)
+
+
+def _score_file(fname: str, got: dict, tcols: dict) -> list[dict]:
     rows = []
-    for key, t in truth["columns"].items():
+    for key, t in tcols.items():
         g = got.get(key)
         if g is None:
-            rows.append({"column": key, "ok": False, "got": None, "truth": t["source"]})
+            rows.append({"file": fname, "column": key, "ok": False, "got": None, "truth": t["source"]})
             continue
         ok = sorted(g["source"]) == sorted(t["source"]) or any(sorted(g["source"]) == sorted(a) for a in t.get("alt", []))
         if t["kind"] == "split":
             ok = ok and g["transform"].get("kind") == "split" and g["transform"].get("index") == t["index"]
         if t["kind"] == "derived_or_epoch":
             ok = ok or g["transform"].get("kind") == "derived"
-        rows.append({"column": key, "ok": bool(ok), "got": g["source"], "transform": g["transform"].get("kind"), "truth": t["source"],
-                     "confidence": g.get("confidence")})
+        rows.append({"file": fname, "column": key, "ok": bool(ok), "got": g["source"], "transform": g["transform"].get("kind"),
+                     "truth": t["source"], "confidence": g.get("confidence")})
+    return rows
+
+
+def _score_summary(rows: list[dict], role_ok: list[dict]) -> dict:
     by_role = {}
     for r in rows:
         role = r["column"].split(".")[0]
@@ -1114,6 +1158,7 @@ def main(argv=None) -> int:
     p.add_argument("--dir", default=None)
     p.add_argument("--out", default=None)
     p.add_argument("--sample", type=int, default=SAMPLE)
+    p.add_argument("--no-align", action="store_true", help="profiles and names only; never join to the bank's records")
     a = sub.add_parser("approve")
     a.add_argument("mapping")
     a.add_argument("--token", default=None)
@@ -1138,7 +1183,7 @@ def main(argv=None) -> int:
         return 0
     if args.cmd == "propose":
         files = [Path(f) for f in args.files] or variant_files(args.dir)
-        m = propose(files, n=args.sample, verbose=True)
+        m = propose(files, n=args.sample, verbose=True, align=not args.no_align)
         out = save(m, args.out or (Path(args.dir or VARIANT_DIR) / "mapping.json"))
         print(summary(m))
         print(f"mapping written to {out} (sha {mapping_sha(m)[:12]}); approve it before use")
@@ -1170,10 +1215,11 @@ def main(argv=None) -> int:
         m = json.loads(Path(args.mapping).read_text(encoding="utf-8"))
         t = json.loads(Path(args.truth or (Path(args.mapping).parent / "truth.json")).read_text(encoding="utf-8"))
         r = score(m, t)
-        print(f"columns {r['correct']}/{r['columns']} ({r['accuracy']:.1%}); needed by the agent {r['needed_correct']}/{r['needed']}; "
+        print(f"file columns {r['correct']}/{r['columns']} ({r['accuracy']:.1%}), wrong {sum(1 for w in r['wrong'] if w['got'])}, "
+              f"unresolved {sum(1 for w in r['wrong'] if not w['got'])}; needed by the agent {r['needed_correct']}/{r['needed']}; "
               f"by role {r['by_role']}; roles {sum(x['ok'] for x in r['roles'])}/{len(r['roles'])} files")
-        for w in r["wrong"][:40]:
-            print(f"  WRONG {w['column']}: got {w['got']} truth {w['truth']}")
+        for w in r["wrong"][:60]:
+            print(f"  {'UNRESOLVED' if w['got'] is None else 'WRONG'} {w['file']} {w['column']}: got {w['got']} truth {w['truth']}")
         return 0
     if args.cmd == "compare":
         idx = Path(args.index or (VARIANT_DIR / "kavach_variant.duckdb")).resolve()

@@ -35,7 +35,7 @@ def load_job(conn) -> None:
     _gsql(conn, f"USE GRAPH {graph}\n" + loading.job_gsql(graph))
 
 
-QUERY_FILES = ("queries.gsql", "queries_r2.gsql", "queries_grow.gsql")
+QUERY_FILES = ("queries.gsql", "queries_r2.gsql", "queries_grow.gsql", "queries_fusion.gsql")
 
 
 def queries(conn, files=QUERY_FILES) -> None:

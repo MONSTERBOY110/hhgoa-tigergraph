@@ -35,7 +35,7 @@
         ]
       },
       {
-        "claim": "The alert names card C09241-K1 (customer C09241), but transaction 3640919 is on card C09241-K2 (customer C09241, card type debit)..",
+        "claim": "The alert names card C09241-K1 (customer C09241), but transaction 3640919 is on card C09241-K2 (customer C09241, card type debit).",
         "source": "graph",
         "ref": "query:txn_detail(txn_id=3640919)",
         "entity_ids": [
@@ -56,19 +56,28 @@
         "source": "document",
         "ref": "document:README#POLICY-R3",
         "entity_ids": []
+      },
+      {
+        "claim": "Graph and vector fused: closed case CC-0362 (cleared, none) is reached through the device profile Windows | Windows 10 | chrome 66.0 | 1280x1024, which card C08489-K2 also used in the 30 days to the alert, and its analyst note is the closest to this case among the connected closed cases (similarity 0.81)",
+        "source": "graph",
+        "ref": "query:fused_precedent(card_ids=C09241-K2)",
+        "entity_ids": [
+          "CC-0362",
+          "C08489-K2"
+        ]
       }
     ],
     "similar_prior_cases": [
+      "CC-0362",
+      "CC-1034",
       "CC-0254",
       "CC-0548",
       "CC-0771",
-      "CC-1002",
-      "CC-4783",
-      "CC-2283"
+      "CC-1002"
     ],
-    "summary": "Alert HHF-011 opened because the bank's model flagged transaction 3640919 (recorded score 0.31) ($881.55, product W, in person, 2017-01-20 05:06) on card C09241-K2. The evidence points to the cardholder: Customer confirmed the transaction when asked: Customer confirms they made the purchase; Profile fit: product W is this account's usual product (467 earlier purchases on card C09241-K2 in its region 494); Profile fit: $881.55 is within the account's earlier range (largest $1,103.96 over 486 purchases). Fraud probability 0.03; the alert is closed as legitimate. Evidence request: Customer confirms they made the purchase.",
-    "written_to_graph": false,
-    "graph_case_id": ""
+    "summary": "Alert HHF-011 opened because the bank's model flagged transaction 3640919 (recorded score 0.31) ($881.55, product W, in person, 2017-01-20 05:06) on card C09241-K2. The evidence points to the cardholder: Customer confirmed the transaction when asked: Customer confirms they made the purchase; Profile fit: product W is this account's usual product. Fraud probability 0.03; the alert is closed as legitimate (allow transaction, verify with customer, monitor card, close no fraud). Evidence request: Customer confirms they made the purchase.",
+    "written_to_graph": true,
+    "graph_case_id": "CASE-2016-9835"
   },
   "evidence_requests": [
     {
@@ -123,7 +132,7 @@
     "activity_dates": []
   },
   "stop_reason": "The customer's reply settled the question (section 6): probability moved from 0.36 to 0.03. Further steps would not change the actions.",
-  "tool_calls": 10,
+  "tool_calls": 14,
   "tokens": 0,
-  "latency_s": 0.29
+  "latency_s": 18.74
 }

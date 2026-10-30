@@ -41,37 +41,93 @@
       }
     }
   },
-  "backend": "duck",
-  "run_at": "2026-10-29T12:14:10Z",
+  "backend": "tg",
+  "run_at": "2026-10-29T22:44:53Z",
   "claims": [
     {
       "id": "E1",
       "kind": "evidence",
-      "what": "Customer confirmed the transaction when asked: On review of the transaction details with the customer, the customer recognises the purchase (made by themselves or an authorised household member) and withdraws the dispute",
+      "what": "The same ladder capped at $1,800.00 appears on 2 other cards within 14 days: coordinated cash-out across customers (no labelled example: the closed months show this template on 3 or more cards 0 times (0 of the reference transactions), so a stated coordination weight of 1.5 is used)",
       "evidence": {
-        "txn_ids": [],
-        "card_ids": [],
+        "txn_ids": [
+          "3660150",
+          "3660151",
+          "3660152",
+          "3660158",
+          "3660163",
+          "3660153"
+        ],
+        "card_ids": [
+          "C08563-K1",
+          "C08943-K2"
+        ],
         "customer_ids": [],
         "case_ids": [],
         "device_keys": [],
         "other": []
       },
-      "how": {},
+      "how": {
+        "tool": "amount_peers",
+        "params": {
+          "product_cd": "C",
+          "amt": 1800.0,
+          "t0": "2017-01-31 17:31:28",
+          "days": 14,
+          "tol": 0.001
+        }
+      },
       "when": {
-        "ts": "2026-10-29T12:14:10Z",
+        "ts": "2026-10-29T22:44:53Z",
         "dataset_version": "eb6caf5672c6"
       },
-      "source": "customer",
-      "ref": "evidence_request:1",
-      "signal": "customer_confirms",
-      "llr": -3.0
+      "source": "graph",
+      "ref": "query:amount_peers(product_cd=C, amt=1800.0, t0=2017-01-31 17:31:28, days=14, tol=0.001)",
+      "signal": "amount_ladder_ring",
+      "llr": 1.5
     },
     {
       "id": "E2",
       "kind": "evidence",
-      "what": "Purchaser email domain yahoo.com is this account's own: 42 earlier transactions on card C11663-K1 used it",
+      "what": "Customer C11663 disputes transaction 3660153 ($1,800.00); a dispute is strong but not conclusive evidence (in the Round 1 review 7 of 8 customer reports were confirmed fraud, and one was cleared because the purchase fitted the cardholder)",
       "evidence": {
         "txn_ids": [
+          "3660153"
+        ],
+        "card_ids": [],
+        "customer_ids": [
+          "C11663"
+        ],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "txn_detail",
+        "params": {
+          "txn_id": 3660153
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:44:53Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "customer",
+      "ref": "case_pack:trigger_text",
+      "signal": "customer_dispute",
+      "llr": 0.9
+    },
+    {
+      "id": "E3",
+      "kind": "evidence",
+      "what": "Amount ladder on card C11663-K1: 7 online product C purchases from $181.73 up to $1,800.00 within 9.2 days (steps x1.97, x2.27, x2.22, x1, x1, x1): a stepped cash-out probing the limit (weak signal: the closed cases do not validate this rule (lift 2.4, 3 confirmed-fraud hits))",
+      "evidence": {
+        "txn_ids": [
+          "3660147",
+          "3660148",
+          "3660149",
+          "3660150",
+          "3660151",
+          "3660152",
           "3660153"
         ],
         "card_ids": [],
@@ -87,16 +143,16 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:10Z",
+        "ts": "2026-10-29T22:44:53Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
       "ref": "query:card_history(card_id=C11663-K1)",
-      "signal": "email_familiar",
-      "llr": -0.5
+      "signal": "amount_ladder",
+      "llr": 0.43
     },
     {
-      "id": "E3",
+      "id": "E4",
       "kind": "evidence",
       "what": "$1,800.00 is 2.7 times the largest earlier purchase on card C11663-K1",
       "evidence": {
@@ -116,7 +172,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:10Z",
+        "ts": "2026-10-29T22:44:53Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -125,38 +181,9 @@
       "llr": 0.41
     },
     {
-      "id": "E4",
-      "kind": "evidence",
-      "what": "Profile fit: the purchase hour (17:00) is one the account already uses (20% of its earlier purchases within an hour of it)",
-      "evidence": {
-        "txn_ids": [
-          "3660153"
-        ],
-        "card_ids": [],
-        "customer_ids": [],
-        "case_ids": [],
-        "device_keys": [],
-        "other": []
-      },
-      "how": {
-        "tool": "card_history",
-        "params": {
-          "card_id": "C11663-K1"
-        }
-      },
-      "when": {
-        "ts": "2026-10-29T12:14:10Z",
-        "dataset_version": "eb6caf5672c6"
-      },
-      "source": "graph",
-      "ref": "query:card_history(card_id=C11663-K1)",
-      "signal": "hour_familiar",
-      "llr": -0.3
-    },
-    {
       "id": "E5",
       "kind": "evidence",
-      "what": "Policy applied, Fraud Policy R3: Customer confirms the transaction: Recommend CLOSE_NO_FRAUD.",
+      "what": "Policy applied, Fraud Policy R9: Undocumented patterns: When activity fits none of the known patterns but the evidence shows coordinated or repeated abuse across customers, recommend CREATE_CASE, FILE_REPORT, and ESCALATE_TO_ANALYST, and describe the pattern in your own words.",
       "evidence": {
         "txn_ids": [],
         "card_ids": [],
@@ -168,17 +195,82 @@
       "how": {
         "tool": "document",
         "params": {
-          "doc_id": "POLICY-R3"
+          "doc_id": "POLICY-R9"
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:10Z",
+        "ts": "2026-10-29T22:44:53Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
-      "ref": "document:README#POLICY-R3",
+      "ref": "document:README#POLICY-R9",
       "signal": "",
       "llr": null
+    },
+    {
+      "id": "E6",
+      "kind": "evidence",
+      "what": "Nearest documented pattern by text similarity is Known fraud patterns: Card-not-present fraud (cosine 0.74), which does not describe a coordinated template across customers; its definition: The number is used online without the card.",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "document",
+        "params": {
+          "doc_id": "PATTERN-2"
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:44:53Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "document",
+      "ref": "document:README#PATTERN-2",
+      "signal": "",
+      "llr": null
+    },
+    {
+      "id": "E7",
+      "kind": "evidence",
+      "what": "Graph algorithm (weakly connected components of the cards whose atypical transactions share a rare element, 2017-01-01 to 2017-01-31): card C11663-K1 is in a component of 3 cards (3 components in the window, the largest 15); shared: ring template amount_ladder (3 cards)",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [
+          "C08563-K1",
+          "C08943-K2"
+        ],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "ring_component",
+        "params": {
+          "card_id": "C11663-K1",
+          "t_from": "2017-01-01 20:31:28",
+          "t_to": "2017-01-31 20:31:28",
+          "template_name": "amount_ladder",
+          "template_cards": [
+            "C11663-K1",
+            "C08563-K1",
+            "C08943-K2"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:44:53Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "graph",
+      "ref": "query:ring_wcc(seed=C11663-K1)",
+      "signal": "ring_component",
+      "llr": 0.0
     },
     {
       "id": "D1",
@@ -201,21 +293,347 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:10Z",
+        "ts": "2026-10-29T22:44:53Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
       "ref": "query:card_history(card_id=C11663-K1)",
       "signal": "risk_score",
       "llr": -0.1
+    },
+    {
+      "id": "S1",
+      "kind": "sar_sentence",
+      "what": "This report concerns customer C11663, card C11663-K1, issued as a mastercard debit.",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [
+          "C11663-K1"
+        ],
+        "customer_ids": [
+          "C11663"
+        ],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "card_ids": [
+            "C11663-K1"
+          ],
+          "customer_ids": [
+            "C11663"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:44:53Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": [
+        "E2"
+      ]
+    },
+    {
+      "id": "S2",
+      "kind": "sar_sentence",
+      "what": "Between 2017-01-22 and 2017-01-31, 7 transaction(s) totalling $8,551.47 were identified as part of one fraud episode, beginning with transaction 3660147.",
+      "evidence": {
+        "txn_ids": [
+          "3660147",
+          "3660148",
+          "3660149",
+          "3660150",
+          "3660151",
+          "3660152",
+          "3660153"
+        ],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "txn_ids": [
+            "3660147",
+            "3660148",
+            "3660149",
+            "3660150",
+            "3660151",
+            "3660152",
+            "3660153"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:44:53Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "D1"
+      ]
+    },
+    {
+      "id": "S3",
+      "kind": "sar_sentence",
+      "what": "The activity took place online, product code(s) C, billing region(s) 315, 327.",
+      "evidence": {
+        "txn_ids": [
+          "3660147",
+          "3660148",
+          "3660149",
+          "3660150",
+          "3660151",
+          "3660152",
+          "3660153"
+        ],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "txn_ids": [
+            "3660147",
+            "3660148",
+            "3660149",
+            "3660150",
+            "3660151",
+            "3660152",
+            "3660153"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:44:53Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "D1"
+      ]
+    },
+    {
+      "id": "S4",
+      "kind": "sar_sentence",
+      "what": "The transactions were online purchases of one product stepping up roughly doubling in amount until they reached a fixed cap, the same ladder appearing on other customers' cards.",
+      "evidence": {
+        "txn_ids": [
+          "3660147",
+          "3660148",
+          "3660149",
+          "3660150",
+          "3660151",
+          "3660152",
+          "3660153"
+        ],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "txn_ids": [
+            "3660147",
+            "3660148",
+            "3660149",
+            "3660150",
+            "3660151",
+            "3660152",
+            "3660153"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:44:53Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "D1"
+      ]
+    },
+    {
+      "id": "S5",
+      "kind": "sar_sentence",
+      "what": "The activity is assessed as an undocumented coordinated pattern: The same ladder capped at $1,800.00 appears on 2 other cards within 14 days: coordinated cash-out across customers; Amount ladder on card C11663-K1: 7 online product C purchases from $181.73 up to $1,800.00 within 9.2 days: a stepped cash-out probing the limit.",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [
+          "C11663-K1"
+        ],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "card_ids": [
+            "C11663-K1"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:44:53Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": []
+    },
+    {
+      "id": "S6",
+      "kind": "sar_sentence",
+      "what": "The shared element (a repeated amount ladder capped at $1,800.00 (product C)) links this activity to 2 other card(s), including C08563-K1, C08943-K2, which indicates a common actor across cardholders.",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [
+          "C11663-K1",
+          "C08563-K1",
+          "C08943-K2"
+        ],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "card_ids": [
+            "C11663-K1",
+            "C08563-K1",
+            "C08943-K2"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:44:53Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": [
+        "E1",
+        "E7"
+      ]
+    },
+    {
+      "id": "S7",
+      "kind": "sar_sentence",
+      "what": "Earlier confirmed cases CC-3748, CC-3841, CC-4124 show the same pattern.",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [
+          "CC-3748",
+          "CC-3841",
+          "CC-4124"
+        ],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "case_ids": [
+            "CC-3748",
+            "CC-3841",
+            "CC-4124"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:44:53Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": []
+    },
+    {
+      "id": "S8",
+      "kind": "sar_sentence",
+      "what": "The cardholder reported the disputed transaction to the bank and denied making it.",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [],
+        "customer_ids": [
+          "C11663"
+        ],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "customer_ids": [
+            "C11663"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:44:53Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": [
+        "E2"
+      ]
+    },
+    {
+      "id": "S9",
+      "kind": "sar_sentence",
+      "what": "The bank has recommended BLOCK_CARD, MONITOR_CONNECTED_CARDS and opened an internal case; the report is filed under R9, §3a.",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [
+          "C11663-K1"
+        ],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "card_ids": [
+            "C11663-K1"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:44:53Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": []
     }
   ],
   "counts": {
-    "claims": 6,
-    "with_how": 5,
+    "claims": 17,
+    "with_how": 17,
     "by_kind": {
-      "evidence": 5,
-      "sar_sentence": 0,
+      "evidence": 7,
+      "sar_sentence": 9,
       "detector_hit": 1
     }
   },

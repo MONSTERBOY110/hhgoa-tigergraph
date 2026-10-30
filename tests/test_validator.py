@@ -248,8 +248,12 @@ def test_r2_tipoff(r2, where):
         a["case"]["evidence"][0]["claim"] = bad
     else:
         a["next_best_actions"]["final"].append(_act("WARN_CUSTOMER", a["case"]["exposure_usd"], "R7: " + bad))
-    errs, _ = _review(r2, a)
-    assert errs == [f"tip-off: {where} mentions a report or regulator ('file a report')"]
+    errs, warns = _review(r2, a)
+    if where in ("summary", "evidence claim 1"):
+        # internal text never reaches the customer: a warning for a human to check, not an error
+        assert errs == [] and any(w.startswith(f"internal {where} mentions a report") for w in warns)
+    else:
+        assert errs == [f"tip-off: {where} mentions a report or regulator ('file a report')"]
 
 
 @needs_r2

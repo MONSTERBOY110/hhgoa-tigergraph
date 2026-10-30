@@ -147,11 +147,11 @@ def sar_sentences_template(facts: dict) -> list[tuple[str, list[str]]]:
         (f"The activity took place {facts['where']}.",
          list(dict.fromkeys(ep_ids + [d for d in ep_devs if d in str(facts['where'])]))),
         (f"The transactions were {facts['how']}.", ep_ids),
-        (f"The activity is assessed as {PATTERN_WORDS[facts['pattern']]}: {facts['top_fraud']}.",
-         list(dict.fromkeys(ID_RE.findall(str(facts['top_fraud'])) or ep_ids))),
+        (f"The activity is assessed as {PATTERN_WORDS[facts['pattern']]}: {facts.get('top_fraud_plain') or facts['top_fraud']}.",
+         list(dict.fromkeys(ID_RE.findall(str(facts.get('top_fraud_plain') or facts['top_fraud'])) or ep_ids))),
     ]
     if facts["n_connected"]:
-        s.append((f"The same {facts['shared']} links this activity to {facts['n_connected']} other card(s), including "
+        s.append((f"The shared element ({facts['shared']}) links this activity to {facts['n_connected']} other card(s), including "
                   f"{', '.join(facts['connected'][:4])}, which indicates a common actor across cardholders.",
                   [card] + [str(c) for c in facts["connected"]]))
     else:
@@ -325,8 +325,9 @@ def _lookup_ids(txn_ids=(), card_ids=(), customer_ids=(), case_ids=(), device_ke
     if case_ids:
         found += list(q("select case_id from closed where case_id in (select unnest(?))", list(case_ids)).case_id)
     if device_keys:
-        found += list(q("select distinct device_key from txn where device_key in (select unnest(?))",
-                        list(device_keys)).device_key)
+        # ids are stored trimmed (see _id), but device keys can end in spaces ("SM-J700T1 |  |  | "): compare trimmed forms
+        found += list(q("select distinct trim(device_key) k from txn where trim(device_key) in (select unnest(?))",
+                        [str(d).strip() for d in device_keys]).k)
     return found
 
 
@@ -449,6 +450,8 @@ def verify(case_id: str, backend: str = "duck", attest_dir_: Path | str | None =
     """Re-run every claim's query through a fresh ToolRegistry and check its ids against the result."""
     from kavach.tools import ToolRegistry
     side = load(case_id, attest_dir_)
+    if backend in (None, "", "auto"):          # re-run each case on the lane that produced it (recorded in the sidecar)
+        backend = (load(case_id, attest_dir_) or {}).get("backend") or "duck"
     tools = ToolRegistry(backend)
     cur = _version_id(dataset_version())
     return [verify_claim(c, tools, cur) for c in side.get("claims", [])]
@@ -478,7 +481,7 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(prog="python -m kavach.attest", description="Re-run and verify attested claims.")
     ap.add_argument("case", nargs="?", help="case id, e.g. HHF-003")
     ap.add_argument("--all", action="store_true", help="every sidecar in attestations/")
-    ap.add_argument("--backend", default="duck")
+    ap.add_argument("--backend", default="auto", help="auto: the lane recorded in each sidecar (duck or tg)")
     ap.add_argument("--build", action="store_true",
                     help="first (re)build the sidecar from cases/<id>.json and logs/traces/<id>.json")
     ap.add_argument("--dir", default=None, help="attestations directory (default attestations/)")

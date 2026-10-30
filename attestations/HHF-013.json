@@ -41,8 +41,8 @@
       }
     }
   },
-  "backend": "duck",
-  "run_at": "2026-10-29T12:14:13Z",
+  "backend": "tg",
+  "run_at": "2026-10-29T22:47:36Z",
   "claims": [
     {
       "id": "E1",
@@ -65,7 +65,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:13Z",
+        "ts": "2026-10-29T22:47:36Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -94,7 +94,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:13Z",
+        "ts": "2026-10-29T22:47:36Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -123,7 +123,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:13Z",
+        "ts": "2026-10-29T22:47:36Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -152,7 +152,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:13Z",
+        "ts": "2026-10-29T22:47:36Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -179,13 +179,154 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:13Z",
+        "ts": "2026-10-29T22:47:36Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
       "ref": "document:README#POLICY-R3",
       "signal": "",
       "llr": null
+    },
+    {
+      "id": "E6",
+      "kind": "evidence",
+      "what": "Case memory: earlier investigation CASE-2016-6009 (HHF-006, verdict fraud, pattern undocumented) already touches card C06115-K1",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [
+          "C06115-K1"
+        ],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": [
+          "HHF-006"
+        ]
+      },
+      "how": {
+        "tool": "case_memory",
+        "params": {
+          "card_ids": [
+            "C06115-K1"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:47:36Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "graph",
+      "ref": "query:case_memory(c=C06115-K1)",
+      "signal": "case_memory",
+      "llr": 0.0
+    },
+    {
+      "id": "E7",
+      "kind": "evidence",
+      "what": "Graph and vector fused: closed case CC-3709 (cleared, none) is reached through the recipient email domain sc.rr.com, which card C05610-K1 also used in the 30 days to the alert, and its analyst note is the closest to this case among the connected closed cases (similarity 0.78)",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [
+          "C05610-K1"
+        ],
+        "customer_ids": [],
+        "case_ids": [
+          "CC-3709"
+        ],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "fused_precedent",
+        "params": {
+          "card_ids": [
+            "C06115-K1"
+          ],
+          "text": "cleared false alarm: Profile fit: product W, purchaser email yahoo.com and the amount $409.30 all match card C06115-K1 before the last 7 days (78 earlier W purchases, 12 with this email, largest earlier purchase $2,945.01) Billing region 203 is familiar: 5 earlier transactions on this card there (6% of its in-person history)",
+          "t0": "2017-01-26 20:40:00",
+          "k": 5
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:47:36Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "graph",
+      "ref": "query:fused_precedent(card_ids=C06115-K1)",
+      "signal": "fused_precedent",
+      "llr": 0.0
+    },
+    {
+      "id": "E8",
+      "kind": "evidence",
+      "what": "Graph algorithm (weakly connected components of the cards whose atypical transactions share a rare element, 2016-12-27 to 2017-01-26): card C06115-K1 is in a component of 15 cards (4 components in the window, the largest 15); shared: recipient email domain sc.rr.com (15 cards)",
+      "evidence": {
+        "txn_ids": [
+          "3660261",
+          "3660262",
+          "3660264",
+          "3660266",
+          "3660267",
+          "3660274",
+          "3660275",
+          "3660276",
+          "3660278",
+          "3660279",
+          "3660281",
+          "3660282",
+          "3660283",
+          "3660284",
+          "3660285",
+          "3660286",
+          "3660287",
+          "3660288",
+          "3660289",
+          "3660311",
+          "3660312",
+          "3660313",
+          "3660314",
+          "3660315",
+          "3660316"
+        ],
+        "card_ids": [
+          "C00534-K2",
+          "C01357-K1",
+          "C01507-K1",
+          "C01594-K1",
+          "C01727-K2",
+          "C02167-K2",
+          "C04146-K1",
+          "C04668-K1",
+          "C05610-K1",
+          "C06639-K1",
+          "C08384-K1",
+          "C11617-K1",
+          "C11743-K2",
+          "C11940-K1"
+        ],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "ring_component",
+        "params": {
+          "card_id": "C06115-K1",
+          "t_from": "2016-12-27 20:40:00",
+          "t_to": "2017-01-26 20:40:00",
+          "template_name": "",
+          "template_cards": []
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:47:36Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "graph",
+      "ref": "query:ring_wcc(seed=C06115-K1)",
+      "signal": "ring_component",
+      "llr": 0.0
     },
     {
       "id": "D1",
@@ -208,7 +349,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:13Z",
+        "ts": "2026-10-29T22:47:36Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
@@ -218,10 +359,10 @@
     }
   ],
   "counts": {
-    "claims": 6,
-    "with_how": 6,
+    "claims": 9,
+    "with_how": 9,
     "by_kind": {
-      "evidence": 5,
+      "evidence": 8,
       "sar_sentence": 0,
       "detector_hit": 1
     }

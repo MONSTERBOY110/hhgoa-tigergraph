@@ -13,8 +13,15 @@ $ErrorActionPreference = "Stop"
 Set-Location -Path $PSScriptRoot
 $py = Join-Path $PSScriptRoot ".venv\Scripts\python.exe"
 if (-not (Test-Path $py)) {
-    Write-Host "setup: creating .venv and installing requirements"
-    python -m venv .venv
+    Write-Host "setup: creating .venv and installing requirements (Python 3.11 or 3.12 preferred)"
+    $made = $false
+    foreach ($v in @("-3.11", "-3.12")) {
+        if (-not $made -and (Get-Command py -ErrorAction SilentlyContinue)) {
+            & py $v -m venv .venv 2>$null
+            if ($LASTEXITCODE -eq 0 -and (Test-Path $py)) { $made = $true }
+        }
+    }
+    if (-not $made) { python -m venv .venv }
     & $py -m pip install --quiet -r requirements.txt
     if ($LASTEXITCODE -ne 0) { exit 1 }
 }
@@ -24,6 +31,11 @@ if (-not (Test-Path "data\kavach_r2.duckdb")) {
     & $py -m kavach download --round 1; if ($LASTEXITCODE -ne 0) { exit 1 }
     & $py -m kavach download --round 2; if ($LASTEXITCODE -ne 0) { exit 1 }
     & $py -m kavach index; if ($LASTEXITCODE -ne 0) { exit 1 }
+}
+if (-not (Test-Path "data\vectors.npz")) {
+    # build the 384-d embeddings once at setup, so no investigation's tool call pays for it (the per-call bound is 90 s)
+    Write-Host "setup: embedding the closed-case notes and policy sections (one time, a few minutes)"
+    & $py -m kavach vectors; if ($LASTEXITCODE -ne 0) { exit 1 }
 }
 $argsList = @("-m", "kavach", "investigate", $CaseId, "--backend", $Backend)
 if ($NoLlm) { $argsList += "--no-llm" }

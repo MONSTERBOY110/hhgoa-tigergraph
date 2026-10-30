@@ -41,8 +41,8 @@
       }
     }
   },
-  "backend": "duck",
-  "run_at": "2026-10-29T12:14:12Z",
+  "backend": "tg",
+  "run_at": "2026-10-29T22:46:19Z",
   "claims": [
     {
       "id": "E1",
@@ -65,7 +65,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:12Z",
+        "ts": "2026-10-29T22:46:19Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -96,7 +96,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:12Z",
+        "ts": "2026-10-29T22:46:19Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -125,7 +125,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:12Z",
+        "ts": "2026-10-29T22:46:19Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -143,7 +143,9 @@
         "customer_ids": [],
         "case_ids": [],
         "device_keys": [],
-        "other": []
+        "other": [
+          "HHF-008"
+        ]
       },
       "how": {
         "tool": "case_pack_row",
@@ -152,7 +154,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:12Z",
+        "ts": "2026-10-29T22:46:19Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "external",
@@ -179,7 +181,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:12Z",
+        "ts": "2026-10-29T22:46:19Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
@@ -206,13 +208,49 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:12Z",
+        "ts": "2026-10-29T22:46:19Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
       "ref": "document:README#PATTERN-4",
       "signal": "",
       "llr": null
+    },
+    {
+      "id": "E7",
+      "kind": "evidence",
+      "what": "Graph and vector fused: closed case CC-5429 (confirmed_fraud, out_of_region_use) is reached through the device profile Windows | Windows 10 | chrome 61.0 | 1366x768, which card C04285-K1 also used in the 30 days to the alert, and its analyst note is the closest to this case among the connected closed cases (similarity 0.83)",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [
+          "C04285-K1"
+        ],
+        "customer_ids": [],
+        "case_ids": [
+          "CC-5429"
+        ],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "fused_precedent",
+        "params": {
+          "card_ids": [
+            "C07871-K1"
+          ],
+          "text": "confirmed fraud out_of_region_use: Profile fit: product W, purchaser email hotmail.com and the amount $165.65 all match card C07871-K1 before the last 7 days (160 earlier W purchases, 19 with this email, largest earlier purchase $2,948.12) Card C07871-K1 already has 1 confirmed-fraud closed case(s) (CC-1638). The account key is not usable in January, so the precedent is read at card level, where it is weaker: on cards of this size an earlier confirmed case made a new alert about 3.9 times as likely to be fraud",
+          "t0": "2017-01-21 13:23:58",
+          "k": 5
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:46:19Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "graph",
+      "ref": "query:fused_precedent(card_ids=C07871-K1)",
+      "signal": "fused_precedent",
+      "llr": 0.0
     },
     {
       "id": "D1",
@@ -235,7 +273,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:12Z",
+        "ts": "2026-10-29T22:46:19Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
@@ -245,10 +283,10 @@
     }
   ],
   "counts": {
-    "claims": 7,
-    "with_how": 7,
+    "claims": 8,
+    "with_how": 8,
     "by_kind": {
-      "evidence": 6,
+      "evidence": 7,
       "sar_sentence": 0,
       "detector_hit": 1
     }

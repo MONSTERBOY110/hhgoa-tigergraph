@@ -41,11 +41,66 @@
       }
     }
   },
-  "backend": "duck",
-  "run_at": "2026-10-29T12:14:10Z",
+  "backend": "tg",
+  "run_at": "2026-10-29T22:44:19Z",
   "claims": [
     {
       "id": "E1",
+      "kind": "evidence",
+      "what": "The same template (product C, New device behind an anonymous proxy, $200 or more, 2 or more within 72 hours) appears on 14 other cards within 14 days, none sharing a device with this card: coordinated abuse across customers (no labelled example: the closed months show this template on 3 or more cards 0 times (0 of the reference transactions), so a stated coordination weight of 1.5 is used)",
+      "evidence": {
+        "txn_ids": [
+          "3660106",
+          "3660107",
+          "3660108",
+          "3660100",
+          "3660099",
+          "3660109",
+          "3660110",
+          "3615957",
+          "3615956",
+          "3660097",
+          "3660096",
+          "3660098",
+          "3660113"
+        ],
+        "card_ids": [
+          "C00450-K1",
+          "C02342-K1",
+          "C03528-K1",
+          "C05704-K2",
+          "C05770-K1",
+          "C06220-K1",
+          "C06962-K2",
+          "C07212-K2",
+          "C07925-K1",
+          "C07997-K1"
+        ],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "entity_neighbors",
+        "params": {
+          "entity_field": "access_signature",
+          "value": "C|IP_PROXY:ANONYMOUS|New|mobile",
+          "t_from": "2016-12-31 00:00:00",
+          "t_to": "2017-01-29 00:00:00"
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:44:19Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "graph",
+      "ref": "query:entity_neighbors(entity_field=access_signature, value=C|IP_PROXY:ANONYMOUS|New|mobile, t_from=2016-12-31 00:00:00, t_to=2017-01-29 00:00:00)",
+      "signal": "proxy_new_burst_ring",
+      "llr": 1.5
+    },
+    {
+      "id": "E2",
       "kind": "evidence",
       "what": "Card C05061-K1 already has 3 confirmed-fraud closed case(s) (CC-2420, CC-2674, CC-4210). The account key is not usable in January, so the precedent is read at card level, where it is weaker: on cards of this size an earlier confirmed case made a new alert about 3.9 times as likely to be fraud",
       "evidence": {
@@ -69,7 +124,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:10Z",
+        "ts": "2026-10-29T22:44:19Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -78,94 +133,7 @@
       "llr": 0.68
     },
     {
-      "id": "E2",
-      "kind": "evidence",
-      "what": "Purchaser email domain gmail.com is this account's own: 42 earlier transactions on card C05061-K1 used it",
-      "evidence": {
-        "txn_ids": [
-          "3660108"
-        ],
-        "card_ids": [],
-        "customer_ids": [],
-        "case_ids": [],
-        "device_keys": [],
-        "other": []
-      },
-      "how": {
-        "tool": "card_history",
-        "params": {
-          "card_id": "C05061-K1"
-        }
-      },
-      "when": {
-        "ts": "2026-10-29T12:14:10Z",
-        "dataset_version": "eb6caf5672c6"
-      },
-      "source": "graph",
-      "ref": "query:card_history(card_id=C05061-K1)",
-      "signal": "email_familiar",
-      "llr": -0.5
-    },
-    {
       "id": "E3",
-      "kind": "evidence",
-      "what": "Profile fit: $447.95 is within the account's earlier range (largest $2,147.02 over 116 purchases)",
-      "evidence": {
-        "txn_ids": [
-          "3660108"
-        ],
-        "card_ids": [],
-        "customer_ids": [],
-        "case_ids": [],
-        "device_keys": [],
-        "other": []
-      },
-      "how": {
-        "tool": "card_history",
-        "params": {
-          "card_id": "C05061-K1"
-        }
-      },
-      "when": {
-        "ts": "2026-10-29T12:14:10Z",
-        "dataset_version": "eb6caf5672c6"
-      },
-      "source": "graph",
-      "ref": "query:card_history(card_id=C05061-K1)",
-      "signal": "amount_within_max",
-      "llr": -0.4
-    },
-    {
-      "id": "E4",
-      "kind": "evidence",
-      "what": "Profile fit: the purchase hour (20:00) is one the account already uses (20% of its earlier purchases within an hour of it)",
-      "evidence": {
-        "txn_ids": [
-          "3660108"
-        ],
-        "card_ids": [],
-        "customer_ids": [],
-        "case_ids": [],
-        "device_keys": [],
-        "other": []
-      },
-      "how": {
-        "tool": "card_history",
-        "params": {
-          "card_id": "C05061-K1"
-        }
-      },
-      "when": {
-        "ts": "2026-10-29T12:14:10Z",
-        "dataset_version": "eb6caf5672c6"
-      },
-      "source": "graph",
-      "ref": "query:card_history(card_id=C05061-K1)",
-      "signal": "hour_familiar",
-      "llr": -0.3
-    },
-    {
-      "id": "E5",
       "kind": "evidence",
       "what": "Connection through an anonymous proxy (id_23), not seen before on this account",
       "evidence": {
@@ -185,7 +153,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:10Z",
+        "ts": "2026-10-29T22:44:19Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -194,7 +162,7 @@
       "llr": 0.2
     },
     {
-      "id": "E6",
+      "id": "E4",
       "kind": "evidence",
       "what": "Identity record marks the device (RCT6303W87M7 Build/MRA58K | Windows 7 | ie 11.0 for desktop | ) as New for this account; 48% of the card's earlier online purchases were also from New devices (in the closed cases a New device is not more common in fraud than in normal traffic for this product)",
       "evidence": {
@@ -214,7 +182,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:10Z",
+        "ts": "2026-10-29T22:44:19Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -223,9 +191,9 @@
       "llr": -0.19
     },
     {
-      "id": "E7",
+      "id": "E5",
       "kind": "evidence",
-      "what": "Policy applied, Fraud Policy R4: No reply within 24 hours: Recommend MONITOR_CARD and DECLINE_TRANSACTION for pending authorizations.",
+      "what": "Policy applied, Fraud Policy R9: Undocumented patterns: When activity fits none of the known patterns but the evidence shows coordinated or repeated abuse across customers, recommend CREATE_CASE, FILE_REPORT, and ESCALATE_TO_ANALYST, and describe the pattern in your own words.",
       "evidence": {
         "txn_ids": [],
         "card_ids": [],
@@ -237,22 +205,22 @@
       "how": {
         "tool": "document",
         "params": {
-          "doc_id": "POLICY-R4"
+          "doc_id": "POLICY-R9"
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:10Z",
+        "ts": "2026-10-29T22:44:19Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
-      "ref": "document:README#POLICY-R4",
+      "ref": "document:README#POLICY-R9",
       "signal": "",
       "llr": null
     },
     {
-      "id": "E8",
+      "id": "E6",
       "kind": "evidence",
-      "what": "Pattern definition, Known fraud patterns: Card-not-present fraud from a new device: Same as above, with the identity record marking the device as New for this account, sometimes behind a proxy.",
+      "what": "Nearest documented pattern by text similarity is Known fraud patterns: Card-not-present fraud (cosine 0.77), which does not describe a coordinated template across customers; its definition: The number is used online without the card.",
       "evidence": {
         "txn_ids": [],
         "card_ids": [],
@@ -264,17 +232,181 @@
       "how": {
         "tool": "document",
         "params": {
-          "doc_id": "PATTERN-3"
+          "doc_id": "PATTERN-2"
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:10Z",
+        "ts": "2026-10-29T22:44:19Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
-      "ref": "document:README#PATTERN-3",
+      "ref": "document:README#PATTERN-2",
       "signal": "",
       "llr": null
+    },
+    {
+      "id": "E7",
+      "kind": "evidence",
+      "what": "Case memory: earlier investigation CASE-2016-4960 (HHF-002, verdict fraud, pattern undocumented) already touches card C05061-K1",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [
+          "C05061-K1"
+        ],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": [
+          "HHF-002"
+        ]
+      },
+      "how": {
+        "tool": "case_memory",
+        "params": {
+          "card_ids": [
+            "C05061-K1"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:44:19Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "graph",
+      "ref": "query:case_memory(c=C05061-K1)",
+      "signal": "case_memory",
+      "llr": 0.0
+    },
+    {
+      "id": "E8",
+      "kind": "evidence",
+      "what": "Case memory: earlier investigation CASE-2016-4960 (HHF-002, verdict fraud, pattern undocumented) already touches card C00450-K1",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [
+          "C00450-K1"
+        ],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": [
+          "HHF-002"
+        ]
+      },
+      "how": {
+        "tool": "case_memory",
+        "params": {
+          "card_ids": [
+            "C00450-K1"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:44:19Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "graph",
+      "ref": "query:case_memory(c=C00450-K1)",
+      "signal": "case_memory",
+      "llr": 0.0
+    },
+    {
+      "id": "E9",
+      "kind": "evidence",
+      "what": "Graph and vector fused: closed case CC-5229 (confirmed_fraud, card_not_present_fraud) is reached through the device profile iOS Device | iOS 10.0.2 | mobile safari 10.0 | 1136x640, which card C12418-K1 also used in the 30 days to the alert, and its analyst note is the closest to this case among the connected closed cases (similarity 0.83)",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [
+          "C12418-K1"
+        ],
+        "customer_ids": [],
+        "case_ids": [
+          "CC-5229"
+        ],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "fused_precedent",
+        "params": {
+          "card_ids": [
+            "C05061-K1"
+          ],
+          "text": "confirmed fraud undocumented: The same template (product C, New device behind an anonymous proxy, $200 or more, 2 or more within 72 hours) appears on 14 other cards within 14 days, none sharing a device with this card: coordinated abuse across customers (no labelled example: the closed months show this template on 3 or more cards 0 times (0 of the reference transactions), so a stated coordination weight of 1.5 is used) Card C05061-K1 already has 3 confirmed-fraud closed case(s) (CC-2420, CC-2674, CC-4210). The account key is not usable in January, so the precedent is read at card level, where it is weaker: on cards of this size an earlier confirmed case made a new alert about 3.9 times as likely to be fraud",
+          "t0": "2017-01-15 01:25:19",
+          "k": 5
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:44:19Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "graph",
+      "ref": "query:fused_precedent(card_ids=C05061-K1)",
+      "signal": "fused_precedent",
+      "llr": 0.0
+    },
+    {
+      "id": "E10",
+      "kind": "evidence",
+      "what": "Graph algorithm (weakly connected components of the cards whose atypical transactions share a rare element, 2016-12-16 to 2017-01-15): card C05061-K1 is in a component of 15 cards (13 components in the window, the largest 15); shared: ring template proxy_new_burst (15 cards)",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [
+          "C00450-K1",
+          "C02342-K1",
+          "C03528-K1",
+          "C05704-K2",
+          "C05770-K1",
+          "C06220-K1",
+          "C06962-K2",
+          "C07212-K2",
+          "C07925-K1",
+          "C07997-K1",
+          "C09251-K1",
+          "C10553-K1",
+          "C11309-K1",
+          "C11543-K2"
+        ],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "ring_component",
+        "params": {
+          "card_id": "C05061-K1",
+          "t_from": "2016-12-16 01:25:19",
+          "t_to": "2017-01-15 01:25:19",
+          "template_name": "proxy_new_burst",
+          "template_cards": [
+            "C05061-K1",
+            "C00450-K1",
+            "C02342-K1",
+            "C03528-K1",
+            "C05704-K2",
+            "C05770-K1",
+            "C06220-K1",
+            "C06962-K2",
+            "C07212-K2",
+            "C07925-K1",
+            "C07997-K1",
+            "C09251-K1",
+            "C10553-K1",
+            "C11309-K1",
+            "C11543-K2"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:44:19Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "graph",
+      "ref": "query:ring_wcc(seed=C05061-K1)",
+      "signal": "ring_component",
+      "llr": 0.0
     },
     {
       "id": "D1",
@@ -297,21 +429,346 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:10Z",
+        "ts": "2026-10-29T22:44:19Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
       "ref": "document:weights.json#score_calibration",
       "signal": "risk_score_untrusted",
       "llr": -0.1
+    },
+    {
+      "id": "S1",
+      "kind": "sar_sentence",
+      "what": "This report concerns customer C05061, card C05061-K1, issued as a visa credit.",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [
+          "C05061-K1"
+        ],
+        "customer_ids": [
+          "C05061"
+        ],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "card_ids": [
+            "C05061-K1"
+          ],
+          "customer_ids": [
+            "C05061"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:44:19Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": [
+        "E7"
+      ]
+    },
+    {
+      "id": "S2",
+      "kind": "sar_sentence",
+      "what": "Between 2017-01-12 and 2017-01-14, 3 transaction(s) totalling $2,189.02 were identified as part of one fraud episode, beginning with transaction 3660106.",
+      "evidence": {
+        "txn_ids": [
+          "3660106",
+          "3660107",
+          "3660108"
+        ],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "txn_ids": [
+            "3660106",
+            "3660107",
+            "3660108"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:44:19Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": [
+        "E1",
+        "E3",
+        "E4",
+        "D1"
+      ]
+    },
+    {
+      "id": "S3",
+      "kind": "sar_sentence",
+      "what": "The activity took place online, product code(s) C, billing region(s) 264, 492, from device profile(s) RCT6303W87M7 Build/MRA58K | Windows 10 | ie 11.0 for tablet | 1920x1080; RCT6303W87M7 Build/MRA58K | Windows 7 | ie 11.0 for desktop | .",
+      "evidence": {
+        "txn_ids": [
+          "3660106",
+          "3660107",
+          "3660108"
+        ],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [
+          "RCT6303W87M7 Build/MRA58K | Windows 7 | ie 11.0 for desktop |",
+          "RCT6303W87M7 Build/MRA58K | Windows 10 | ie 11.0 for tablet | 1920x1080"
+        ],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "txn_ids": [
+            "3660106",
+            "3660107",
+            "3660108"
+          ],
+          "device_keys": [
+            "RCT6303W87M7 Build/MRA58K | Windows 7 | ie 11.0 for desktop |",
+            "RCT6303W87M7 Build/MRA58K | Windows 10 | ie 11.0 for tablet | 1920x1080"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:44:19Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": [
+        "E1",
+        "E3",
+        "E4",
+        "D1"
+      ]
+    },
+    {
+      "id": "S4",
+      "kind": "sar_sentence",
+      "what": "The transactions were bursts of online purchases from devices new to the account behind an anonymous proxy, the same template appearing on other customers' cards with no device in common.",
+      "evidence": {
+        "txn_ids": [
+          "3660106",
+          "3660107",
+          "3660108"
+        ],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "txn_ids": [
+            "3660106",
+            "3660107",
+            "3660108"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:44:19Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": [
+        "E1",
+        "E3",
+        "E4",
+        "D1"
+      ]
+    },
+    {
+      "id": "S5",
+      "kind": "sar_sentence",
+      "what": "The activity is assessed as an undocumented coordinated pattern: The same template appears on 14 other cards within 14 days, none sharing a device with this card: coordinated abuse across customers; Card C05061-K1 already has 3 confirmed-fraud closed case. The account key is not usable in January, so the precedent is read at card level, where it is weaker: on cards of this size an earlier confirmed case made a new alert about 3.9 times as likely to be fraud.",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [
+          "C05061-K1"
+        ],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "card_ids": [
+            "C05061-K1"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:44:19Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": [
+        "E7"
+      ]
+    },
+    {
+      "id": "S6",
+      "kind": "sar_sentence",
+      "what": "The shared element (a repeated template of product C purchases of $200 or more in bursts from devices marked New behind an anonymous proxy, with no shared device) links this activity to 14 other card(s), including C00450-K1, C02342-K1, C03528-K1, C05704-K2, which indicates a common actor across cardholders.",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [
+          "C05061-K1",
+          "C00450-K1",
+          "C02342-K1",
+          "C03528-K1",
+          "C05704-K2",
+          "C05770-K1",
+          "C06220-K1",
+          "C06962-K2",
+          "C07212-K2"
+        ],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "card_ids": [
+            "C05061-K1",
+            "C00450-K1",
+            "C02342-K1",
+            "C03528-K1",
+            "C05704-K2",
+            "C05770-K1",
+            "C06220-K1",
+            "C06962-K2",
+            "C07212-K2"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:44:19Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": [
+        "E1",
+        "E7",
+        "E8",
+        "E10"
+      ]
+    },
+    {
+      "id": "S7",
+      "kind": "sar_sentence",
+      "what": "Earlier confirmed cases CC-5229, CC-2674, CC-2420 show the same pattern.",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [
+          "CC-5229",
+          "CC-2674",
+          "CC-2420"
+        ],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "case_ids": [
+            "CC-5229",
+            "CC-2674",
+            "CC-2420"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:44:19Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": [
+        "E2",
+        "E9"
+      ]
+    },
+    {
+      "id": "S8",
+      "kind": "sar_sentence",
+      "what": "The cardholder has not yet been contacted.",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [],
+        "customer_ids": [
+          "C05061"
+        ],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "customer_ids": [
+            "C05061"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:44:19Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": []
+    },
+    {
+      "id": "S9",
+      "kind": "sar_sentence",
+      "what": "The bank has recommended BLOCK_CARD, MONITOR_CONNECTED_CARDS and opened an internal case; the report is filed under R9, §3a.",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [
+          "C05061-K1"
+        ],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "card_ids": [
+            "C05061-K1"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:44:19Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": [
+        "E7"
+      ]
     }
   ],
   "counts": {
-    "claims": 9,
-    "with_how": 9,
+    "claims": 20,
+    "with_how": 20,
     "by_kind": {
-      "evidence": 8,
-      "sar_sentence": 0,
+      "evidence": 10,
+      "sar_sentence": 9,
       "detector_hit": 1
     }
   },

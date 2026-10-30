@@ -41,8 +41,8 @@
       }
     }
   },
-  "backend": "duck",
-  "run_at": "2026-10-29T12:14:14Z",
+  "backend": "tg",
+  "run_at": "2026-10-29T22:48:24Z",
   "claims": [
     {
       "id": "E1",
@@ -65,7 +65,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:14Z",
+        "ts": "2026-10-29T22:48:24Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -94,7 +94,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:14Z",
+        "ts": "2026-10-29T22:48:24Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -123,7 +123,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:14Z",
+        "ts": "2026-10-29T22:48:24Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -152,7 +152,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:14Z",
+        "ts": "2026-10-29T22:48:24Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -170,7 +170,9 @@
         "customer_ids": [],
         "case_ids": [],
         "device_keys": [],
-        "other": []
+        "other": [
+          "HHF-016"
+        ]
       },
       "how": {
         "tool": "case_pack_row",
@@ -179,7 +181,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:14Z",
+        "ts": "2026-10-29T22:48:24Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "external",
@@ -206,13 +208,49 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:14Z",
+        "ts": "2026-10-29T22:48:24Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
       "ref": "document:README#POLICY-R3",
       "signal": "",
       "llr": null
+    },
+    {
+      "id": "E7",
+      "kind": "evidence",
+      "what": "Graph and vector fused: closed case CC-3132 (cleared, none) is reached through the device profile Windows | Windows 8.1 | chrome 66.0 | 1368x768, which card C04108-K2 also used in the 30 days to the alert, and its analyst note is the closest to this case among the connected closed cases (similarity 0.80)",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [
+          "C04108-K2"
+        ],
+        "customer_ids": [],
+        "case_ids": [
+          "CC-3132"
+        ],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "fused_precedent",
+        "params": {
+          "card_ids": [
+            "C02502-K2"
+          ],
+          "text": "cleared false alarm: Profile fit: product W, purchaser email gmail.com and the amount $3,008.76 all match card C02502-K2 in its region 123 before the last 7 days (1322 earlier W purchases, 477 with this email, largest earlier purchase $3,247.90) Billing region 123 is familiar: 1431 earlier transactions on this card there (63% of its in-person history)",
+          "t0": "2017-01-01 03:07:47",
+          "k": 5
+        }
+      },
+      "when": {
+        "ts": "2026-10-29T22:48:24Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "source": "graph",
+      "ref": "query:fused_precedent(card_ids=C02502-K2)",
+      "signal": "fused_precedent",
+      "llr": 0.0
     },
     {
       "id": "D1",
@@ -235,7 +273,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:14Z",
+        "ts": "2026-10-29T22:48:24Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
@@ -271,7 +309,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T12:14:14Z",
+        "ts": "2026-10-29T22:48:24Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -281,10 +319,10 @@
     }
   ],
   "counts": {
-    "claims": 8,
-    "with_how": 8,
+    "claims": 9,
+    "with_how": 9,
     "by_kind": {
-      "evidence": 6,
+      "evidence": 7,
       "sar_sentence": 0,
       "detector_hit": 2
     }
