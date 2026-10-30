@@ -227,7 +227,7 @@ def drift(action: str = typer.Argument("detect", help="detect | status | approve
 
 PUBLISHED = ("RESILIENCE.md", "INNOVATION.md", "ablation.md", "backtests.md", "attacks.md", "drift-report.md", "data-quality.md",
              "january-data-profile.md", "round1-postmortem.md", "policy-to-detector.md", "containment.md", "sar-filings.md",
-             "bench.md", "analyst-loop.md", "schema-mapping.md", "drills.md", "tigergraph.md")
+             "bench.md", "analyst-loop.md", "schema-mapping.md", "drills.md", "tigergraph.md", "ARCHITECTURE.md")
 
 
 @app.command(context_settings={"allow_extra_args": True, "ignore_unknown_options": True})

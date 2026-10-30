@@ -1,0 +1,133 @@
+{
+  "clips": [
+    {
+      "file": "shot1.mp4",
+      "line": 1,
+      "similarity": 1.0,
+      "take": [
+        12.49,
+        19.55
+      ],
+      "seconds": 7.07,
+      "captions_from": "script",
+      "source": "1920x1080"
+    },
+    {
+      "file": "shot2.mp4",
+      "line": 2,
+      "similarity": 1.0,
+      "take": [
+        16.15,
+        26.55
+      ],
+      "seconds": 10.4,
+      "captions_from": "script",
+      "source": "1080x1920"
+    },
+    {
+      "file": "shot3.mov",
+      "line": 3,
+      "similarity": 1.0,
+      "take": [
+        17.93,
+        30.13
+      ],
+      "seconds": 12.2,
+      "captions_from": "script",
+      "source": "3840x2160"
+    },
+    {
+      "file": "shot4.mp4",
+      "line": 4,
+      "similarity": 0.96,
+      "take": [
+        16.35,
+        26.93
+      ],
+      "seconds": 10.6,
+      "captions_from": "script",
+      "source": "1920x1080"
+    },
+    {
+      "file": "shot5.mp4",
+      "line": 5,
+      "similarity": 0.93,
+      "take": [
+        17.55,
+        29.43
+      ],
+      "seconds": 11.9,
+      "captions_from": "script",
+      "source": "1920x1080"
+    }
+  ],
+  "total_seconds": 79.667,
+  "caption_groups": 33,
+  "music": "bed_c.wav",
+  "timeline": [
+    {
+      "id": "face1",
+      "kind": "face",
+      "start": 0.0,
+      "dur": 7.07
+    },
+    {
+      "id": "mg1",
+      "kind": "insert",
+      "start": 7.07,
+      "dur": 4.8
+    },
+    {
+      "id": "face2",
+      "kind": "face",
+      "start": 11.87,
+      "dur": 10.4
+    },
+    {
+      "id": "mg2",
+      "kind": "insert",
+      "start": 22.27,
+      "dur": 5.2
+    },
+    {
+      "id": "face3",
+      "kind": "face",
+      "start": 27.47,
+      "dur": 12.2
+    },
+    {
+      "id": "mg3",
+      "kind": "insert",
+      "start": 39.67,
+      "dur": 6.4
+    },
+    {
+      "id": "face4",
+      "kind": "face",
+      "start": 46.07,
+      "dur": 10.6
+    },
+    {
+      "id": "mg4",
+      "kind": "insert",
+      "start": 56.67,
+      "dur": 6.9
+    },
+    {
+      "id": "face5",
+      "kind": "face",
+      "start": 63.57,
+      "dur": 11.9
+    },
+    {
+      "id": "mg5",
+      "kind": "insert",
+      "start": 75.47,
+      "dur": 4.2
+    }
+  ],
+  "check": {
+    "ok": true,
+    "errors": []
+  }
+}

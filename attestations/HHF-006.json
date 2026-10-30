@@ -42,7 +42,7 @@
     }
   },
   "backend": "tg",
-  "run_at": "2026-10-29T22:45:49Z",
+  "run_at": "2026-10-30T05:21:58Z",
   "claims": [
     {
       "id": "E1",
@@ -71,7 +71,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:49Z",
+        "ts": "2026-10-30T05:21:58Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -106,7 +106,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:49Z",
+        "ts": "2026-10-30T05:21:58Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -149,7 +149,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:49Z",
+        "ts": "2026-10-30T05:21:58Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -176,7 +176,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:49Z",
+        "ts": "2026-10-30T05:21:58Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
@@ -203,7 +203,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:49Z",
+        "ts": "2026-10-30T05:21:58Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
@@ -239,7 +239,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:49Z",
+        "ts": "2026-10-30T05:21:58Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -331,7 +331,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:49Z",
+        "ts": "2026-10-30T05:21:58Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -360,7 +360,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:49Z",
+        "ts": "2026-10-30T05:21:58Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
@@ -371,7 +371,7 @@
     {
       "id": "S1",
       "kind": "sar_sentence",
-      "what": "This report concerns customer C01727, card C01727-K2, issued as a visa debit.",
+      "what": "This Suspicious Activity Report concerns unauthorized activity conducted on visa debit card C01727-K2 belonging to customer C01727 under case id HHF-006.",
       "evidence": {
         "txn_ids": [],
         "card_ids": [
@@ -396,7 +396,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:49Z",
+        "ts": "2026-10-30T05:21:58Z",
         "dataset_version": "eb6caf5672c6"
       },
       "supported_by": [
@@ -406,7 +406,7 @@
     {
       "id": "S2",
       "kind": "sar_sentence",
-      "what": "Between 2017-01-17 and 2017-01-28, 3 transaction(s) totalling $967.68 were identified as part of one fraud episode, beginning with transaction 3660261.",
+      "what": "Between 2017-01-17 and 2017-01-28, an unauthorized party executed three online transactions totaling 967.68 dollars without any associated device identifiers.",
       "evidence": {
         "txn_ids": [
           "3660261",
@@ -430,7 +430,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:49Z",
+        "ts": "2026-10-30T05:21:58Z",
         "dataset_version": "eb6caf5672c6"
       },
       "supported_by": [
@@ -442,12 +442,11 @@
     {
       "id": "S3",
       "kind": "sar_sentence",
-      "what": "The activity took place online, product code(s) C, billing region(s) 231.",
+      "what": "The activity commenced with transaction 3660261 on 2017-01-17 at 15:29 for 305.41 dollars, followed by transaction 3660262 on 2017-01-18 at 19:40 for 366.35 dollars.",
       "evidence": {
         "txn_ids": [
           "3660261",
-          "3660262",
-          "3660263"
+          "3660262"
         ],
         "card_ids": [],
         "customer_ids": [],
@@ -460,29 +459,24 @@
         "params": {
           "txn_ids": [
             "3660261",
-            "3660262",
-            "3660263"
+            "3660262"
           ]
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:49Z",
+        "ts": "2026-10-30T05:21:58Z",
         "dataset_version": "eb6caf5672c6"
       },
       "supported_by": [
-        "E3",
-        "E7",
-        "D1"
+        "E7"
       ]
     },
     {
       "id": "S4",
       "kind": "sar_sentence",
-      "what": "The transactions were purchases paying one recipient email domain that suddenly drew payments from several unrelated customers' cards.",
+      "what": "A third transaction, 3660263, was carried out on 2017-01-28 at 07:59:42 for 295.92 dollars.",
       "evidence": {
         "txn_ids": [
-          "3660261",
-          "3660262",
           "3660263"
         ],
         "card_ids": [],
@@ -495,14 +489,12 @@
         "tool": "lookup_ids",
         "params": {
           "txn_ids": [
-            "3660261",
-            "3660262",
             "3660263"
           ]
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:49Z",
+        "ts": "2026-10-30T05:21:58Z",
         "dataset_version": "eb6caf5672c6"
       },
       "supported_by": [
@@ -514,12 +506,14 @@
     {
       "id": "S5",
       "kind": "sar_sentence",
-      "what": "The activity is assessed as an undocumented coordinated pattern: R_emaildomain sc.rr.com was paid by 4 cards in the 1 day up to 2017-01-28 against 35 card-days in the previous 56 days; Card C01727-K2 already has 5 confirmed-fraud closed case. The account key is not usable in January, so the precedent is read at card level, where it is weaker: on cards of this size an earlier confirmed case made a new alert about 3.9 times as likely to be fraud.",
+      "what": "All three transactions were conducted online under product code C within billing region 231.",
       "evidence": {
-        "txn_ids": [],
-        "card_ids": [
-          "C01727-K2"
+        "txn_ids": [
+          "3660261",
+          "3660262",
+          "3660263"
         ],
+        "card_ids": [],
         "customer_ids": [],
         "case_ids": [],
         "device_keys": [],
@@ -528,23 +522,63 @@
       "how": {
         "tool": "lookup_ids",
         "params": {
-          "card_ids": [
-            "C01727-K2"
+          "txn_ids": [
+            "3660261",
+            "3660262",
+            "3660263"
           ]
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:49Z",
+        "ts": "2026-10-30T05:21:58Z",
         "dataset_version": "eb6caf5672c6"
       },
       "supported_by": [
-        "E1"
+        "E3",
+        "E7",
+        "D1"
       ]
     },
     {
       "id": "S6",
       "kind": "sar_sentence",
-      "what": "The shared element (recipient email domain sc.rr.com) links this activity to 16 other card(s), including C00534-K2, C01357-K1, C01507-K1, C01594-K1, which indicates a common actor across cardholders.",
+      "what": "The unauthorized transactions were carried out as purchases paying one recipient email domain, sc.rr.com, that suddenly drew payments from several unrelated customers' cards.",
+      "evidence": {
+        "txn_ids": [
+          "3660261",
+          "3660262",
+          "3660263"
+        ],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "txn_ids": [
+            "3660261",
+            "3660262",
+            "3660263"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-30T05:21:58Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": [
+        "E3",
+        "E7",
+        "D1"
+      ]
+    },
+    {
+      "id": "S7",
+      "kind": "sar_sentence",
+      "what": "The shared recipient email domain sc.rr.com connected card C01727-K2 to other cards including C00534-K2, C01357-K1, C01507-K1, C01594-K1, C02167-K2, C03060-K1, C04146-K1, and C04668-K1.",
       "evidence": {
         "txn_ids": [],
         "card_ids": [
@@ -580,7 +614,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:49Z",
+        "ts": "2026-10-30T05:21:58Z",
         "dataset_version": "eb6caf5672c6"
       },
       "supported_by": [
@@ -591,12 +625,14 @@
       ]
     },
     {
-      "id": "S7",
+      "id": "S8",
       "kind": "sar_sentence",
-      "what": "Earlier confirmed cases CC-0723, CC-1833, CC-1501 show the same pattern.",
+      "what": "The activity is suspicious because the pattern matches none of the documented fraud typologies and card C01727-K2 has prior confirmed-fraud cases including CC-0723, CC-1833, and CC-1501.",
       "evidence": {
         "txn_ids": [],
-        "card_ids": [],
+        "card_ids": [
+          "C01727-K2"
+        ],
         "customer_ids": [],
         "case_ids": [
           "CC-0723",
@@ -609,6 +645,9 @@
       "how": {
         "tool": "lookup_ids",
         "params": {
+          "card_ids": [
+            "C01727-K2"
+          ],
           "case_ids": [
             "CC-0723",
             "CC-1833",
@@ -617,15 +656,16 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:49Z",
+        "ts": "2026-10-30T05:21:58Z",
         "dataset_version": "eb6caf5672c6"
       },
       "supported_by": [
+        "E1",
         "E2"
       ]
     },
     {
-      "id": "S8",
+      "id": "S9",
       "kind": "sar_sentence",
       "what": "The cardholder has not yet been contacted.",
       "evidence": {
@@ -647,15 +687,15 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:49Z",
+        "ts": "2026-10-30T05:21:58Z",
         "dataset_version": "eb6caf5672c6"
       },
       "supported_by": []
     },
     {
-      "id": "S9",
+      "id": "S10",
       "kind": "sar_sentence",
-      "what": "The bank has recommended BLOCK_CARD, MONITOR_CONNECTED_CARDS and opened an internal case; the report is filed under R9, §3a.",
+      "what": "Bank containment and response actions included blocking the card, creating a case, monitoring connected cards, escalating to an analyst, and filing this report.",
       "evidence": {
         "txn_ids": [],
         "card_ids": [
@@ -675,7 +715,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:49Z",
+        "ts": "2026-10-30T05:21:58Z",
         "dataset_version": "eb6caf5672c6"
       },
       "supported_by": [
@@ -684,11 +724,11 @@
     }
   ],
   "counts": {
-    "claims": 17,
-    "with_how": 17,
+    "claims": 18,
+    "with_how": 18,
     "by_kind": {
       "evidence": 7,
-      "sar_sentence": 9,
+      "sar_sentence": 10,
       "detector_hit": 1
     }
   },

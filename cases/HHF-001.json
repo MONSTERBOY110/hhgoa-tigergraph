@@ -5,7 +5,7 @@
     "verdict": "fraud",
     "fraud_probability": 0.89,
     "pattern": "undocumented",
-    "pattern_description": "One device profile (RCT6303W87M7 Build/MRA58K | Windows 7 | ie 11.0 for desktop | ) makes low-value online purchases on many unrelated customers' cards, always marked New to the account and behind an anonymous proxy, keeping amounts small so the model scores them low. It touched 14 other cards around this alert and matches earlier confirmed cases on the same profile. It was found by pivoting from the card to the device profile and grouping every card on it.",
+    "pattern_description": "This undocumented fraud pattern involves rapid bursts of online purchases for product C totaling $200 or more made from new devices operating behind an anonymous proxy. The activity affects customer C05061 on visa credit card C05061-K1, as well as 14 other customer cards showing the identical behavioral template without sharing physical devices. The scheme was identified following an analyst request to review transaction 3660108 on card C05061-K1 and investigate linked coordinated activity across accounts.",
     "affected_txn_ids": [
       "3660106",
       "3660107",
@@ -156,7 +156,7 @@
       "CC-3907",
       "CC-5571"
     ],
-    "summary": "Alert HHF-001 opened because an analyst asked for a review of transaction 3660108 and related activity on other cards ($447.95, product C, online, 2017-01-14 20:25) on card C05061-K1. Assessed as an undocumented coordinated pattern with fraud probability 0.89. Main findings: The same template appears on 14 other cards within 14 days, none sharing a device with this card: coordinated abuse across customers; Card C05061-K1 already has 3 confirmed-fraud closed case. The account key is not usable in January, so the precedent is read at card level, where it is weaker: on cards of this size an earlier confirmed case made a new alert about 3.9 times as likely to be fraud. The episode covers 3 transaction(s) totalling $2,189.02, and 14 other card(s) are linked by a repeated template of product C purchases of $200 or more in bursts from devices marked New behind an anonymous proxy, with no shared device. Actions: block card, create case, file report, monitor connected cards, escalate to analyst.",
+    "summary": "This alert was opened following an analyst request to review transaction 3660108 on card C05061-K1 and investigate related activity on other cards. The investigation found that the same transaction template appears on 14 other cards within 14 days without sharing a device, indicating coordinated abuse across customers. Furthermore, card C05061-K1 already has three closed confirmed fraud cases, and earlier confirmed cases on cards of this size make a new alert about 3.9 times as likely to be fraud. The final verdict is fraud with a fraud probability of 0.89. The final actions are to block the card, create a case, file a report, monitor connected cards, and escalate to an analyst.",
     "written_to_graph": true,
     "graph_case_id": "CASE-2016-7194"
   },
@@ -221,7 +221,7 @@
   "sar": {
     "file": true,
     "reason": "R9 and §3a: coordinated activity fitting no documented pattern, repeated on 14 other card(s)",
-    "narrative": "This report concerns customer C05061, card C05061-K1, issued as a visa credit. Between 2017-01-12 and 2017-01-14, 3 transaction(s) totalling $2,189.02 were identified as part of one fraud episode, beginning with transaction 3660106. The activity took place online, product code(s) C, billing region(s) 264, 492, from device profile(s) RCT6303W87M7 Build/MRA58K | Windows 10 | ie 11.0 for tablet | 1920x1080; RCT6303W87M7 Build/MRA58K | Windows 7 | ie 11.0 for desktop | . The transactions were bursts of online purchases from devices new to the account behind an anonymous proxy, the same template appearing on other customers' cards with no device in common. The activity is assessed as an undocumented coordinated pattern: The same template appears on 14 other cards within 14 days, none sharing a device with this card: coordinated abuse across customers; Card C05061-K1 already has 3 confirmed-fraud closed case. The account key is not usable in January, so the precedent is read at card level, where it is weaker: on cards of this size an earlier confirmed case made a new alert about 3.9 times as likely to be fraud. The shared element (a repeated template of product C purchases of $200 or more in bursts from devices marked New behind an anonymous proxy, with no shared device) links this activity to 14 other card(s), including C00450-K1, C02342-K1, C03528-K1, C05704-K2, which indicates a common actor across cardholders. Earlier confirmed cases CC-5229, CC-2674, CC-2420 show the same pattern. The cardholder has not yet been contacted. The bank has recommended BLOCK_CARD, MONITOR_CONNECTED_CARDS and opened an internal case; the report is filed under R9, §3a.",
+    "narrative": "Between January 12, 2017, and January 14, 2017, an unauthorized party initiated three suspicious online transactions totaling $2,189.02 on Visa credit card C05061-K1 belonging to customer C05061. The unauthorized activity began with transaction 3660106 on January 12, 2017, at 07:08 for $850.28, which occurred in billing region 492 under product code C using device \"RCT6303W87M7 Build/MRA58K | Windows 7 | ie 11.0 for desktop | \". On January 13, 2017, at 22:09, transaction 3660107 was processed for $890.79 under product code C in billing region 264 using device \"RCT6303W87M7 Build/MRA58K | Windows 10 | ie 11.0 for tablet | 1920x1080\". The final transaction, 3660108, was carried out on January 14, 2017, at 20:25 for $447.95 under product code C in billing region 492 using device \"RCT6303W87M7 Build/MRA58K | Windows 7 | ie 11.0 for desktop | \". These unauthorized purchases were executed in bursts using devices new to the account operating behind an anonymous proxy. This pattern matches none of the documented fraud typologies, but the same template was identified across 14 other cards within 14 days, including C00450-K1, C02342-K1, C03528-K1, C05704-K2, C05770-K1, C06220-K1, C06962-K2, and C07212-K2, despite sharing no common devices. The activity is considered suspicious due to the rapid succession of high-dollar transactions, the use of anonymous proxies, the correlation to coordinated multi-card abuse, and prior confirmed fraud cases associated with card C05061-K1. Regarding the incident, the cardholder has not yet been contacted. The bank took containment actions by blocking card C05061-K1 and placing the connected cards on monitoring.",
     "subjects": [
       "C05061",
       "C05061-K1",
@@ -242,6 +242,6 @@
   },
   "stop_reason": "Fraud probability 0.89 is at or above 0.85 with 2 independent evidence groups (network, history), so section 6 allows a decision without asking the customer; further queries would not change the actions.",
   "tool_calls": 21,
-  "tokens": 0,
-  "latency_s": 19.87
+  "tokens": 6245,
+  "latency_s": 39.5
 }

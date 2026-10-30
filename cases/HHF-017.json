@@ -67,7 +67,7 @@
       "CC-2742",
       "CC-1449"
     ],
-    "summary": "Alert HHF-017 opened because the bank's model flagged transaction 3638829 (recorded score 0.01) ($43.92, product H, online, 2017-01-01 00:02) on card C08842-K2. The evidence points to the cardholder: Profile fit: product H, purchaser email yahoo.com and the amount $43.92 all match card C08842-K2 in its region 299 before the last 7 days; The device profile was already used by this card 1 time more than a week before. Fraud probability 0.12; the alert is closed as legitimate (allow transaction, verify with customer, monitor card, close no fraud).",
+    "summary": "This alert was triggered by a model alert on transaction 3638829 on card C08842-K2, which scored 0.55 on 2017-01-01 02:02:06. In support of legitimate activity, product H, purchaser email yahoo.com, and the amount $43.92 all match card C08842-K2 in its region 299 before the last 7 days, and the device profile was already used by this card one time more than a week before. The case has been ruled legitimate with a fraud probability of 0.12. The final actions are to allow the transaction, verify with the customer, monitor the card, and close the case as no fraud.",
     "written_to_graph": true,
     "graph_case_id": "CASE-2016-7662"
   },
@@ -129,6 +129,6 @@
   },
   "stop_reason": "Fraud probability 0.12 is at or below 0.15 with 2 independent evidence groups (sequence, device), so section 6 allows a decision without asking the customer; further queries would not change the actions.",
   "tool_calls": 15,
-  "tokens": 0,
-  "latency_s": 14.66
+  "tokens": 1410,
+  "latency_s": 16.07
 }

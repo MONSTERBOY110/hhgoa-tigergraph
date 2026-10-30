@@ -5,7 +5,7 @@
     "verdict": "fraud",
     "fraud_probability": 0.94,
     "pattern": "undocumented",
-    "pattern_description": "One device profile (None) makes low-value online purchases on many unrelated customers' cards, always marked New to the account and behind an anonymous proxy, keeping amounts small so the model scores them low. It touched 2 other cards around this alert and matches earlier confirmed cases on the same profile. It was found by pivoting from the card to the device profile and grouping every card on it.",
+    "pattern_description": "This undocumented fraud pattern involves an amount ladder scheme where online purchases for product C roughly double in size until reaching a fixed cap of $1,800.00. The activity affects customer C11663 on Mastercard debit card C11663-K1, with the identical ladder pattern also identified across connected cards C08563-K1 and C08943-K2. It was uncovered after customer C11663 reported and disputed transaction 3660153 for $1,800.00, prompting alert HHF-003.",
     "affected_txn_ids": [
       "3660147",
       "3660148",
@@ -96,7 +96,7 @@
       "CC-3841",
       "CC-4124"
     ],
-    "summary": "Alert HHF-003 opened because customer C11663 disputed transaction 3660153 ($1,800.00, product C, online, 2017-01-31 17:31) on card C11663-K1. Assessed as an undocumented coordinated pattern with fraud probability 0.94. Main findings: The same ladder capped at $1,800.00 appears on 2 other cards within 14 days: coordinated cash-out across customers; Amount ladder on card C11663-K1: 7 online product C purchases from $181.73 up to $1,800.00 within 9.2 days: a stepped cash-out probing the limit. The episode covers 7 transaction(s) totalling $8,551.47, and 2 other card(s) are linked by a repeated amount ladder capped at $1,800.00 (product C). Actions: block card, create case, file report, monitor connected cards, escalate to analyst.",
+    "summary": "Alert HHF-003 was triggered when customer C11663 disputed online transaction 3660153 for $1,800.00 on card C11663-K1. Key findings indicate an amount ladder on card C11663-K1 involving 7 online product C purchases from $181.73 up to $1,800.00 within 9.2 days, reflecting a stepped cash-out probing the limit. Furthermore, the same ladder capped at $1,800.00 appears on 2 other cards within 14 days, pointing to a coordinated cash-out across customers. The verdict is fraud with a probability of 0.94. The final actions are to block the card, create a case, file a report, monitor connected cards, and escalate to an analyst.",
     "written_to_graph": true,
     "graph_case_id": "CASE-2016-2118"
   },
@@ -161,7 +161,7 @@
   "sar": {
     "file": true,
     "reason": "R9 and §3a: coordinated activity fitting no documented pattern, repeated on 2 other card(s)",
-    "narrative": "This report concerns customer C11663, card C11663-K1, issued as a mastercard debit. Between 2017-01-22 and 2017-01-31, 7 transaction(s) totalling $8,551.47 were identified as part of one fraud episode, beginning with transaction 3660147. The activity took place online, product code(s) C, billing region(s) 315, 327. The transactions were online purchases of one product stepping up roughly doubling in amount until they reached a fixed cap, the same ladder appearing on other customers' cards. The activity is assessed as an undocumented coordinated pattern: The same ladder capped at $1,800.00 appears on 2 other cards within 14 days: coordinated cash-out across customers; Amount ladder on card C11663-K1: 7 online product C purchases from $181.73 up to $1,800.00 within 9.2 days: a stepped cash-out probing the limit. The shared element (a repeated amount ladder capped at $1,800.00 (product C)) links this activity to 2 other card(s), including C08563-K1, C08943-K2, which indicates a common actor across cardholders. Earlier confirmed cases CC-3748, CC-3841, CC-4124 show the same pattern. The cardholder reported the disputed transaction to the bank and denied making it. The bank has recommended BLOCK_CARD, MONITOR_CONNECTED_CARDS and opened an internal case; the report is filed under R9, §3a.",
+    "narrative": "This Suspicious Activity Report relates to unauthorized card activity identified on customer C11663 under case HHF-003. Between January 22, 2017, and January 31, 2017, seven unauthorized online transactions totaling $8,551.47 were conducted on the customer's mastercard debit card C11663-K1. The activity commenced on January 22, 2017, at 12:55 with transaction 3660147 for $181.73 in billing region 327 under product code C, with no device recorded. Subsequent transactions in billing region 327 under product code C included transaction 3660148 for $357.82 on January 23, 2017, at 07:25, transaction 3660149 for $811.92 on January 24, 2017, at 19:13, and three consecutive $1,800.00 purchases numbered 3660150, 3660151, and 3660152 occurring on January 26, 27, and 28, 2017, respectively. The final flagged transaction, 3660153, was initiated on January 31, 2017, at 17:31:28 for $1,800.00 under product code C in billing region 315. The cardholder reported the disputed transaction to the bank and denied making it. The unauthorized activity was carried out through online purchases of one product stepping up roughly doubling in amount until reaching a fixed cap of $1,800.00. This pattern matches none of the documented fraud typologies. The activity is suspicious because the identical amount ladder capped at $1,800.00 was also observed across connected cards C08563-K1 and C08943-K2 belonging to other customers within 14 days, indicating a coordinated multi-account cash-out probing transaction limits. In response, the bank blocked card C11663-K1 and placed the connected cards on monitoring.",
     "subjects": [
       "C11663",
       "C11663-K1",
@@ -176,6 +176,6 @@
   },
   "stop_reason": "Fraud probability 0.94 is at or above 0.85 with 3 independent evidence groups (sequence, network, customer), so section 6 allows a decision without asking the customer; further queries would not change the actions.",
   "tool_calls": 15,
-  "tokens": 0,
-  "latency_s": 14.4
+  "tokens": 6415,
+  "latency_s": 25.63
 }

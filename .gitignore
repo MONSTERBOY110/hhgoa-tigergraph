@@ -14,3 +14,17 @@ __pycache__/
 /CLAUDE.md
 incidents/
 .vscode/
+
+# HyperFrames video projects: keep sources, not renders or caches
+video/**/renders/
+video/**/.hyperframes/
+video/**/node_modules/
+video/**/out/
+
+# launch video: footage, music beds and heavy media stay local
+video/footage/
+video/footage-test/
+video/music/*.wav
+video/**/assets/*.mp4
+video/**/assets/*.wav
+video/**/.work/

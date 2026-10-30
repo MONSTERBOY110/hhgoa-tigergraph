@@ -58,7 +58,7 @@
       "CC-5132",
       "CC-4118"
     ],
-    "summary": "Alert HHF-015 opened because the bank's model flagged transaction 3601725 (recorded score 0.07) ($112.75, product W, in person, 2017-01-22 09:21) on card C00543-K1. The evidence points to the cardholder: Billing region 485 is familiar: 9 earlier transactions on this card there; Profile fit: product W is this account's usual product. Fraud probability 0.15; the alert is closed as legitimate (allow transaction, verify with customer, monitor card, close no fraud).",
+    "summary": "This case was triggered by a model alert on card C00543-K1 when in-person transaction 3601725 for $112.75 was flagged with a risk score of 0.71. Supporting the legitimacy of the activity, billing region 485 is familiar with 9 earlier transactions on this card, and product W fits the profile as this account's usual product. The investigation reached a verdict of legitimate with a fraud probability of 0.15. The final actions are to allow the transaction, verify with the customer, monitor the card, and close the case as no fraud.",
     "written_to_graph": true,
     "graph_case_id": "CASE-2016-5098"
   },
@@ -120,6 +120,6 @@
   },
   "stop_reason": "Fraud probability 0.15 is at or below 0.15 with 2 independent evidence groups (sequence, region), so section 6 allows a decision without asking the customer; further queries would not change the actions.",
   "tool_calls": 12,
-  "tokens": 0,
-  "latency_s": 11.59
+  "tokens": 1211,
+  "latency_s": 13.2
 }

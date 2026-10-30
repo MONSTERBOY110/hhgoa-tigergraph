@@ -1,0 +1,286 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      font-family: "Oswald", sans-serif;
+      color: var(--color-ink, #141a21);
+    }
+    #root .clip {
+      position: absolute;
+      inset: 0;
+    }
+    #mg4-bg {
+      position: absolute;
+      inset: 0;
+      background: var(--color-paper, #eef0f3);
+    }
+    #root .kicker {
+      position: absolute;
+      left: 120px;
+      top: 110px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 36px;
+      letter-spacing: 0.1em;
+      color: var(--color-grey, #6b7684);
+      text-transform: uppercase;
+    }
+    #root .numeral {
+      position: absolute;
+      left: 120px;
+      top: 230px;
+      font-size: 380px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum" 1;
+    }
+    #root .numeral .of {
+      color: var(--color-grey, #6b7684);
+    }
+    #root .label {
+      position: absolute;
+      left: 120px;
+      top: 650px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 44px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: var(--color-grey, #6b7684);
+    }
+    /* stage 1: eighteen ticks fill with the count */
+    #root .ticks {
+      position: absolute;
+      left: 120px;
+      top: 780px;
+      display: flex;
+      gap: 12px;
+    }
+    #root .ticks i {
+      display: block;
+      width: 48px;
+      height: 48px;
+      border: 3px solid var(--color-ink, #141a21);
+      background: var(--color-paper, #eef0f3);
+    }
+    /* stage 2: nine customer cards, each cleared with a check */
+    #mg4-cards {
+      position: absolute;
+      left: 120px;
+      top: 780px;
+      width: 1222px;
+      height: 90px;
+    }
+    #mg4-cards .cardo {
+      fill: var(--color-paper, #eef0f3);
+      stroke: var(--color-grey, #6b7684);
+      stroke-width: 3;
+    }
+    #mg4-cards .check {
+      fill: none;
+      stroke: var(--color-accent, #c2491a);
+      stroke-width: 6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    /* stage 3: the dot field loads with the count */
+    #mg4-field {
+      position: absolute;
+      left: 120px;
+      top: 770px;
+      width: 1300px;
+      height: 120px;
+    }
+    #mg4-field circle {
+      fill: var(--color-ink, #141a21);
+    }
+    /* stage 4: the ledger of re-run claims */
+    #root .claim {
+      position: absolute;
+      left: 120px;
+      top: 230px;
+      font-size: 130px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: var(--color-accent, #c2491a);
+    }
+    #root .claim .w {
+      display: inline-block;
+    }
+    #root .sub {
+      position: absolute;
+      left: 120px;
+      top: 400px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 42px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: var(--color-ink, #141a21);
+    }
+    #root .ledger {
+      position: absolute;
+      left: 120px;
+      top: 500px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 32px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: var(--color-ink, #141a21);
+    }
+    #root .ledger .row {
+      display: flex;
+      align-items: baseline;
+      width: 1500px;
+      height: 56px;
+      border-bottom: 2px solid #c9d0d9;
+      white-space: nowrap;
+    }
+    #root .ledger .row .what {
+      width: 1100px;
+      padding-top: 10px;
+    }
+    #root .ledger .row .ok {
+      width: 400px;
+      padding-top: 10px;
+      color: var(--color-grey, #6b7684);
+    }
+    #root .ledger .row .ok b {
+      font-weight: 500;
+      color: var(--color-accent, #c2491a);
+      display: inline-block;
+      margin-left: 18px;
+    }
+  </style>
+  <div id="root" data-composition-id="mg4" data-width="1920" data-height="1080">
+    <div id="mg4-bg"></div>
+    <div id="mg4-kicker" class="clip" data-start="0" data-duration="7">
+      <div class="kicker">The proof</div>
+    </div>
+    <div id="mg4-s1" class="clip" data-start="0.1" data-duration="1.8">
+      <div class="numeral"><span id="mg4-n1" class="num">0</span><span class="of"> / 18</span></div>
+      <div class="label">Clean on the organizer's grader</div>
+      <div class="ticks" id="mg4-ticks"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    </div>
+    <div id="mg4-s2" class="clip" data-start="1.9" data-duration="1.7">
+      <div class="numeral" style="font-size: 460px; top: 190px">0</div>
+      <div class="label">Good customers blocked in backtest</div>
+      <svg id="mg4-cards" viewBox="0 0 1222 90" aria-hidden="true" data-layout-ignore>
+        <g class="cardset">
+          <rect class="cardo" x="2" y="6" width="104" height="70" /><path class="check" pathLength="100" d="M32 42 L48 58 L78 26" />
+          <rect class="cardo" x="124" y="6" width="104" height="70" /><path class="check" pathLength="100" d="M154 42 L170 58 L200 26" />
+          <rect class="cardo" x="246" y="6" width="104" height="70" /><path class="check" pathLength="100" d="M276 42 L292 58 L322 26" />
+          <rect class="cardo" x="368" y="6" width="104" height="70" /><path class="check" pathLength="100" d="M398 42 L414 58 L444 26" />
+          <rect class="cardo" x="490" y="6" width="104" height="70" /><path class="check" pathLength="100" d="M520 42 L536 58 L566 26" />
+          <rect class="cardo" x="612" y="6" width="104" height="70" /><path class="check" pathLength="100" d="M642 42 L658 58 L688 26" />
+          <rect class="cardo" x="734" y="6" width="104" height="70" /><path class="check" pathLength="100" d="M764 42 L780 58 L810 26" />
+          <rect class="cardo" x="856" y="6" width="104" height="70" /><path class="check" pathLength="100" d="M886 42 L902 58 L932 26" />
+          <rect class="cardo" x="978" y="6" width="104" height="70" /><path class="check" pathLength="100" d="M1008 42 L1024 58 L1054 26" />
+          <rect class="cardo" x="1100" y="6" width="104" height="70" /><path class="check" pathLength="100" d="M1130 42 L1146 58 L1176 26" />
+        </g>
+      </svg>
+    </div>
+    <div id="mg4-s3" class="clip" data-start="3.6" data-duration="1.7">
+      <div class="numeral"><span id="mg4-n3" class="num">0</span></div>
+      <div class="label">Transactions in TigerGraph</div>
+      <svg id="mg4-field" viewBox="0 0 1300 120" aria-hidden="true" data-layout-ignore></svg>
+    </div>
+    <div id="mg4-s4" class="clip" data-start="5.3" data-duration="1.7">
+      <div class="claim"><span class="w">Every</span> <span class="w">claim</span> <span class="w">re-runnable</span></div>
+      <div class="sub">0 failing on re-run</div>
+      <div class="ledger" id="mg4-ledger" data-layout-ignore>
+        <div class="row"><span class="what">Recipient domain paid by 17 cards in 30 days</span><span class="ok">re-run<b>ok</b></span></div>
+        <div class="row"><span class="what">Six charges under $6, $23.99 in all</span><span class="ok">re-run<b>ok</b></span></div>
+        <div class="row"><span class="what">Amount ladder up to exactly $1,800</span><span class="ok">re-run<b>ok</b></span></div>
+        <div class="row"><span class="what">Four charges under $10, then $236.28</span><span class="ok">re-run<b>ok</b></span></div>
+        <div class="row"><span class="what">Closed case CC-3907, similarity 0.77</span><span class="ok">re-run<b>ok</b></span></div>
+        <div class="row"><span class="what">Alert names card K1; the payment is on K2</span><span class="ok">re-run<b>ok</b></span></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    const FPS = 30;
+    // a count is a row of set() calls, one per frame, so every seek shows the same digits (no update callbacks)
+    const count = (sel, from, to, at, seconds) => {
+      const el = document.querySelector(sel);
+      const last = Math.round(seconds * FPS);
+      const ease = gsap.parseEase("power2.out");
+      for (let f = 0; f <= last; f += 1) {
+        const v = Math.round(from + (to - from) * ease(f / last));
+        tl.set(el, { textContent: v.toLocaleString("en-US") }, at + f / FPS);
+      }
+    };
+    const slam = (sel, at) =>
+      tl.fromTo(
+        sel,
+        { opacity: 0, scale: 1.12, filter: "blur(10px)", transformOrigin: "0% 50%" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.35, ease: "power4.out" },
+        at,
+      );
+    const lineIn = (sel, at) =>
+      tl.fromTo(sel, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power3.out" }, at);
+    const out = (sels, at) =>
+      tl.to(sels, { opacity: 0, filter: "blur(8px)", duration: 0.15, ease: "power3.in" }, at);
+
+    // the dot field for stage 3: 4 rows of 36, built once at load (static markup is not needed: nothing here is timed)
+    const field = document.getElementById("mg4-field");
+    for (let r = 0; r < 4; r += 1) {
+      for (let c = 0; c < 36; c += 1) {
+        const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        dot.setAttribute("cx", String(10 + c * 36));
+        dot.setAttribute("cy", String(12 + r * 32));
+        dot.setAttribute("r", "6");
+        field.appendChild(dot);
+      }
+    }
+
+    // stage 1: 18 of 18 on the grader; the ticks fill with the count (power2.out, like the digits)
+    slam("#mg4-s1 .numeral", 0.1);
+    count("#mg4-n1", 0, 18, 0.15, 1.2);
+    lineIn("#mg4-s1 .label", 0.28);
+    const ease1 = gsap.parseEase("power2.out");
+    document.querySelectorAll("#mg4-ticks i").forEach((tick, i) => {
+      // the frame on which the count first shows i+1
+      let when = 1.2;
+      for (let f = 0; f <= 36; f += 1) {
+        if (Math.round(18 * ease1(f / 36)) >= i + 1) { when = f / 30; break; }
+      }
+      tl.fromTo(tick, { backgroundColor: "#eef0f3" }, { backgroundColor: "#141a21", duration: 0.06, ease: "none" }, 0.15 + when);
+    });
+    out(["#mg4-s1 .numeral", "#mg4-s1 .label", "#mg4-ticks"], 1.72);
+
+    // stage 2: zero legitimate customers harmed; nine cards, a check drawn on each
+    slam("#mg4-s2 .numeral", 1.9);
+    lineIn("#mg4-s2 .label", 1.97);
+    tl.fromTo("#mg4-cards .cardo", { opacity: 0 }, { opacity: 1, duration: 0.15, ease: "power2.out", stagger: 0.05 }, 2.0);
+    tl.fromTo("#mg4-cards .check", { strokeDasharray: 100, strokeDashoffset: 100 }, { strokeDashoffset: 0, duration: 0.18, ease: "power2.out", stagger: 0.09 }, 2.3);
+    out(["#mg4-s2 .numeral", "#mg4-s2 .label", "#mg4-cards"], 3.42);
+
+    // stage 3: the graph; the dot field fills in reading order over the same 1.4 s as the count
+    slam("#mg4-s3 .numeral", 3.6);
+    count("#mg4-n3", 0, 650938, 3.65, 1.4);
+    lineIn("#mg4-s3 .label", 3.9);
+    tl.fromTo("#mg4-field circle", { opacity: 0 }, { opacity: 1, duration: 0.05, ease: "none", stagger: 1.35 / 144 }, 3.65);
+    out(["#mg4-s3 .numeral", "#mg4-s3 .label", "#mg4-field"], 5.12);
+
+    // stage 4: the claim, then the ledger: rows appear, each RE-RUN lands its OK
+    tl.fromTo(
+      "#mg4-s4 .w",
+      { color: "#b9c0c9", filter: "blur(6px)" },
+      { color: "#c2491a", filter: "blur(0px)", duration: 0.14, ease: "power2.out", stagger: 0.08 },
+      5.3,
+    );
+    lineIn("#mg4-s4 .sub", 5.45);
+    tl.fromTo("#mg4-ledger .row", { opacity: 0, filter: "blur(6px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.15, ease: "power2.out", stagger: 0.07 }, 5.5);
+    tl.fromTo("#mg4-ledger .ok b", { opacity: 0, scale: 1.4, transformOrigin: "0% 50%" }, { opacity: 1, scale: 1, duration: 0.14, ease: "power3.out", stagger: 0.1 }, 5.85);
+    window.__timelines["mg4"] = tl;
+  </script>
+</template>

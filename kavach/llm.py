@@ -100,7 +100,8 @@ class Llm:
             return GARBAGE_BLOB
         if fault == "empty":
             return ""
-        kw = {"reasoning_effort": "low"} if "gpt-oss" in self.model else {}
+        # reasoning models: keep the thinking budget small so it does not eat max_tokens (Groq gpt-oss, Gemini 2.5+)
+        kw = {"reasoning_effort": "low"} if ("gpt-oss" in self.model or "gemini" in self.model) else {}
         self._pace(len(prompt) // 3 + max_tokens)
         r = self.client().chat.completions.create(
             model=self.model, temperature=0.2, max_tokens=max_tokens,

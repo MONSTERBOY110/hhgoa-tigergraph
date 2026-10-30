@@ -5,7 +5,7 @@
     "verdict": "fraud",
     "fraud_probability": 0.97,
     "pattern": "undocumented",
-    "pattern_description": "One device profile (SM-J700T1 |  |  | ) makes low-value online purchases on many unrelated customers' cards, always marked New to the account and behind an anonymous proxy, keeping amounts small so the model scores them low. It touched 14 other cards around this alert and matches earlier confirmed cases on the same profile. It was found by pivoting from the card to the device profile and grouping every card on it.",
+    "pattern_description": "This undocumented fraud pattern involves bursts of online purchases of $200 or more for product C conducted from new devices operating behind an anonymous proxy. The activity affects card C06220-K1 belonging to customer C06220, as well as 14 other cards across different customers who share this transaction template without sharing devices. The pattern was identified following an analyst request to investigate transaction 3660127 and search for related activity across other cards.",
     "affected_txn_ids": [
       "3660125",
       "3660126",
@@ -161,7 +161,7 @@
       "CC-2807",
       "CC-4224"
     ],
-    "summary": "Alert HHF-002 opened because an analyst asked for a review of transaction 3660127 and related activity on other cards ($770.78, product C, online, 2017-01-19 18:18) on card C06220-K1. Assessed as an undocumented coordinated pattern with fraud probability 0.97. Main findings: The same template appears on 14 other cards within 14 days, none sharing a device with this card: coordinated abuse across customers. The episode covers 3 transaction(s) totalling $2,166.71, and 14 other card(s) are linked by a repeated template of product C purchases of $200 or more in bursts from devices marked New behind an anonymous proxy, with no shared device. Actions: block card, create case, file report, monitor connected cards, escalate to analyst. Evidence request: Customer states they did not make these purchases and still has the card.",
+    "summary": "This alert was triggered by an analyst request to review transaction 3660127 on card C06220-K1 and investigate related activity on other cards. The primary finding indicates that the same transaction template appears on 14 other cards within 14 days without sharing a device with this card, pointing to coordinated abuse across customers. The case has been assigned a verdict of fraud with a fraud probability of 0.97. Final actions include blocking the card, creating a case, filing a report, monitoring connected cards, and escalating the case to an analyst.",
     "written_to_graph": true,
     "graph_case_id": "CASE-2016-4960"
   },
@@ -222,7 +222,7 @@
   "sar": {
     "file": true,
     "reason": "R9 and §3a: coordinated activity fitting no documented pattern, repeated on 14 other card(s)",
-    "narrative": "This report concerns customer C06220, card C06220-K1, issued as a visa credit. Between 2017-01-17 and 2017-01-19, 3 transaction(s) totalling $2,166.71 were identified as part of one fraud episode, beginning with transaction 3660125. The activity took place online, product code(s) C, billing region(s) 126, 330, 384, from device profile(s) SM-J700T1 |  |  | ; SM-J700T1 | iOS 11.1.1 | mobile safari 11.0 | 2048x1536. The transactions were bursts of online purchases from devices new to the account behind an anonymous proxy, the same template appearing on other customers' cards with no device in common. The activity is assessed as an undocumented coordinated pattern: The same template appears on 14 other cards within 14 days, none sharing a device with this card: coordinated abuse across customers. The shared element (a repeated template of product C purchases of $200 or more in bursts from devices marked New behind an anonymous proxy, with no shared device) links this activity to 14 other card(s), including C00450-K1, C02342-K1, C03528-K1, C05061-K1, which indicates a common actor across cardholders. Earlier confirmed cases CC-3077, CC-1969, CC-0626 show the same pattern. When contacted, the cardholder stated they did not make the transaction(s), did not share the card details, and still has the card. The bank has recommended BLOCK_CARD, MONITOR_CONNECTED_CARDS and opened an internal case; the report is filed under R9, §3a.",
+    "narrative": "This narrative pertains to unauthorized credit card activity identified under case HHF-002 involving customer C06220 and visa credit card C06220-K1. Between January 17, 2017, and January 19, 2017, an unauthorized party conducted three fraudulent online transactions totaling $2,166.71 on the customer's card. The first transaction, transaction 3660125, occurred on 2017-01-17 at 19:58 for $637.13 in billing region 330 using device SM-J700T1 | iOS 11.1.2 | mobile safari 11.0 | 2048x1536 under product code C. The second transaction, transaction 3660126, took place on 2017-01-18 at 19:48 for $758.80 in billing region 384 using device SM-J700T1 | iOS 11.1.1 | mobile safari 11.0 | 2048x1536 under product code C. The final flagged transaction, transaction 3660127, was processed on 2017-01-19 at 18:18:58 for $770.78 in billing region 126 from device profile SM-J700T1 | | | under product code C. These transactions were executed through bursts of online purchases from devices new to the account operating behind an anonymous proxy. When contacted, the cardholder stated they did not make the transaction(s), did not share the card details, and still has the card. The identified activity is suspicious because the observed pattern matches none of the documented fraud typologies. Furthermore, this identical template of product C purchases of $200 or more in bursts from new devices behind an anonymous proxy appeared across 14 other cards within 14 days, including cards C00450-K1, C02342-K1, C03528-K1, C05061-K1, C05704-K2, C05770-K1, C06962-K2, and C07212-K2. Notably, none of these connected cards shared a physical device with card C06220-K1, indicating coordinated abuse across multiple customer accounts.",
     "subjects": [
       "C06220",
       "C06220-K1",
@@ -243,6 +243,6 @@
   },
   "stop_reason": "The customer's reply settled the question (section 6): probability moved from 0.82 to 0.97 and the episode (3 transaction(s), $2,166.71) is scoped. Further steps would not change the actions.",
   "tool_calls": 17,
-  "tokens": 0,
-  "latency_s": 16.89
+  "tokens": 5673,
+  "latency_s": 27.37
 }

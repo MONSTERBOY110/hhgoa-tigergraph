@@ -42,7 +42,7 @@
     }
   },
   "backend": "tg",
-  "run_at": "2026-10-29T22:45:29Z",
+  "run_at": "2026-10-30T05:21:24Z",
   "claims": [
     {
       "id": "E1",
@@ -87,7 +87,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:29Z",
+        "ts": "2026-10-30T05:21:24Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -118,7 +118,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:29Z",
+        "ts": "2026-10-30T05:21:24Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "customer",
@@ -152,7 +152,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:29Z",
+        "ts": "2026-10-30T05:21:24Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -181,7 +181,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:29Z",
+        "ts": "2026-10-30T05:21:24Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -210,7 +210,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:29Z",
+        "ts": "2026-10-30T05:21:24Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "customer",
@@ -237,7 +237,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:29Z",
+        "ts": "2026-10-30T05:21:24Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
@@ -264,7 +264,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:29Z",
+        "ts": "2026-10-30T05:21:24Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
@@ -297,7 +297,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:29Z",
+        "ts": "2026-10-30T05:21:24Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -330,7 +330,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:29Z",
+        "ts": "2026-10-30T05:21:24Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -386,7 +386,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:29Z",
+        "ts": "2026-10-30T05:21:24Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -415,7 +415,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:29Z",
+        "ts": "2026-10-30T05:21:24Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -426,7 +426,7 @@
     {
       "id": "S1",
       "kind": "sar_sentence",
-      "what": "This report concerns customer C00348, card C00348-K1, issued as a mastercard debit.",
+      "what": "This Suspicious Activity Report relates to unauthorized card activity identified on customer C00348's mastercard debit card, C00348-K1, involving case HHF-005.",
       "evidence": {
         "txn_ids": [],
         "card_ids": [
@@ -451,7 +451,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:29Z",
+        "ts": "2026-10-30T05:21:24Z",
         "dataset_version": "eb6caf5672c6"
       },
       "supported_by": [
@@ -462,7 +462,7 @@
     {
       "id": "S2",
       "kind": "sar_sentence",
-      "what": "Between 2017-01-07 and 2017-01-28, 6 transaction(s) totalling $23.17 were identified as part of one fraud episode, beginning with transaction 3660245.",
+      "what": "Between 2017-01-07 and 2017-01-28, an unauthorized party processed six online micro-charges totaling $23.17 on the card.",
       "evidence": {
         "txn_ids": [
           "3660245",
@@ -492,7 +492,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:29Z",
+        "ts": "2026-10-30T05:21:24Z",
         "dataset_version": "eb6caf5672c6"
       },
       "supported_by": [
@@ -505,7 +505,7 @@
     {
       "id": "S3",
       "kind": "sar_sentence",
-      "what": "The activity took place online, product code(s) C, billing region(s) 264, 325.",
+      "what": "The activity took place via the online channel under product code C across billing regions 264 and 325, with no device information recorded.",
       "evidence": {
         "txn_ids": [
           "3660245",
@@ -535,7 +535,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:29Z",
+        "ts": "2026-10-30T05:21:24Z",
         "dataset_version": "eb6caf5672c6"
       },
       "supported_by": [
@@ -548,7 +548,7 @@
     {
       "id": "S4",
       "kind": "sar_sentence",
-      "what": "The transactions were small online charges of a few dollars spread over several weeks, never followed by a larger purchase, the same shape appearing on other customers' cards in the same weeks.",
+      "what": "The individual transactions included transaction 3660245 for $4.30 on 2017-01-07 at 15:32, transaction 3660246 for $5.08 on 2017-01-15 at 22:51, transaction 3660247 for $2.70 on 2017-01-16 at 14:04, transaction 3660248 for $4.94 on 2017-01-18 at 19:30, transaction 3660249 for $2.10 on 2017-01-20 at 11:03, and flagged transaction 3660250 for $4.05 on 2017-01-28 at 20:45.",
       "evidence": {
         "txn_ids": [
           "3660245",
@@ -578,7 +578,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:29Z",
+        "ts": "2026-10-30T05:21:24Z",
         "dataset_version": "eb6caf5672c6"
       },
       "supported_by": [
@@ -590,117 +590,6 @@
     },
     {
       "id": "S5",
-      "kind": "sar_sentence",
-      "what": "The activity is assessed as an undocumented coordinated pattern: The slow micro-charge shape appears on 11 other customers' cards with no micro-charge habit in the 30 days to 2017-01-28 against 1.0 per 30 days over the previous 3 windows: charges too small to trip any threshold, repeated across customers; 6 online charges of $2.10 to $5.08 within 21.2 days on card C00348-K1, each under $10, with no larger purchase after them and only 0 such charge in the 90 days before: slow card probing rather than the one-hour R5 test.",
-      "evidence": {
-        "txn_ids": [],
-        "card_ids": [
-          "C00348-K1"
-        ],
-        "customer_ids": [],
-        "case_ids": [],
-        "device_keys": [],
-        "other": []
-      },
-      "how": {
-        "tool": "lookup_ids",
-        "params": {
-          "card_ids": [
-            "C00348-K1"
-          ]
-        }
-      },
-      "when": {
-        "ts": "2026-10-29T22:45:29Z",
-        "dataset_version": "eb6caf5672c6"
-      },
-      "supported_by": [
-        "E8"
-      ]
-    },
-    {
-      "id": "S6",
-      "kind": "sar_sentence",
-      "what": "The shared element (the same slow micro-charge shape (5 or more online charges under $6 in 30 days on a card with no micro-charge habit)) links this activity to 11 other card(s), including C00129-K1, C01326-K2, C01525-K2, C02851-K2, which indicates a common actor across cardholders.",
-      "evidence": {
-        "txn_ids": [],
-        "card_ids": [
-          "C00348-K1",
-          "C00129-K1",
-          "C01326-K2",
-          "C01525-K2",
-          "C02851-K2",
-          "C04528-K1",
-          "C05083-K1",
-          "C06139-K2",
-          "C09471-K2"
-        ],
-        "customer_ids": [],
-        "case_ids": [],
-        "device_keys": [],
-        "other": []
-      },
-      "how": {
-        "tool": "lookup_ids",
-        "params": {
-          "card_ids": [
-            "C00348-K1",
-            "C00129-K1",
-            "C01326-K2",
-            "C01525-K2",
-            "C02851-K2",
-            "C04528-K1",
-            "C05083-K1",
-            "C06139-K2",
-            "C09471-K2"
-          ]
-        }
-      },
-      "when": {
-        "ts": "2026-10-29T22:45:29Z",
-        "dataset_version": "eb6caf5672c6"
-      },
-      "supported_by": [
-        "E1",
-        "E8",
-        "E9",
-        "E10"
-      ]
-    },
-    {
-      "id": "S7",
-      "kind": "sar_sentence",
-      "what": "Earlier confirmed cases CC-2971, CC-3035, CC-2985 show the same pattern.",
-      "evidence": {
-        "txn_ids": [],
-        "card_ids": [],
-        "customer_ids": [],
-        "case_ids": [
-          "CC-2971",
-          "CC-3035",
-          "CC-2985"
-        ],
-        "device_keys": [],
-        "other": []
-      },
-      "how": {
-        "tool": "lookup_ids",
-        "params": {
-          "case_ids": [
-            "CC-2971",
-            "CC-3035",
-            "CC-2985"
-          ]
-        }
-      },
-      "when": {
-        "ts": "2026-10-29T22:45:29Z",
-        "dataset_version": "eb6caf5672c6"
-      },
-      "supported_by": []
-    },
-    {
-      "id": "S8",
       "kind": "sar_sentence",
       "what": "The cardholder reported the disputed transaction to the bank and denied making it.",
       "evidence": {
@@ -722,7 +611,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:29Z",
+        "ts": "2026-10-30T05:21:24Z",
         "dataset_version": "eb6caf5672c6"
       },
       "supported_by": [
@@ -730,9 +619,134 @@
       ]
     },
     {
+      "id": "S6",
+      "kind": "sar_sentence",
+      "what": "The unauthorized scheme was executed using small online charges of a few dollars spread over several weeks, which were never followed by a larger purchase.",
+      "evidence": {
+        "txn_ids": [
+          "3660245",
+          "3660246",
+          "3660247",
+          "3660248",
+          "3660249",
+          "3660250"
+        ],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "txn_ids": [
+            "3660245",
+            "3660246",
+            "3660247",
+            "3660248",
+            "3660249",
+            "3660250"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-30T05:21:24Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": [
+        "E2",
+        "E3",
+        "E4",
+        "D1"
+      ]
+    },
+    {
+      "id": "S7",
+      "kind": "sar_sentence",
+      "what": "This specific pattern matches none of the documented fraud typologies.",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [
+          "C00348-K1"
+        ],
+        "customer_ids": [
+          "C00348"
+        ],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "card_ids": [
+            "C00348-K1"
+          ],
+          "customer_ids": [
+            "C00348"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-30T05:21:24Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": [
+        "E2",
+        "E8"
+      ]
+    },
+    {
+      "id": "S8",
+      "kind": "sar_sentence",
+      "what": "The identical slow micro-charge pattern was observed across 11 other customer cards during the same timeframe, including C00129-K1, C01326-K2, C01525-K2, C02851-K2, C04528-K1, C05083-K1, C06139-K2, and C09471-K2.",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [
+          "C00129-K1",
+          "C01326-K2",
+          "C01525-K2",
+          "C02851-K2",
+          "C04528-K1",
+          "C05083-K1",
+          "C06139-K2",
+          "C09471-K2"
+        ],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "card_ids": [
+            "C00129-K1",
+            "C01326-K2",
+            "C01525-K2",
+            "C02851-K2",
+            "C04528-K1",
+            "C05083-K1",
+            "C06139-K2",
+            "C09471-K2"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-30T05:21:24Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": [
+        "E1",
+        "E9",
+        "E10"
+      ]
+    },
+    {
       "id": "S9",
       "kind": "sar_sentence",
-      "what": "The bank has recommended BLOCK_CARD, MONITOR_CONNECTED_CARDS and opened an internal case; the report is filed under R9, §3a.",
+      "what": "Card C00348-K1 was blocked, the related cards were placed on monitoring, and the matter has been escalated for further analysis.",
       "evidence": {
         "txn_ids": [],
         "card_ids": [
@@ -752,7 +766,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:45:29Z",
+        "ts": "2026-10-30T05:21:24Z",
         "dataset_version": "eb6caf5672c6"
       },
       "supported_by": [

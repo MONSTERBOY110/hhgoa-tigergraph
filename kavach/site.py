@@ -229,6 +229,11 @@ def _verify(case_id: str, src: dict, db: _Duck) -> dict:
         rows = attest.verify(case_id, "duck", src["attest"])
     except Exception as e:
         return {"available": False, "reason": f"re-run failed: {_err(e)}"}
+    for r in rows:   # a graph-only query (e.g. case memory) has no local mirror: not checkable here, which is not a failure
+        if r.get("status") == "fail" and "unknown tool" in str(r.get("reason", "")):
+            r["status"] = "unverifiable"
+            r["reason"] = (f"graph-only query ({r.get('tool')}): not checkable on the local lane; "
+                           f"re-run on TigerGraph with `python -m kavach attest {case_id}`")
     counts = {s: sum(1 for r in rows if r.get("status") == s) for s in ("pass", "fail", "unverifiable")}
     return {"available": True, "at": _now(), "backend": "duck", "dataset_version": db.version(), "counts": counts,
             "rows": [{k: r.get(k) for k in ("id", "status", "reason", "tool", "n_ids", "missing")} for r in rows]}

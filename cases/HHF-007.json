@@ -84,7 +84,7 @@
       "CC-3653",
       "CC-5573"
     ],
-    "summary": "Alert HHF-007 opened because customer C09582 disputed transaction 3660350 ($236.28, product C, online, 2017-01-14 13:57) on card C09582-K1. Assessed as card testing with fraud probability 0.94. Main findings: 4 online authorizations under $10 within an hour, then a $236.28 purchase; $236.28 is 2.2 times the largest earlier purchase on card C09582-K1 in its region 476. The episode covers 5 transaction(s) totalling $246.38. Actions: block card, create case.",
+    "summary": "Alert HHF-007 was triggered when customer C09582 disputed online transaction 3660350 for $236.28 on card C09582-K1. The investigation revealed four online authorizations under $10 within an hour followed by the $236.28 purchase, which is 2.2 times the largest earlier purchase on card C09582-K1 in its region 476. In contrast, the purchaser email domain gmail.com matches the account's own domain, as seen in four earlier transactions on the card in region 476. The verdict is fraud with a fraud probability of 0.94. The final actions are to block the card and create a case.",
     "written_to_graph": true,
     "graph_case_id": "CASE-2016-3799"
   },
@@ -126,6 +126,6 @@
   },
   "stop_reason": "Fraud probability 0.94 is at or above 0.85 with 2 independent evidence groups (sequence, customer), so section 6 allows a decision without asking the customer; further queries would not change the actions.",
   "tool_calls": 12,
-  "tokens": 0,
-  "latency_s": 13.62
+  "tokens": 1732,
+  "latency_s": 15.28
 }

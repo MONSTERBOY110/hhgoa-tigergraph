@@ -42,7 +42,7 @@
     }
   },
   "backend": "tg",
-  "run_at": "2026-10-29T22:44:37Z",
+  "run_at": "2026-10-30T05:19:52Z",
   "claims": [
     {
       "id": "E1",
@@ -58,7 +58,7 @@
       },
       "how": {},
       "when": {
-        "ts": "2026-10-29T22:44:37Z",
+        "ts": "2026-10-30T05:19:52Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "customer",
@@ -113,7 +113,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:37Z",
+        "ts": "2026-10-30T05:19:52Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -142,7 +142,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:37Z",
+        "ts": "2026-10-30T05:19:52Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -171,7 +171,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:37Z",
+        "ts": "2026-10-30T05:19:52Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -198,7 +198,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:37Z",
+        "ts": "2026-10-30T05:19:52Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
@@ -225,7 +225,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:37Z",
+        "ts": "2026-10-30T05:19:52Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
@@ -258,7 +258,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:37Z",
+        "ts": "2026-10-30T05:19:52Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -291,7 +291,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:37Z",
+        "ts": "2026-10-30T05:19:52Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -327,7 +327,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:37Z",
+        "ts": "2026-10-30T05:19:52Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -399,7 +399,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:37Z",
+        "ts": "2026-10-30T05:19:52Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -428,7 +428,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:37Z",
+        "ts": "2026-10-30T05:19:52Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
@@ -463,7 +463,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:37Z",
+        "ts": "2026-10-30T05:19:52Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -474,7 +474,7 @@
     {
       "id": "S1",
       "kind": "sar_sentence",
-      "what": "This report concerns customer C06220, card C06220-K1, issued as a visa credit.",
+      "what": "This narrative pertains to unauthorized credit card activity identified under case HHF-002 involving customer C06220 and visa credit card C06220-K1.",
       "evidence": {
         "txn_ids": [],
         "card_ids": [
@@ -499,7 +499,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:37Z",
+        "ts": "2026-10-30T05:19:52Z",
         "dataset_version": "eb6caf5672c6"
       },
       "supported_by": [
@@ -509,7 +509,7 @@
     {
       "id": "S2",
       "kind": "sar_sentence",
-      "what": "Between 2017-01-17 and 2017-01-19, 3 transaction(s) totalling $2,166.71 were identified as part of one fraud episode, beginning with transaction 3660125.",
+      "what": "Between January 17, 2017, and January 19, 2017, an unauthorized party conducted three fraudulent online transactions totaling $2,166.71 on the customer's card.",
       "evidence": {
         "txn_ids": [
           "3660125",
@@ -533,7 +533,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:37Z",
+        "ts": "2026-10-30T05:19:52Z",
         "dataset_version": "eb6caf5672c6"
       },
       "supported_by": [
@@ -547,94 +547,76 @@
     {
       "id": "S3",
       "kind": "sar_sentence",
-      "what": "The activity took place online, product code(s) C, billing region(s) 126, 330, 384, from device profile(s) SM-J700T1 |  |  | ; SM-J700T1 | iOS 11.1.1 | mobile safari 11.0 | 2048x1536.",
+      "what": "The first transaction, transaction 3660125, occurred on 2017-01-17 at 19:58 for $637.13 in billing region 330 using device SM-J700T1 | iOS 11.1.2 | mobile safari 11.0 | 2048x1536 under product code C.",
       "evidence": {
         "txn_ids": [
-          "3660125",
-          "3660126",
-          "3660127"
+          "3660125"
         ],
         "card_ids": [],
         "customer_ids": [],
         "case_ids": [],
-        "device_keys": [
-          "SM-J700T1 | iOS 11.1.1 | mobile safari 11.0 | 2048x1536",
-          "SM-J700T1 |  |  |"
-        ],
+        "device_keys": [],
         "other": []
       },
       "how": {
         "tool": "lookup_ids",
         "params": {
           "txn_ids": [
-            "3660125",
-            "3660126",
-            "3660127"
-          ],
-          "device_keys": [
-            "SM-J700T1 | iOS 11.1.1 | mobile safari 11.0 | 2048x1536",
-            "SM-J700T1 |  |  |"
+            "3660125"
           ]
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:37Z",
+        "ts": "2026-10-30T05:19:52Z",
         "dataset_version": "eb6caf5672c6"
       },
       "supported_by": [
         "E2",
-        "E3",
-        "E4",
-        "E10",
-        "D1"
+        "E10"
       ]
     },
     {
       "id": "S4",
       "kind": "sar_sentence",
-      "what": "The transactions were bursts of online purchases from devices new to the account behind an anonymous proxy, the same template appearing on other customers' cards with no device in common.",
+      "what": "The second transaction, transaction 3660126, took place on 2017-01-18 at 19:48 for $758.80 in billing region 384 using device SM-J700T1 | iOS 11.1.1 | mobile safari 11.0 | 2048x1536 under product code C.",
       "evidence": {
         "txn_ids": [
-          "3660125",
-          "3660126",
-          "3660127"
+          "3660126"
         ],
         "card_ids": [],
         "customer_ids": [],
         "case_ids": [],
-        "device_keys": [],
+        "device_keys": [
+          "SM-J700T1 | iOS 11.1.1 | mobile safari 11.0 | 2048x1536"
+        ],
         "other": []
       },
       "how": {
         "tool": "lookup_ids",
         "params": {
           "txn_ids": [
-            "3660125",
-            "3660126",
-            "3660127"
+            "3660126"
+          ],
+          "device_keys": [
+            "SM-J700T1 | iOS 11.1.1 | mobile safari 11.0 | 2048x1536"
           ]
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:37Z",
+        "ts": "2026-10-30T05:19:52Z",
         "dataset_version": "eb6caf5672c6"
       },
       "supported_by": [
         "E2",
-        "E3",
-        "E4",
-        "E10",
-        "D1"
+        "E10"
       ]
     },
     {
       "id": "S5",
       "kind": "sar_sentence",
-      "what": "The activity is assessed as an undocumented coordinated pattern: The same template appears on 14 other cards within 14 days, none sharing a device with this card: coordinated abuse across customers.",
+      "what": "The final flagged transaction, transaction 3660127, was processed on 2017-01-19 at 18:18:58 for $770.78 in billing region 126 from device profile SM-J700T1 | | | under product code C.",
       "evidence": {
         "txn_ids": [
-          "3660125",
-          "3660126",
           "3660127"
         ],
         "card_ids": [],
@@ -647,14 +629,12 @@
         "tool": "lookup_ids",
         "params": {
           "txn_ids": [
-            "3660125",
-            "3660126",
             "3660127"
           ]
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:37Z",
+        "ts": "2026-10-30T05:19:52Z",
         "dataset_version": "eb6caf5672c6"
       },
       "supported_by": [
@@ -668,20 +648,14 @@
     {
       "id": "S6",
       "kind": "sar_sentence",
-      "what": "The shared element (a repeated template of product C purchases of $200 or more in bursts from devices marked New behind an anonymous proxy, with no shared device) links this activity to 14 other card(s), including C00450-K1, C02342-K1, C03528-K1, C05061-K1, which indicates a common actor across cardholders.",
+      "what": "These transactions were executed through bursts of online purchases from devices new to the account operating behind an anonymous proxy.",
       "evidence": {
-        "txn_ids": [],
-        "card_ids": [
-          "C06220-K1",
-          "C00450-K1",
-          "C02342-K1",
-          "C03528-K1",
-          "C05061-K1",
-          "C05704-K2",
-          "C05770-K1",
-          "C06962-K2",
-          "C07212-K2"
+        "txn_ids": [
+          "3660125",
+          "3660126",
+          "3660127"
         ],
+        "card_ids": [],
         "customer_ids": [],
         "case_ids": [],
         "device_keys": [],
@@ -690,67 +664,27 @@
       "how": {
         "tool": "lookup_ids",
         "params": {
-          "card_ids": [
-            "C06220-K1",
-            "C00450-K1",
-            "C02342-K1",
-            "C03528-K1",
-            "C05061-K1",
-            "C05704-K2",
-            "C05770-K1",
-            "C06962-K2",
-            "C07212-K2"
+          "txn_ids": [
+            "3660125",
+            "3660126",
+            "3660127"
           ]
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:37Z",
+        "ts": "2026-10-30T05:19:52Z",
         "dataset_version": "eb6caf5672c6"
       },
       "supported_by": [
         "E2",
-        "E7",
-        "E8",
-        "E10"
+        "E3",
+        "E4",
+        "E10",
+        "D1"
       ]
     },
     {
       "id": "S7",
-      "kind": "sar_sentence",
-      "what": "Earlier confirmed cases CC-3077, CC-1969, CC-0626 show the same pattern.",
-      "evidence": {
-        "txn_ids": [],
-        "card_ids": [],
-        "customer_ids": [],
-        "case_ids": [
-          "CC-3077",
-          "CC-1969",
-          "CC-0626"
-        ],
-        "device_keys": [],
-        "other": []
-      },
-      "how": {
-        "tool": "lookup_ids",
-        "params": {
-          "case_ids": [
-            "CC-3077",
-            "CC-1969",
-            "CC-0626"
-          ]
-        }
-      },
-      "when": {
-        "ts": "2026-10-29T22:44:37Z",
-        "dataset_version": "eb6caf5672c6"
-      },
-      "supported_by": [
-        "E9",
-        "D2"
-      ]
-    },
-    {
-      "id": "S8",
       "kind": "sar_sentence",
       "what": "When contacted, the cardholder stated they did not make the transaction(s), did not share the card details, and still has the card.",
       "evidence": {
@@ -772,15 +706,99 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:37Z",
+        "ts": "2026-10-30T05:19:52Z",
         "dataset_version": "eb6caf5672c6"
       },
       "supported_by": []
     },
     {
+      "id": "S8",
+      "kind": "sar_sentence",
+      "what": "The identified activity is suspicious because the observed pattern matches none of the documented fraud typologies.",
+      "evidence": {
+        "txn_ids": [
+          "3660125",
+          "3660126",
+          "3660127"
+        ],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "txn_ids": [
+            "3660125",
+            "3660126",
+            "3660127"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-30T05:19:52Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": [
+        "E2",
+        "E3",
+        "E4",
+        "E10",
+        "D1"
+      ]
+    },
+    {
       "id": "S9",
       "kind": "sar_sentence",
-      "what": "The bank has recommended BLOCK_CARD, MONITOR_CONNECTED_CARDS and opened an internal case; the report is filed under R9, §3a.",
+      "what": "Furthermore, this identical template of product C purchases of $200 or more in bursts from new devices behind an anonymous proxy appeared across 14 other cards within 14 days, including cards C00450-K1, C02342-K1, C03528-K1, C05061-K1, C05704-K2, C05770-K1, C06962-K2, and C07212-K2.",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [
+          "C00450-K1",
+          "C02342-K1",
+          "C03528-K1",
+          "C05061-K1",
+          "C05704-K2",
+          "C05770-K1",
+          "C06962-K2",
+          "C07212-K2"
+        ],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "card_ids": [
+            "C00450-K1",
+            "C02342-K1",
+            "C03528-K1",
+            "C05061-K1",
+            "C05704-K2",
+            "C05770-K1",
+            "C06962-K2",
+            "C07212-K2"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-30T05:19:52Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": [
+        "E2",
+        "E8",
+        "E10"
+      ]
+    },
+    {
+      "id": "S10",
+      "kind": "sar_sentence",
+      "what": "Notably, none of these connected cards shared a physical device with card C06220-K1, indicating coordinated abuse across multiple customer accounts.",
       "evidence": {
         "txn_ids": [],
         "card_ids": [
@@ -800,7 +818,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:37Z",
+        "ts": "2026-10-30T05:19:52Z",
         "dataset_version": "eb6caf5672c6"
       },
       "supported_by": [
@@ -809,11 +827,11 @@
     }
   ],
   "counts": {
-    "claims": 21,
-    "with_how": 20,
+    "claims": 22,
+    "with_how": 21,
     "by_kind": {
       "evidence": 10,
-      "sar_sentence": 9,
+      "sar_sentence": 10,
       "detector_hit": 2
     }
   },

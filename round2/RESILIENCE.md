@@ -8,13 +8,13 @@ One page: what Kavach depends on, what leaves the bank's boundary, what happens 
 |---|---|---|
 | DuckDB index `data/kavach_r2.duckdb` (July 2016 to January 2017) | lane A tools, dataset version, attestations | local file, opened read-only |
 | TigerGraph Savanna workspace (TG-00, auto-suspend) | lane B tools (installed GSQL queries), case write-back and read-back, vectors | TigerGraph Cloud (US-EAST-1) |
-| Groq API, model `openai/gpt-oss-120b` | prose only: summary, SAR narrative, pattern and detector descriptions | external API |
+| Google Gemini API through its OpenAI-compatible endpoint, model `gemini-3.8-flash` (the provider is set in `.env`; Groq `openai/gpt-oss-120b` was used until 30 Oct) | prose only: summary, SAR narrative, pattern and detector descriptions | external API (Google) |
 | fastembed `BAAI/bge-small-en-v1.5` | 384-d embeddings for similar-case and policy recall | local (model files cached on disk) |
 | Python packages (`requirements.txt`) | runtime | local venv |
 
 ## What leaves the boundary
 
-- **Groq** receives one facts JSON per prose piece: anonymised ids (customer, card, transaction, closed-case ids), amounts, dates, product codes, channel, billing region numbers, device profile strings, verdict, probability and the chosen actions. Never raw rows, never the alert's free text (`kavach.intake` replaces it with a deterministic one-sentence summary built from structured fields; `tests/test_intake.py` asserts no hostile fragment ever reaches a prompt), never secrets. Nothing the model returns is used for a decision or an id field.
+- **The prose model (Google Gemini)** receives one facts JSON per prose piece: anonymised ids (customer, card, transaction, closed-case ids), amounts, dates, product codes, channel, billing region numbers, device profile strings, verdict, probability and the chosen actions. Never raw rows, never the alert's free text (`kavach.intake` replaces it with a deterministic one-sentence summary built from structured fields; `tests/test_intake.py` asserts no hostile fragment ever reaches a prompt), never secrets. Nothing the model returns is used for a decision or an id field.
 - **TigerGraph Cloud** holds the full dataset (same content as the DuckDB index) plus the investigation write-back (case, events, approvals). Credentials stay in `.env`.
 - Nothing else leaves: no telemetry, no other model provider. `.env` is git-ignored; `.env.example` lists the variable names only.
 

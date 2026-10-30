@@ -42,7 +42,7 @@
     }
   },
   "backend": "tg",
-  "run_at": "2026-10-29T22:44:53Z",
+  "run_at": "2026-10-30T05:20:17Z",
   "claims": [
     {
       "id": "E1",
@@ -77,7 +77,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:53Z",
+        "ts": "2026-10-30T05:20:17Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -108,7 +108,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:53Z",
+        "ts": "2026-10-30T05:20:17Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "customer",
@@ -143,7 +143,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:53Z",
+        "ts": "2026-10-30T05:20:17Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -172,7 +172,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:53Z",
+        "ts": "2026-10-30T05:20:17Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -199,7 +199,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:53Z",
+        "ts": "2026-10-30T05:20:17Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
@@ -226,7 +226,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:53Z",
+        "ts": "2026-10-30T05:20:17Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "document",
@@ -264,7 +264,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:53Z",
+        "ts": "2026-10-30T05:20:17Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -293,7 +293,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:53Z",
+        "ts": "2026-10-30T05:20:17Z",
         "dataset_version": "eb6caf5672c6"
       },
       "source": "graph",
@@ -304,12 +304,10 @@
     {
       "id": "S1",
       "kind": "sar_sentence",
-      "what": "This report concerns customer C11663, card C11663-K1, issued as a mastercard debit.",
+      "what": "This Suspicious Activity Report relates to unauthorized card activity identified on customer C11663 under case HHF-003.",
       "evidence": {
         "txn_ids": [],
-        "card_ids": [
-          "C11663-K1"
-        ],
+        "card_ids": [],
         "customer_ids": [
           "C11663"
         ],
@@ -320,16 +318,13 @@
       "how": {
         "tool": "lookup_ids",
         "params": {
-          "card_ids": [
-            "C11663-K1"
-          ],
           "customer_ids": [
             "C11663"
           ]
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:53Z",
+        "ts": "2026-10-30T05:20:17Z",
         "dataset_version": "eb6caf5672c6"
       },
       "supported_by": [
@@ -339,145 +334,7 @@
     {
       "id": "S2",
       "kind": "sar_sentence",
-      "what": "Between 2017-01-22 and 2017-01-31, 7 transaction(s) totalling $8,551.47 were identified as part of one fraud episode, beginning with transaction 3660147.",
-      "evidence": {
-        "txn_ids": [
-          "3660147",
-          "3660148",
-          "3660149",
-          "3660150",
-          "3660151",
-          "3660152",
-          "3660153"
-        ],
-        "card_ids": [],
-        "customer_ids": [],
-        "case_ids": [],
-        "device_keys": [],
-        "other": []
-      },
-      "how": {
-        "tool": "lookup_ids",
-        "params": {
-          "txn_ids": [
-            "3660147",
-            "3660148",
-            "3660149",
-            "3660150",
-            "3660151",
-            "3660152",
-            "3660153"
-          ]
-        }
-      },
-      "when": {
-        "ts": "2026-10-29T22:44:53Z",
-        "dataset_version": "eb6caf5672c6"
-      },
-      "supported_by": [
-        "E1",
-        "E2",
-        "E3",
-        "E4",
-        "D1"
-      ]
-    },
-    {
-      "id": "S3",
-      "kind": "sar_sentence",
-      "what": "The activity took place online, product code(s) C, billing region(s) 315, 327.",
-      "evidence": {
-        "txn_ids": [
-          "3660147",
-          "3660148",
-          "3660149",
-          "3660150",
-          "3660151",
-          "3660152",
-          "3660153"
-        ],
-        "card_ids": [],
-        "customer_ids": [],
-        "case_ids": [],
-        "device_keys": [],
-        "other": []
-      },
-      "how": {
-        "tool": "lookup_ids",
-        "params": {
-          "txn_ids": [
-            "3660147",
-            "3660148",
-            "3660149",
-            "3660150",
-            "3660151",
-            "3660152",
-            "3660153"
-          ]
-        }
-      },
-      "when": {
-        "ts": "2026-10-29T22:44:53Z",
-        "dataset_version": "eb6caf5672c6"
-      },
-      "supported_by": [
-        "E1",
-        "E2",
-        "E3",
-        "E4",
-        "D1"
-      ]
-    },
-    {
-      "id": "S4",
-      "kind": "sar_sentence",
-      "what": "The transactions were online purchases of one product stepping up roughly doubling in amount until they reached a fixed cap, the same ladder appearing on other customers' cards.",
-      "evidence": {
-        "txn_ids": [
-          "3660147",
-          "3660148",
-          "3660149",
-          "3660150",
-          "3660151",
-          "3660152",
-          "3660153"
-        ],
-        "card_ids": [],
-        "customer_ids": [],
-        "case_ids": [],
-        "device_keys": [],
-        "other": []
-      },
-      "how": {
-        "tool": "lookup_ids",
-        "params": {
-          "txn_ids": [
-            "3660147",
-            "3660148",
-            "3660149",
-            "3660150",
-            "3660151",
-            "3660152",
-            "3660153"
-          ]
-        }
-      },
-      "when": {
-        "ts": "2026-10-29T22:44:53Z",
-        "dataset_version": "eb6caf5672c6"
-      },
-      "supported_by": [
-        "E1",
-        "E2",
-        "E3",
-        "E4",
-        "D1"
-      ]
-    },
-    {
-      "id": "S5",
-      "kind": "sar_sentence",
-      "what": "The activity is assessed as an undocumented coordinated pattern: The same ladder capped at $1,800.00 appears on 2 other cards within 14 days: coordinated cash-out across customers; Amount ladder on card C11663-K1: 7 online product C purchases from $181.73 up to $1,800.00 within 9.2 days: a stepped cash-out probing the limit.",
+      "what": "Between January 22, 2017, and January 31, 2017, seven unauthorized online transactions totaling $8,551.47 were conducted on the customer's mastercard debit card C11663-K1.",
       "evidence": {
         "txn_ids": [],
         "card_ids": [
@@ -497,15 +354,194 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:53Z",
+        "ts": "2026-10-30T05:20:17Z",
         "dataset_version": "eb6caf5672c6"
       },
       "supported_by": []
     },
     {
+      "id": "S3",
+      "kind": "sar_sentence",
+      "what": "The activity commenced on January 22, 2017, at 12:55 with transaction 3660147 for $181.73 in billing region 327 under product code C, with no device recorded.",
+      "evidence": {
+        "txn_ids": [
+          "3660147"
+        ],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "txn_ids": [
+            "3660147"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-30T05:20:17Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": [
+        "E3"
+      ]
+    },
+    {
+      "id": "S4",
+      "kind": "sar_sentence",
+      "what": "Subsequent transactions in billing region 327 under product code C included transaction 3660148 for $357.82 on January 23, 2017, at 07:25, transaction 3660149 for $811.92 on January 24, 2017, at 19:13, and three consecutive $1,800.00 purchases numbered 3660150, 3660151, and 3660152 occurring on January 26, 27, and 28, 2017, respectively.",
+      "evidence": {
+        "txn_ids": [
+          "3660148",
+          "3660149",
+          "3660150",
+          "3660151",
+          "3660152"
+        ],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "txn_ids": [
+            "3660148",
+            "3660149",
+            "3660150",
+            "3660151",
+            "3660152"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-30T05:20:17Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": [
+        "E1",
+        "E3"
+      ]
+    },
+    {
+      "id": "S5",
+      "kind": "sar_sentence",
+      "what": "The final flagged transaction, 3660153, was initiated on January 31, 2017, at 17:31:28 for $1,800.00 under product code C in billing region 315.",
+      "evidence": {
+        "txn_ids": [
+          "3660153"
+        ],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "txn_ids": [
+            "3660153"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-30T05:20:17Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "D1"
+      ]
+    },
+    {
       "id": "S6",
       "kind": "sar_sentence",
-      "what": "The shared element (a repeated amount ladder capped at $1,800.00 (product C)) links this activity to 2 other card(s), including C08563-K1, C08943-K2, which indicates a common actor across cardholders.",
+      "what": "The cardholder reported the disputed transaction to the bank and denied making it.",
+      "evidence": {
+        "txn_ids": [],
+        "card_ids": [],
+        "customer_ids": [
+          "C11663"
+        ],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "customer_ids": [
+            "C11663"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-30T05:20:17Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": [
+        "E2"
+      ]
+    },
+    {
+      "id": "S7",
+      "kind": "sar_sentence",
+      "what": "The unauthorized activity was carried out through online purchases of one product stepping up roughly doubling in amount until reaching a fixed cap of $1,800.00.",
+      "evidence": {
+        "txn_ids": [
+          "3660147",
+          "3660148",
+          "3660149",
+          "3660150",
+          "3660151",
+          "3660152",
+          "3660153"
+        ],
+        "card_ids": [],
+        "customer_ids": [],
+        "case_ids": [],
+        "device_keys": [],
+        "other": []
+      },
+      "how": {
+        "tool": "lookup_ids",
+        "params": {
+          "txn_ids": [
+            "3660147",
+            "3660148",
+            "3660149",
+            "3660150",
+            "3660151",
+            "3660152",
+            "3660153"
+          ]
+        }
+      },
+      "when": {
+        "ts": "2026-10-30T05:20:17Z",
+        "dataset_version": "eb6caf5672c6"
+      },
+      "supported_by": [
+        "E1",
+        "E2",
+        "E3",
+        "E4",
+        "D1"
+      ]
+    },
+    {
+      "id": "S8",
+      "kind": "sar_sentence",
+      "what": "This pattern matches none of the documented fraud typologies.",
       "evidence": {
         "txn_ids": [],
         "card_ids": [
@@ -529,7 +565,7 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:53Z",
+        "ts": "2026-10-30T05:20:17Z",
         "dataset_version": "eb6caf5672c6"
       },
       "supported_by": [
@@ -538,47 +574,16 @@
       ]
     },
     {
-      "id": "S7",
+      "id": "S9",
       "kind": "sar_sentence",
-      "what": "Earlier confirmed cases CC-3748, CC-3841, CC-4124 show the same pattern.",
+      "what": "The activity is suspicious because the identical amount ladder capped at $1,800.00 was also observed across connected cards C08563-K1 and C08943-K2 belonging to other customers within 14 days, indicating a coordinated multi-account cash-out probing transaction limits.",
       "evidence": {
         "txn_ids": [],
-        "card_ids": [],
+        "card_ids": [
+          "C08563-K1",
+          "C08943-K2"
+        ],
         "customer_ids": [],
-        "case_ids": [
-          "CC-3748",
-          "CC-3841",
-          "CC-4124"
-        ],
-        "device_keys": [],
-        "other": []
-      },
-      "how": {
-        "tool": "lookup_ids",
-        "params": {
-          "case_ids": [
-            "CC-3748",
-            "CC-3841",
-            "CC-4124"
-          ]
-        }
-      },
-      "when": {
-        "ts": "2026-10-29T22:44:53Z",
-        "dataset_version": "eb6caf5672c6"
-      },
-      "supported_by": []
-    },
-    {
-      "id": "S8",
-      "kind": "sar_sentence",
-      "what": "The cardholder reported the disputed transaction to the bank and denied making it.",
-      "evidence": {
-        "txn_ids": [],
-        "card_ids": [],
-        "customer_ids": [
-          "C11663"
-        ],
         "case_ids": [],
         "device_keys": [],
         "other": []
@@ -586,23 +591,25 @@
       "how": {
         "tool": "lookup_ids",
         "params": {
-          "customer_ids": [
-            "C11663"
+          "card_ids": [
+            "C08563-K1",
+            "C08943-K2"
           ]
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:53Z",
+        "ts": "2026-10-30T05:20:17Z",
         "dataset_version": "eb6caf5672c6"
       },
       "supported_by": [
-        "E2"
+        "E1",
+        "E7"
       ]
     },
     {
-      "id": "S9",
+      "id": "S10",
       "kind": "sar_sentence",
-      "what": "The bank has recommended BLOCK_CARD, MONITOR_CONNECTED_CARDS and opened an internal case; the report is filed under R9, §3a.",
+      "what": "In response, the bank blocked card C11663-K1 and placed the connected cards on monitoring.",
       "evidence": {
         "txn_ids": [],
         "card_ids": [
@@ -622,18 +629,18 @@
         }
       },
       "when": {
-        "ts": "2026-10-29T22:44:53Z",
+        "ts": "2026-10-30T05:20:17Z",
         "dataset_version": "eb6caf5672c6"
       },
       "supported_by": []
     }
   ],
   "counts": {
-    "claims": 17,
-    "with_how": 17,
+    "claims": 18,
+    "with_how": 18,
     "by_kind": {
       "evidence": 7,
-      "sar_sentence": 9,
+      "sar_sentence": 10,
       "detector_hit": 1
     }
   },

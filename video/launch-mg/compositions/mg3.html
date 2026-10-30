@@ -1,0 +1,247 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      font-family: "Oswald", sans-serif;
+      color: var(--color-ink, #141a21);
+    }
+    #root .clip {
+      position: absolute;
+      inset: 0;
+    }
+    #mg3-bg {
+      position: absolute;
+      inset: 0;
+      background: var(--color-paper, #eef0f3);
+    }
+    #root .kicker {
+      position: absolute;
+      left: 120px;
+      top: 110px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 36px;
+      letter-spacing: 0.1em;
+      color: var(--color-grey, #6b7684);
+      text-transform: uppercase;
+    }
+    #root .box {
+      position: absolute;
+      top: 420px;
+      width: 272px;
+      height: 150px;
+      border: 4px solid var(--color-ink, #141a21);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      text-transform: uppercase;
+      font-weight: 700;
+      font-size: 48px;
+      line-height: 0.95;
+      letter-spacing: 0.01em;
+      background: var(--color-paper, #eef0f3);
+    }
+    #root .box.two {
+      font-size: 44px;
+    }
+    #root .box .sub {
+      font-family: "IBM Plex Mono", monospace;
+      font-weight: 400;
+      font-size: 30px;
+      letter-spacing: 0.04em;
+      text-transform: none;
+      margin-top: 8px;
+      color: var(--color-grey, #6b7684);
+    }
+    #mg3-arrows,
+    #mg3-graph {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+    }
+    #mg3-arrows line {
+      stroke: var(--color-ink, #141a21);
+      stroke-width: 4;
+    }
+    #mg3-arrows polygon {
+      fill: var(--color-ink, #141a21);
+    }
+    #mg3-token {
+      fill: var(--color-accent, #c2491a);
+    }
+    #mg3-graph .edge {
+      stroke: var(--color-grey, #6b7684);
+      stroke-width: 3;
+      fill: none;
+    }
+    #mg3-graph .node {
+      fill: var(--color-paper, #eef0f3);
+      stroke: var(--color-ink, #141a21);
+      stroke-width: 3;
+    }
+    #mg3-graph .centre {
+      fill: var(--color-ink, #141a21);
+    }
+    #mg3-graph .ringedge {
+      stroke: var(--color-accent, #c2491a);
+      stroke-width: 4;
+      fill: none;
+    }
+    #mg3-graph .label {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 30px;
+      letter-spacing: 0.06em;
+      fill: var(--color-grey, #6b7684);
+      text-anchor: middle;
+    }
+    #root .note {
+      position: absolute;
+      left: 120px;
+      top: 740px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 42px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    #root .note .w {
+      display: inline-block;
+    }
+    #root .claim {
+      position: absolute;
+      left: 120px;
+      top: 830px;
+      font-size: 84px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: var(--color-accent, #c2491a);
+    }
+    #root .claim .w {
+      display: inline-block;
+    }
+  </style>
+  <div id="root" data-composition-id="mg3" data-width="1920" data-height="1080">
+    <div id="mg3-bg"></div>
+    <div id="mg3-kicker" class="clip" data-start="0" data-duration="7">
+      <div class="kicker">How it works</div>
+    </div>
+    <div id="mg3-arrowclip" class="clip" data-start="0.5" data-duration="6.5" data-layout-ignore>
+      <svg id="mg3-arrows" viewBox="0 0 1920 1080" aria-hidden="true">
+        <line id="mg3-a1" x1="400" y1="495" x2="450" y2="495" pathLength="100" />
+        <polygon id="mg3-h1" points="448,483 466,495 448,507" />
+        <line id="mg3-a2" x1="752" y1="495" x2="802" y2="495" pathLength="100" />
+        <polygon id="mg3-h2" points="800,483 818,495 800,507" />
+        <line id="mg3-a3" x1="1104" y1="495" x2="1154" y2="495" pathLength="100" />
+        <polygon id="mg3-h3" points="1152,483 1170,495 1152,507" />
+        <line id="mg3-a4" x1="1456" y1="495" x2="1506" y2="495" pathLength="100" />
+        <polygon id="mg3-h4" points="1504,483 1522,495 1504,507" />
+        <circle id="mg3-token" cx="256" cy="495" r="14" />
+      </svg>
+    </div>
+    <div id="mg3-b1" class="clip" data-start="0.2" data-duration="6.8">
+      <div class="box" style="left: 120px">Alert</div>
+    </div>
+    <div id="mg3-b2" class="clip" data-start="0.8" data-duration="6.2">
+      <div class="box two" style="left: 472px"><span>Graph<br />evidence</span><span class="sub">TigerGraph</span></div>
+    </div>
+    <div id="mg3-b3" class="clip" data-start="1.4" data-duration="5.6">
+      <div class="box" style="left: 824px">Detectors</div>
+    </div>
+    <div id="mg3-b4" class="clip" data-start="2.0" data-duration="5.0">
+      <div class="box" style="left: 1176px">Policy</div>
+    </div>
+    <div id="mg3-b5" class="clip" data-start="2.6" data-duration="4.4">
+      <div class="box" id="mg3-answer" style="left: 1528px">Answer</div>
+    </div>
+    <div id="mg3-graphclip" class="clip" data-start="0.9" data-duration="6.1" data-layout-ignore>
+      <svg id="mg3-graph" viewBox="0 0 1920 1080" aria-hidden="true">
+        <g id="mg3-edges">
+          <line class="edge" x1="608" y1="300" x2="608" y2="210" pathLength="100" />
+          <line class="edge" x1="608" y1="300" x2="686" y2="255" pathLength="100" />
+          <line class="edge" x1="608" y1="300" x2="686" y2="345" pathLength="100" />
+          <line class="edge" x1="608" y1="300" x2="608" y2="390" pathLength="100" />
+          <line class="edge" x1="608" y1="300" x2="530" y2="345" pathLength="100" />
+          <line class="edge" x1="608" y1="300" x2="530" y2="255" pathLength="100" />
+        </g>
+        <line id="mg3-ringedge" class="ringedge" x1="686" y1="255" x2="686" y2="345" pathLength="100" />
+        <g id="mg3-nodes">
+          <circle class="node" cx="608" cy="210" r="11" />
+          <circle class="node flag" id="mg3-f1" cx="686" cy="255" r="11" />
+          <circle class="node flag" id="mg3-f2" cx="686" cy="345" r="11" />
+          <circle class="node" cx="608" cy="390" r="11" />
+          <circle class="node" cx="530" cy="345" r="11" />
+          <circle class="node" cx="530" cy="255" r="11" />
+        </g>
+        <circle id="mg3-centre" class="centre" cx="608" cy="300" r="16" />
+        <text id="mg3-rules" class="label" x="1312" y="372">R1 to R10, section 3a</text>
+      </svg>
+    </div>
+    <div id="mg3-note" class="clip" data-start="3.6" data-duration="3.4">
+      <div class="note"><span class="w">Decisions</span> <span class="w">by</span> <span class="w">policy.</span> <span class="w">The</span> <span class="w">model</span> <span class="w">only</span> <span class="w">writes.</span></div>
+    </div>
+    <div id="mg3-claim" class="clip" data-start="5.2" data-duration="1.8">
+      <div class="claim"><span class="w">Every</span> <span class="w">claim</span> <span class="w">re-runnable</span></div>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    const pop = (sel, at) =>
+      tl.fromTo(
+        sel,
+        { opacity: 0, scale: 0.9, filter: "blur(6px)", transformOrigin: "50% 50%" },
+        { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.3, ease: "power4.out" },
+        at,
+      );
+    const draw = (line, head, at) => {
+      tl.fromTo(line, { strokeDasharray: 100, strokeDashoffset: 100 }, { strokeDashoffset: 0, duration: 0.3, ease: "power2.inOut" }, at);
+      tl.fromTo(head, { opacity: 0 }, { opacity: 1, duration: 0.08, ease: "none" }, at + 0.24);
+    };
+    // the alert token rides the pipeline just under the boxes: it leads, the arrow trails it
+    const ride = (toX, at) => tl.to("#mg3-token", { attr: { cx: toX }, duration: 0.3, ease: "power2.inOut" }, at);
+    pop("#mg3-b1 .box", 0.2);
+    tl.fromTo("#mg3-token", { attr: { r: 0 } }, { attr: { r: 14 }, duration: 0.2, ease: "back.out(1.6)" }, 0.5);
+    draw("#mg3-a1", "#mg3-h1", 0.5);
+    ride(608, 0.55);
+    pop("#mg3-b2 .box", 0.8);
+    // the graph grows above GRAPH EVIDENCE: edges draw, nodes pop
+    tl.fromTo("#mg3-edges line", { strokeDasharray: 100, strokeDashoffset: 100 }, { strokeDashoffset: 0, duration: 0.25, ease: "power2.out", stagger: 0.05 }, 0.9);
+    tl.fromTo("#mg3-centre", { attr: { r: 0 } }, { attr: { r: 16 }, duration: 0.2, ease: "back.out(1.6)" }, 0.9);
+    tl.fromTo("#mg3-nodes circle", { attr: { r: 0 } }, { attr: { r: 11 }, duration: 0.2, ease: "back.out(1.6)", stagger: 0.05 }, 1.05);
+    draw("#mg3-a2", "#mg3-h2", 1.1);
+    ride(960, 1.15);
+    pop("#mg3-b3 .box", 1.4);
+    // at DETECTORS two connected cards flag orange and the ring edge draws between them
+    tl.to(["#mg3-f1", "#mg3-f2"], { fill: "#c2491a", stroke: "#c2491a", duration: 0.2, ease: "power2.out", stagger: 0.08 }, 1.5);
+    tl.fromTo("#mg3-ringedge", { strokeDasharray: 100, strokeDashoffset: 100 }, { strokeDashoffset: 0, duration: 0.25, ease: "power2.out" }, 1.6);
+    draw("#mg3-a3", "#mg3-h3", 1.7);
+    ride(1312, 1.75);
+    pop("#mg3-b4 .box", 2.0);
+    tl.fromTo("#mg3-rules", { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "power2.out" }, 2.1);
+    draw("#mg3-a4", "#mg3-h4", 2.3);
+    ride(1664, 2.35);
+    pop("#mg3-b5 .box", 2.6);
+    // the answer box fills with the accent: the token becomes the answer
+    tl.to("#mg3-answer", { backgroundColor: "#c2491a", borderColor: "#c2491a", color: "#eef0f3", duration: 0.3, ease: "power2.inOut" }, 2.9);
+    tl.to("#mg3-token", { attr: { r: 0 }, duration: 0.2, ease: "power2.in" }, 2.9);
+    tl.fromTo(
+      "#mg3-note .w",
+      { opacity: 0, filter: "blur(8px)" },
+      { opacity: 1, filter: "blur(0px)", duration: 0.13, ease: "power2.out", stagger: 0.067 },
+      3.6,
+    );
+    tl.fromTo(
+      "#mg3-claim .w",
+      { color: "#b9c0c9" },
+      { color: "#c2491a", duration: 0.12, ease: "power2.out", stagger: 0.08 },
+      5.2,
+    );
+    window.__timelines["mg3"] = tl;
+  </script>
+</template>

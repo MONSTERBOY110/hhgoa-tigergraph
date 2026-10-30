@@ -93,7 +93,8 @@ def write_all(llm: Llm, facts: dict, want_sar: bool, undocumented: bool) -> dict
     tmpl = summary_template(facts)
     text, src = llm.write(
         "Write a case summary for a bank fraud analyst in 3 to 5 sentences: (1) what triggered the alert, (2) the two or three "
-        "strongest findings, taken from top_fraud and top_legit, (3) the verdict and fraud probability, (4) the final actions from "
+        "strongest findings, taken from top_fraud_plain and top_legit_plain (never name detectors, approval ids or backtest figures), "
+        "(3) the verdict and fraud probability, (4) the final actions from "
         "final_actions in plain words. Only state findings present in the facts; never claim that something is absent or that there "
         "was no prior activity unless the facts say so; never say the card is blocked unless BLOCK_CARD is in final_actions. "
         "No lists, no headings.",

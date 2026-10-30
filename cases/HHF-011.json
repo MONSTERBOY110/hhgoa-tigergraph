@@ -75,7 +75,7 @@
       "CC-0771",
       "CC-1002"
     ],
-    "summary": "Alert HHF-011 opened because the bank's model flagged transaction 3640919 (recorded score 0.31) ($881.55, product W, in person, 2017-01-20 05:06) on card C09241-K2. The evidence points to the cardholder: Customer confirmed the transaction when asked: Customer confirms they made the purchase; Profile fit: product W is this account's usual product. Fraud probability 0.03; the alert is closed as legitimate (allow transaction, verify with customer, monitor card, close no fraud). Evidence request: Customer confirms they made the purchase.",
+    "summary": "This case was opened after a model alert flagged in-person transaction 3640919 for $881.55 on card C09241-K2. Key findings supporting the activity show that the customer confirmed making the purchase when asked, and product W represents this account's usual product. The verdict is legitimate with a fraud probability of 0.03. Final actions taken were to allow the transaction, verify the details with the customer, monitor the card, and close the case as no fraud.",
     "written_to_graph": true,
     "graph_case_id": "CASE-2016-9835"
   },
@@ -133,6 +133,6 @@
   },
   "stop_reason": "The customer's reply settled the question (section 6): probability moved from 0.36 to 0.03. Further steps would not change the actions.",
   "tool_calls": 14,
-  "tokens": 0,
-  "latency_s": 18.74
+  "tokens": 1188,
+  "latency_s": 17.44
 }

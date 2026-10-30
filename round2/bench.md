@@ -15,6 +15,11 @@ An alert triggers the investigation, so the case is ready before anyone opens it
 | TigerGraph lane (TG-00), deterministic (18 runs) | 5.75 s | 8.77 s | 11.16 s | 12.3 | 0 | $0.00168 |
 | Alert to ready case (POST /alerts to GET /cases serving the answer) | 0.25 s | 0.34 s | 0.35 s | | | |
 
+Note (30 Oct 10:40 IST): the submitted answers' prose was written by Google Gemini `gemini-3.8-flash` through the same
+OpenAI-compatible client (the mentors' key, no per-minute token window), so the production LLM arm runs close to the
+"minus the token-window wait" row; the Groq rows above are the measured record from the night before. Per-case tokens and
+seconds for the submitted run are in the README results table.
+
 **Accuracy held.** Decisions (verdict, probability, pattern, affected transactions, first transaction, exposure,
 connected cards and devices, initial and final actions with routes, SAR) are identical across all 72 DuckDB runs (3
 deterministic repeats and the LLM arm) of the 18 cases, and across the DuckDB and TigerGraph lanes for all 18. The

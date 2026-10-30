@@ -1,0 +1,140 @@
+<template>
+  <style>
+    #root {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      font-family: "Oswald", sans-serif;
+      color: var(--color-ink, #141a21);
+    }
+    #root .clip {
+      position: absolute;
+      inset: 0;
+    }
+    #mg5-bg {
+      position: absolute;
+      inset: 0;
+      background: var(--color-paper, #eef0f3);
+    }
+    #root .wordmark {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 210px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      font-size: 340px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: 0.01em;
+      text-transform: uppercase;
+    }
+    #root .wordmark .k {
+      display: inline-block;
+    }
+    #root .wordmark .mark {
+      display: block;
+      width: 150px;
+      height: 175px;
+      margin-left: 36px;
+      margin-top: 135px;
+      overflow: visible;
+    }
+    #root .mark .shield {
+      fill: var(--color-accent, #c2491a);
+      stroke: var(--color-accent, #c2491a);
+      stroke-width: 8;
+      stroke-linejoin: round;
+    }
+    #root .centre {
+      position: absolute;
+      left: 0;
+      right: 0;
+      text-align: center;
+      white-space: nowrap;
+    }
+    #root .tag {
+      top: 640px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 40px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-grey, #6b7684);
+    }
+    #root .built {
+      top: 740px;
+      font-size: 72px;
+      font-weight: 700;
+      line-height: 1;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--color-accent, #c2491a);
+    }
+    #root .rule {
+      position: absolute;
+      left: 760px;
+      top: 830px;
+      width: 400px;
+      height: 4px;
+      background: var(--color-ink, #141a21);
+    }
+    #root .hh {
+      top: 860px;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 34px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--color-grey, #6b7684);
+    }
+  </style>
+  <div id="root" data-composition-id="mg5" data-width="1920" data-height="1080">
+    <div id="mg5-bg"></div>
+    <div id="mg5-name" class="clip" data-start="0.1" data-duration="4.4">
+      <div class="wordmark"><span class="k">K</span><span class="k">a</span><span class="k">v</span><span class="k">a</span><span class="k">c</span><span class="k">h</span><svg class="mark" id="mg5-mark" viewBox="0 0 120 140" aria-hidden="true"><path id="mg5-shield" class="shield" pathLength="100" d="M60 6 L112 26 V64 C112 98 88 120 60 134 C32 120 8 98 8 64 V26 Z" /></svg></div>
+    </div>
+    <div id="mg5-tag" class="clip" data-start="1.1" data-duration="3.4">
+      <div class="centre tag">An AI fraud investigator a bank can run</div>
+    </div>
+    <div id="mg5-built" class="clip" data-start="1.7" data-duration="2.8">
+      <div class="centre built">Built on TigerGraph</div>
+      <div class="rule" id="mg5-rule" data-layout-ignore></div>
+    </div>
+    <div id="mg5-hh" class="clip" data-start="2.0" data-duration="2.5">
+      <div class="centre hh">Hacker House Goa 2026</div>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo(
+      "#mg5-name .k",
+      { opacity: 0.3, filter: "blur(6px)" },
+      { opacity: 1, filter: "blur(0px)", duration: 0.3, ease: "power4.out", stagger: 0.08 },
+      0.1,
+    );
+    // the shield draws its outline, stamps in, then fills
+    tl.fromTo("#mg5-shield", { strokeDasharray: 100, strokeDashoffset: 100, fillOpacity: 0 }, { strokeDashoffset: 0, duration: 0.35, ease: "power2.inOut" }, 0.6);
+    tl.fromTo("#mg5-mark", { scale: 1.35, rotation: -12, transformOrigin: "50% 60%" }, { scale: 1, rotation: 0, duration: 0.3, ease: "back.out(1.4)" }, 0.8);
+    tl.to("#mg5-shield", { fillOpacity: 1, duration: 0.18, ease: "power2.out" }, 0.85);
+    tl.fromTo(
+      "#mg5-tag .tag",
+      { opacity: 0, filter: "blur(8px)" },
+      { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power3.out" },
+      1.1,
+    );
+    tl.fromTo(
+      "#mg5-built .built",
+      { opacity: 0, scale: 1.08, filter: "blur(8px)", transformOrigin: "50% 50%" },
+      { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.3, ease: "power4.out" },
+      1.7,
+    );
+    tl.fromTo("#mg5-rule", { scaleX: 0, transformOrigin: "50% 50%" }, { scaleX: 1, duration: 0.3, ease: "power3.out" }, 1.85);
+    tl.fromTo(
+      "#mg5-hh .hh",
+      { opacity: 0, filter: "blur(6px)" },
+      { opacity: 1, filter: "blur(0px)", duration: 0.2, ease: "power3.out" },
+      2.0,
+    );
+    window.__timelines["mg5"] = tl;
+  </script>
+</template>

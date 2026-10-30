@@ -5,7 +5,7 @@
     "verdict": "fraud",
     "fraud_probability": 0.95,
     "pattern": "undocumented",
-    "pattern_description": "One device profile (None) makes low-value online purchases on many unrelated customers' cards, always marked New to the account and behind an anonymous proxy, keeping amounts small so the model scores them low. It touched 11 other cards around this alert and matches earlier confirmed cases on the same profile. It was found by pivoting from the card to the device profile and grouping every card on it.",
+    "pattern_description": "This undocumented fraud pattern consists of repeated online micro-charges of a few dollars for product C spread over several weeks, which stay under standard detection thresholds and are never followed by larger purchases. The activity affects card C00348-K1 belonging to customer C00348 as well as 11 other customers' cards that have no prior micro-charge habits. It was uncovered after customer C00348 disputed transaction 3660250 for $4.05, leading to an alert that connected six low-value transactions totaling $23.17 across regions 264 and 325.",
     "affected_txn_ids": [
       "3660245",
       "3660246",
@@ -150,7 +150,7 @@
       "CC-3035",
       "CC-2985"
     ],
-    "summary": "Alert HHF-005 opened because customer C00348 disputed transaction 3660250 ($4.05, product C, online, 2017-01-28 20:45) on card C00348-K1. Assessed as an undocumented coordinated pattern with fraud probability 0.95. Main findings: The slow micro-charge shape appears on 11 other customers' cards with no micro-charge habit in the 30 days to 2017-01-28 against 1.0 per 30 days over the previous 3 windows: charges too small to trip any threshold, repeated across customers; 6 online charges of $2.10 to $5.08 within 21.2 days on card C00348-K1, each under $10, with no larger purchase after them and only 0 such charge in the 90 days before: slow card probing rather than the one-hour R5 test. The episode covers 6 transaction(s) totalling $23.17, and 11 other card(s) are linked by the same slow micro-charge shape (5 or more online charges under $6 in 30 days on a card with no micro-charge habit). Actions: block card, create case, file report, monitor connected cards, escalate to analyst.",
+    "summary": "This alert was opened after customer C00348 disputed online transaction 3660250 for $4.05 on card C00348-K1. Key findings indicate that card C00348-K1 incurred 6 online charges of $2.10 to $5.08 within 21.2 days, each under $10, with no larger purchase following them and 0 such charges in the prior 90 days. Furthermore, this slow micro-charge shape appeared across 11 other customers' cards with no micro-charge habit during the 30 days up to 2017-01-28, compared to 1.0 per 30 days over the prior 3 windows. The case verdict is fraud with a fraud probability of 0.95. Final actions are to block the card, create a case, file a report, monitor connected cards, and escalate to an analyst.",
     "written_to_graph": true,
     "graph_case_id": "CASE-2016-4243"
   },
@@ -215,7 +215,7 @@
   "sar": {
     "file": true,
     "reason": "R9 and §3a: coordinated activity fitting no documented pattern, repeated on 11 other card(s)",
-    "narrative": "This report concerns customer C00348, card C00348-K1, issued as a mastercard debit. Between 2017-01-07 and 2017-01-28, 6 transaction(s) totalling $23.17 were identified as part of one fraud episode, beginning with transaction 3660245. The activity took place online, product code(s) C, billing region(s) 264, 325. The transactions were small online charges of a few dollars spread over several weeks, never followed by a larger purchase, the same shape appearing on other customers' cards in the same weeks. The activity is assessed as an undocumented coordinated pattern: The slow micro-charge shape appears on 11 other customers' cards with no micro-charge habit in the 30 days to 2017-01-28 against 1.0 per 30 days over the previous 3 windows: charges too small to trip any threshold, repeated across customers; 6 online charges of $2.10 to $5.08 within 21.2 days on card C00348-K1, each under $10, with no larger purchase after them and only 0 such charge in the 90 days before: slow card probing rather than the one-hour R5 test. The shared element (the same slow micro-charge shape (5 or more online charges under $6 in 30 days on a card with no micro-charge habit)) links this activity to 11 other card(s), including C00129-K1, C01326-K2, C01525-K2, C02851-K2, which indicates a common actor across cardholders. Earlier confirmed cases CC-2971, CC-3035, CC-2985 show the same pattern. The cardholder reported the disputed transaction to the bank and denied making it. The bank has recommended BLOCK_CARD, MONITOR_CONNECTED_CARDS and opened an internal case; the report is filed under R9, §3a.",
+    "narrative": "This Suspicious Activity Report relates to unauthorized card activity identified on customer C00348's mastercard debit card, C00348-K1, involving case HHF-005. Between 2017-01-07 and 2017-01-28, an unauthorized party processed six online micro-charges totaling $23.17 on the card. The activity took place via the online channel under product code C across billing regions 264 and 325, with no device information recorded. The individual transactions included transaction 3660245 for $4.30 on 2017-01-07 at 15:32, transaction 3660246 for $5.08 on 2017-01-15 at 22:51, transaction 3660247 for $2.70 on 2017-01-16 at 14:04, transaction 3660248 for $4.94 on 2017-01-18 at 19:30, transaction 3660249 for $2.10 on 2017-01-20 at 11:03, and flagged transaction 3660250 for $4.05 on 2017-01-28 at 20:45. The cardholder reported the disputed transaction to the bank and denied making it. The unauthorized scheme was executed using small online charges of a few dollars spread over several weeks, which were never followed by a larger purchase. This specific pattern matches none of the documented fraud typologies. The identical slow micro-charge pattern was observed across 11 other customer cards during the same timeframe, including C00129-K1, C01326-K2, C01525-K2, C02851-K2, C04528-K1, C05083-K1, C06139-K2, and C09471-K2. Card C00348-K1 was blocked, the related cards were placed on monitoring, and the matter has been escalated for further analysis.",
     "subjects": [
       "C00348",
       "C00348-K1",
@@ -236,6 +236,6 @@
   },
   "stop_reason": "Fraud probability 0.95 is at or above 0.85 with 3 independent evidence groups (sequence, network, customer), so section 6 allows a decision without asking the customer; further queries would not change the actions.",
   "tool_calls": 14,
-  "tokens": 0,
-  "latency_s": 15.98
+  "tokens": 6731,
+  "latency_s": 31.63
 }
